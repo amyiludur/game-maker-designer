@@ -13,7 +13,9 @@
         "types": "npm run types --workspace @gmd/web",
         "types:check": "npm run types:check --workspace @gmd/web",
         "lint": "npm run lint --workspace @gmd/web",
-        "e2e": "npm run e2e --workspace @gmd/web"
+        "e2e": "npm run e2e --workspace @gmd/web",
+        "events": "node scripts/sync-event-catalogue.mjs",
+        "events:check": "node scripts/sync-event-catalogue.mjs && git diff --exit-code -- docs/06-effect-dsl.md"
     },
     "devDependencies": {
         "ajv": "^8.17.1",

@@ -42,7 +42,7 @@
             "and", "or", "not",
             "has_trait", "has_keyword", "is_type", "in_zone",
             "controlled_by", "owned_by",
-            "is_exhausted", "is_face_down", "is_attached", "entered_this_round",
+            "is_exhausted", "is_face_down", "is_attached", "entered_this_round", "can_enter_play",
             "has_permission", "has_restriction",
             "exists", "all", "any", "none", "can_pay", "matches"
           ]

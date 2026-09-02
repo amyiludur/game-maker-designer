@@ -266,14 +266,52 @@ Rules:
 }
 ```
 
-**Core event catalogue** (each carries a documented payload):
+**Core event catalogue.** Generated from `EventCatalogue::EVENTS` in the kernel by
+`npm run events`, and checked in CI — trigger filters read these payload fields by name, so a
+doc that disagrees with the code teaches authors to write filters that never match.
 
-`match.began`, `round.began`, `round.ended`, `phase.began`, `phase.ended`, `step.began`,
-`step.ended`, `turn.began`, `turn.ended`, `card.played`, `card.entered_zone`,
-`card.left_zone`, `card.destroyed`, `card.exhausted`, `card.readied`, `card.revealed`,
-`card.attached`, `damage.dealt`, `damage.prevented`, `counter.added`, `counter.removed`,
-`resource.gained`, `resource.paid`, `cards.drawn`, `attack.declared`, `block.declared`,
-`combat.resolved`, `ability.resolved`, `player.lost`, `game.ended`.
+<!-- generated: event-catalogue -->
+
+| Event | `$event.*` payload |
+|---|---|
+| `match.began` | — |
+| `round.began` | `round` |
+| `round.ended` | `round` |
+| `phase.began` | `phase` |
+| `phase.ended` | `phase` |
+| `step.began` | `phase`, `step` |
+| `step.ended` | `phase`, `step` |
+| `turn.began` | `player` |
+| `turn.ended` | `player` |
+| `card.played` | `card`, `player`, `action` |
+| `card.entered_zone` | `card`, `from`, `to`, `controller`, `position` |
+| `card.left_zone` | `card`, `from`, `to`, `controller` |
+| `card.destroyed` | `card`, `from`, `source` |
+| `card.exhausted` | `card` |
+| `card.readied` | `card` |
+| `card.revealed` | `card`, `from`, `to`, `player` |
+| `card.attached` | `card`, `host` |
+| `damage.dealt` | `target`, `amount`, `source` |
+| `damage.prevented` | `target`, `amount`, `source` |
+| `counter.added` | `card`, `counter`, `amount` |
+| `counter.removed` | `card`, `counter`, `amount` |
+| `resource.gained` | `player`, `resource`, `amount` |
+| `resource.paid` | `player`, `resource`, `amount` |
+| `cards.drawn` | `player`, `count`, `cards` |
+| `attack.declared` | `attacker`, `defender`, `target` |
+| `block.declared` | `blocker`, `attacker` |
+| `combat.resolved` | `attacks` |
+| `ability.resolved` | `card`, `ability` |
+| `player.lost` | `player`, `reason` |
+| `game.ended` | `winners`, `losers`, `reason` |
+| `card.flipped` | `card`, `from`, `to` |
+| `card.replaced` | `card`, `with` |
+| `deck.exhausted` | `player` |
+| `zone.shuffled` | `zone`, `player` |
+| `modifiers.expired` | `duration`, `count` |
+| `first_player.set` | `player` |
+
+<!-- /generated: event-catalogue -->
 
 Games may declare additional events in the system document; the linter checks that every
 `trigger.event` is either core or declared.

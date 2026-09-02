@@ -12,25 +12,33 @@ Conventions:
   a failure returns `422` with `details.violations[]` giving JSON Pointer + message.
 * `If-Match` / `expectedVersion` is used for optimistic concurrency on mutable documents.
 
+**A ✅ marks a route that is built.** The rest are specified and unbuilt — this is the target
+surface, not a description of the server. Twenty-two of them exist today; the routes that do
+not are M4 (simulation), M5 (collaboration, notes, online) or M6 (export, rendering).
+`php artisan route:list --path=api/v1` is the authority.
+
+There is no authentication yet: the Sanctum sentence above describes the intent, and every
+built route is currently unauthenticated and unscoped. That is the first thing M5 has to fix.
+
 ---
 
 ## Games & versions
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` | `/games` | List games in the workspace |
+| `GET` ✅ | `/games` | List games in the workspace |
 | `POST` | `/games` | Create; optionally `{ from: "template:duel-lcg" }` |
-| `GET` | `/games/{game}` | Includes current draft version summary |
+| `GET` ✅ | `/games/{game}` | Includes current draft version summary |
 | `PATCH` | `/games/{game}` | Name, summary, settings |
 | `DELETE` | `/games/{game}` | Soft delete |
 | `GET` | `/games/{game}/versions` | |
 | `POST` | `/games/{game}/versions` | Branch a new draft from a version |
-| `GET` | `/games/{game}/versions/{v}` | Full system document |
-| `PUT` | `/games/{game}/versions/{v}` | Replace the system document (draft only) |
+| `GET` ✅ | `/games/{game}/versions/{v}` | Full system document |
+| `PUT` ✅ | `/games/{game}/versions/{v}` | Replace the system document (draft only) |
 | `PATCH` | `/games/{game}/versions/{v}` | JSON Patch (RFC 6902) for targeted edits |
 | `POST` | `/games/{game}/versions/{v}/publish` | Freeze + write snapshot |
-| `GET` | `/games/{game}/versions/{v}/compiled` | Card-type schemas, form descriptors, rules digest |
-| `GET` | `/games/{game}/versions/{v}/lint` | Lint report |
+| `GET` ✅ | `/games/{game}/versions/{v}/compiled` | Card-type schemas, form descriptors, rules digest |
+| `GET` ✅ | `/games/{game}/versions/{v}/lint` | Lint report |
 | `GET` | `/games/{game}/versions/{v}/diff?against={v2}` | Structured diff + change classification |
 | `GET` | `/games/{game}/versions/{v}/impact?against={v2}` | Cards/decks/matches invalidated by the change |
 | `GET` | `/games/{game}/versions/{v}/rulebook?format=html\|md\|pdf` | Generated rulebook |
@@ -40,11 +48,11 @@ Conventions:
 | Method | Path | Notes |
 |---|---|---|
 | `GET` | `/games/{game}/sets` · `POST` · `PATCH /sets/{set}` | |
-| `GET` | `/games/{game}/sets/{set}/completeness` | Planned vs. authored, by type and cost |
-| `GET` | `/games/{game}/cards` | Filter: `type`, `faction`, `cost`, `traits[]`, `keywords[]`, `status`, `set`, `q` (full-text), `sort`, `page` |
+| `GET` ✅ | `/games/{game}/sets/{set}/completeness` | Planned vs. authored, by type and cost |
+| `GET` ✅ | `/games/{game}/cards` | Filter: `type`, `faction`, `cost`, `traits[]`, `keywords[]`, `status`, `set`, `q` (full-text), `sort`, `page` |
 | `POST` | `/games/{game}/cards` | |
-| `GET` | `/cards/{card}` | |
-| `PUT` | `/cards/{card}` | New revision; body `{ document, message }` |
+| `GET` ✅ | `/cards/{card}` | |
+| `PUT` ✅ | `/cards/{card}` | New revision; body `{ document, message }` |
 | `DELETE` | `/cards/{card}` | Retire (never hard-deleted — replays reference it) |
 | `POST` | `/cards/{card}/duplicate` | |
 | `GET` | `/cards/{card}/revisions` · `GET /cards/{card}/revisions/{n}` | |
@@ -70,10 +78,10 @@ Conventions:
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` `POST` | `/games/{game}/decks` | |
-| `GET` `PATCH` `DELETE` | `/decks/{deck}` | |
+| `GET` ✅ `POST` | `/games/{game}/decks` | |
+| `GET` ✅ `PATCH` `DELETE` | `/decks/{deck}` | |
 | `GET` `POST` | `/decks/{deck}/versions` | |
-| `POST` | `/decks/{deck}/validate` | Legality + stats without saving |
+| `POST` ✅ | `/games/{game}/decks/validate` | Legality + stats without saving. Under the game, not the deck: the builder calls it on every keystroke for a deck that does not exist yet |
 | `GET` | `/decks/{deck}/stats` | Curve, type split, trait density |
 | `GET` | `/decks/{deck}/export?format=json\|text` | |
 
@@ -81,31 +89,31 @@ Conventions:
 
 | Method | Path | Notes |
 |---|---|---|
-| `POST` | `/matches` | `{ gameVersionId, mode, seats[], seed?, config }` |
+| `POST` ✅ | `/matches` | `{ gameVersionId, mode, seats[], seed?, config }` |
 | `GET` | `/matches` | Filter by game, mode, status, participant |
-| `GET` | `/matches/{match}` | Metadata + result |
+| `GET` | `/matches/{match}` ✅ | Metadata, result, **and** the redacted view and legal actions for `?side=` — one round trip is one render, so `/view` and `/legal-actions` below are folded into it |
 | `POST` | `/matches/{match}/join` | `{ seat }` |
-| `POST` | `/matches/{match}/start` | |
-| `GET` | `/matches/{match}/view` | Redacted `PlayerView` for the caller's seat |
-| `GET` | `/matches/{match}/legal-actions` | Current legal action list |
+| `POST` | `/matches/{match}/start` | Folded into `POST /matches`: a match with every seat filled at creation has nothing to wait in a lobby for |
+| `GET` | `/matches/{match}/view` | Redacted `PlayerView` — folded into `GET /matches/{match}` |
+| `GET` | `/matches/{match}/legal-actions` | Current legal action list — folded into `GET /matches/{match}` |
 | `GET` | `/matches/{match}/legal-targets?actionId=&targetId=` | Lazy target enumeration |
-| `POST` | `/matches/{match}/actions` | `{ actionId, params, expectedVersion }` → `{ view, events }`; `409` on version mismatch |
-| `POST` | `/matches/{match}/choice` | Answer a `pendingChoice` |
+| `POST` ✅ | `/matches/{match}/actions` | `{ actionId, params, expectedVersion }` → `{ view, events }`; `409` on version mismatch |
+| `POST` ✅ | `/matches/{match}/choice` | Answer a `pendingChoice` |
 | `POST` | `/matches/{match}/explain` | `{ actionId }` → why an action is unavailable, in words |
-| `POST` | `/matches/{match}/undo` | Truncate + replay; requires consent in online mode |
+| `POST` | `/matches/{match}/undo` ✅ | `{ toSequence }` — rewind + replay; requires consent in online mode. The log is appended to, not truncated ([ADR-0008](adr/0008-undo-is-recorded.md)) |
 | `POST` | `/matches/{match}/sandbox` | God-mode action (sandbox mode only) |
 | `POST` | `/matches/{match}/fork` | `{ atSequence }` → new match |
 | `POST` | `/matches/{match}/concede` | |
-| `GET` | `/matches/{match}/log?from=&to=` | Action + event log |
+| `GET` ✅ | `/matches/{match}/log?from=&to=` | Action + event log |
 | `GET` | `/matches/{match}/state-at/{sequence}` | Reconstructed state for the scrubber |
-| `GET` | `/matches/{match}/replay` | `replay.json` export |
+| `GET` ✅ | `/matches/{match}/replay` | `replay.json` export |
 | `POST` | `/matches/{match}/notes` · `GET` | Anchored playtest notes |
 
 ## Simulation & balance
 
 | Method | Path | Notes |
 |---|---|---|
-| `GET` `POST` | `/games/{game}/bot-profiles[/{profile}]` | |
+| `GET` ✅ `POST` | `/games/{game}/bot-profiles[/{profile}]` | The game's profiles plus the built-in game-agnostic ones, each marked `implemented` — only `random` has a bot behind it so far |
 | `POST` | `/simulations` | Queue a batch |
 | `GET` | `/simulations` · `GET /simulations/{batch}` | Includes progress |
 | `POST` | `/simulations/{batch}/cancel` | |

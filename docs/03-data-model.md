@@ -23,21 +23,26 @@ matters.
 ## Entity overview
 
 ```
-users ──< memberships >── workspaces
+users ──< memberships >── workspaces                      ✓
                              │
-                             └──< games
-                                    ├──< game_versions ──< game_snapshots
-                                    ├──< sets ──< cards ──< card_revisions
-                                    ├──< assets
-                                    ├──< card_templates
-                                    ├──< decks ──< deck_versions
-                                    ├──< matches ──< match_players
-                                    │        ├──< match_actions   (append-only)
-                                    │        ├──< match_snapshots
-                                    │        └──< match_notes
-                                    └──< simulation_batches ──< simulation_runs
-                                                    └──< balance_reports
+                             └──< games                     ✓
+                                    ├──< game_versions ──< game_snapshots   ✓
+                                    ├──< sets ──< cards ──< card_revisions  ✓
+                                    ├──< assets                             M6
+                                    ├──< card_templates                     M6
+                                    ├──< decks ──< deck_versions            ✓
+                                    ├──< matches ──< match_players          ✓
+                                    │        ├──< match_actions   (append-only)  ✓
+                                    │        ├──< match_snapshots            ✓
+                                    │        └──< match_notes               M5
+                                    └──< simulation_batches ──< simulation_runs  M4
+                                                    └──< balance_reports    M4
 ```
+
+`✓` is migrated today; the rest are specified against the milestone that needs them.
+`bot_profiles` (not drawn above — it hangs off `games` with a nullable `game_id`, so a
+game-agnostic profile like the built-in random opponent belongs to no game) is also
+migrated. `php artisan migrate:status` is the authority.
 
 ## Tables
 

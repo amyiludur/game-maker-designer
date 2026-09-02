@@ -38,7 +38,14 @@ Run on every system/card save; results surface in the UI as errors and warnings.
 | No round cap or equivalent terminating condition | **error** (simulations would hang) |
 | Resource declared but never spent by any action or ability | warning |
 | Counter declared but never added or read | warning |
+| Keyword grants a permission or restriction nothing ever checks | warning |
+| Keyword defined but no card carries it | info |
 | Vocabulary entry never used | info |
+
+The grant rule earns its place: a keyword that grants a restriction nothing consults reads
+like a rule on the card, a designer balances around it, and it does nothing. Emberfall's
+`guard` is exactly that today, on two printed cards — see the note in
+[the Emberfall README](../examples/emberfall/README.md).
 
 ### Card lint
 

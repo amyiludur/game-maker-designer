@@ -204,8 +204,12 @@ the data is not transmitted.
 
 ## Undo, rewind and sandbox mode
 
-* **Undo** is implemented by *truncating the action log and replaying*, not by inverse
+* **Undo** is implemented by *rewinding the action log and replaying*, not by inverse
   operations. Inverse ops are a bug farm; replay is exact by construction.
+* The log is not truncated to do it. An undo is *recorded* as an entry naming the sequence
+  to rewind to, and reconstruction folds it away — which keeps doc 03's append-only
+  guarantee and this exactness at the same time. See
+  [ADR-0008](adr/0008-undo-is-recorded.md).
 * Undo is allowed freely in `solo`/`hotseat`/`sandbox` modes. In `online` mode it requires
   consent from all seats (a proposal message), because undoing past a hidden-information
   reveal leaks.

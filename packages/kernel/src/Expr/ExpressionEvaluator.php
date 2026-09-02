@@ -148,6 +148,7 @@ final class ExpressionEvaluator
             'is_face_down' => $this->instance($node, $context, 'card')?->faceDown ?? false,
             'is_attached' => $this->instance($node, $context, 'card')?->isAttached() ?? false,
             'entered_this_round' => $this->enteredThisRound($node, $context),
+            'can_enter_play' => $this->canEnterPlay($node, $context),
             'in_zone' => $this->inZone($node, $context),
             'controlled_by' => $this->same($this->instance($node, $context, 'card')?->controller, $this->evaluate($node['player'] ?? null, $context)),
             'owned_by' => $this->same($this->instance($node, $context, 'card')?->owner, $this->evaluate($node['player'] ?? null, $context)),
@@ -230,6 +231,65 @@ final class ExpressionEvaluator
     }
 
     /** @param array<string, mixed> $node */
+    /**
+     * Could this card legally arrive in that zone right now?
+     *
+     * A real primitive rather than a convenience: zone capacity, uniqueness and
+     * "this cannot enter play" are rules every game has, and without this each one would
+     * re-express them as a hand-written conjunction in every action that puts a card
+     * somewhere — and get one of them wrong.
+     *
+     * The zone defaults to the first entry in the card type's `playableTo`, so
+     * `{ "op": "can_enter_play", "card": "$target.card" }` means what it reads as.
+     *
+     * @param  array<string, mixed>  $node
+     */
+    private function canEnterPlay(array $node, EvalContext $context): bool
+    {
+        $instance = $this->instance($node, $context, 'card');
+        $characteristics = $this->characteristics($node, $context);
+        if ($instance === null || $characteristics === null) {
+            return false;
+        }
+
+        if ($characteristics->restricted('cannot_enter_play')) {
+            return false;
+        }
+
+        $type = $characteristics->types[0] ?? null;
+        $definition = $type !== null && $context->system->hasCardType($type)
+            ? $context->system->cardType($type)
+            : null;
+
+        $zoneId = isset($node['zone'])
+            ? (string) $context->evaluate($node['zone'])
+            : ($definition?->playableTo[0] ?? 'play');
+
+        if (! $context->system->hasZone($zoneId)) {
+            return false;
+        }
+
+        $zone = $context->system->zone($zoneId);
+        $key = $context->system->qualifiedZone($instance->controller, $zoneId);
+
+        if ($zone->maxSize !== null && count($context->state->zone($key)) >= $zone->maxSize) {
+            return false;
+        }
+
+        // Uniqueness is per controller and by card code: a second copy of a unique card
+        // cannot arrive while the first is still there.
+        if ($definition?->unique === true) {
+            foreach ($context->state->zone($key) as $occupantId) {
+                $occupant = $context->state->instance($occupantId);
+                if ($occupant->code === $instance->code && $occupant->id !== $instance->id) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     private function inZone(array $node, EvalContext $context): bool
     {
         $instance = $this->instance($node, $context, 'card');

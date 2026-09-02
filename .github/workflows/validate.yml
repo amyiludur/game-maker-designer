@@ -19,6 +19,15 @@ jobs:
       - run: npm ci
       - name: Validate example documents against schemas
         run: npm run validate
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+      # Doc 06's event catalogue is generated from the kernel's own table. Trigger filters
+      # read those payload fields by name, so a doc that has drifted teaches authors to
+      # write filters that never match.
+      - name: The event catalogue in doc 06 matches the kernel
+        run: npm run events:check
 
   kernel:
     name: Kernel & harness

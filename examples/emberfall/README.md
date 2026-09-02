@@ -47,8 +47,21 @@ from an empty deck.
 | Keyword | Meaning |
 |---|---|
 | `Swift` | May attack the round it enters play (grants the `attack_while_summoning_sick` permission) |
-| `Guard` | While ready, enemy characters must attack it first (the `must_be_attacked_first` restriction) |
+| `Guard` | Grants the `must_be_attacked_first` restriction — **and nothing reads it, so it currently does nothing.** See below |
 | `Bolster N` | On entering play, another friendly character gets +N attack this round (a parameterised keyword) |
+
+**`Guard` is an open design question, not an oversight to patch.** Its reminder text
+("enemy characters must attack it before any other target") describes a combat model
+Emberfall does not use: attacks are not aimed at a character, they are declared and then
+*blocked*, with anything unblocked hitting the defending identity. There is no attack target
+for `must_be_attacked_first` to restrict.
+
+Making it work means deciding what Guard should mean in a blocker game — most likely a
+constraint on the defender ("an attack cannot go unblocked while a ready Guard could block
+it"), which is a rule about the *absence* of an action and needs a mechanism the kernel does
+not have yet. That is a decision for whoever owns Emberfall's design, so the linter reports
+it (`unread-grant`) rather than the platform inventing a rule. Two cards carry it today:
+`core-021 Ashen Vanguard` and `core-022 Gravewatch Sentinel`.
 
 ---
 

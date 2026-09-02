@@ -71,7 +71,7 @@ start M3 until the fuzz run is clean.*
 * Animation from the event stream
 * Card inspector with modifier breakdown
 * Solo (vs. bot), hotseat, sandbox mode
-* Undo via truncate-and-replay
+* Undo via rewind-and-replay ([ADR-0008](adr/0008-undo-is-recorded.md))
 * Deck builder with live legality
 
 **Exit:** a designer builds a deck and plays a complete solo match against a bot without

@@ -254,6 +254,27 @@ final class Lint
             }
         }
 
+        // Requirements, target queries and state checks are not compiled programs, and a
+        // permission is far more likely to be read by an action's requirements than by any
+        // effect — `swift` is checked in `declare_attack`, and nowhere else.
+        foreach ($system->actions as $action) {
+            foreach ([$action->requirements, $action->targets] as $node) {
+                foreach ($this->strings($node) as $value) {
+                    $mentioned[$value] = true;
+                }
+            }
+        }
+        foreach ($system->stateChecks as $check) {
+            foreach ($this->strings($check->when) as $value) {
+                $mentioned[$value] = true;
+            }
+        }
+        foreach ($system->winConditions as $condition) {
+            foreach ($this->strings($condition->check) as $value) {
+                $mentioned[$value] = true;
+            }
+        }
+
         $findings = [];
         foreach ($system->resources as $resource) {
             if (! isset($mentioned[$resource->id])) {
@@ -284,6 +305,28 @@ final class Lint
                 $findings[] = LintFinding::info(
                     'unused-keyword',
                     "\"{$keyword->id}\" is defined but no card carries it",
+                );
+            }
+
+            // A keyword that grants a permission or restriction nothing ever reads is the
+            // most expensive kind of nothing: it reads like a rule on the card, a designer
+            // balances around it, and it does not exist. Emberfall's `guard` was exactly
+            // this — two printed cards carrying a restriction no requirement consulted.
+            foreach ($keyword->grants as $grant) {
+                $kind = $grant['kind'] ?? null;
+                if ($kind !== 'permission' && $kind !== 'restriction') {
+                    continue;
+                }
+
+                $name = (string) ($grant[$kind] ?? '');
+                if ($name === '' || isset($mentioned[$name])) {
+                    continue;
+                }
+
+                $findings[] = LintFinding::warning(
+                    'unread-grant',
+                    "\"{$keyword->id}\" grants the {$kind} \"{$name}\", but nothing ever checks it — "
+                        . 'the keyword has no effect on play',
                 );
             }
         }

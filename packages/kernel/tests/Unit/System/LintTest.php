@@ -26,6 +26,31 @@ it('notices a counter nothing ever uses', function (): void {
     expect(ruleNames(Lint::standard()->check(Fixtures::emberfall())))->toContain('unused-counter');
 });
 
+it('notices a keyword whose grant nothing reads', function (): void {
+    // Emberfall's `guard` grants `must_be_attacked_first` and nothing consults it. Two
+    // printed cards carry it, so it reads like a rule, a designer balances around it, and
+    // it does nothing — the most expensive kind of nothing a card game can print.
+    $findings = Lint::standard()->check(Fixtures::emberfall());
+    $unread = array_filter($findings, static fn (LintFinding $f): bool => $f->rule === 'unread-grant');
+
+    expect(array_map(static fn (LintFinding $f): string => $f->message, $unread))
+        ->toHaveCount(1)
+        ->and(implode('', array_map(static fn (LintFinding $f): string => $f->message, $unread)))
+        ->toContain('must_be_attacked_first');
+});
+
+it('does not flag a grant that an action requirement reads', function (): void {
+    // `swift` grants `attack_while_summoning_sick`, which nothing in any *effect* mentions —
+    // it is read by `declare_attack`'s requirements. A scan that only walked compiled
+    // programs called this dead, which would have taught designers to ignore the rule.
+    $messages = array_map(
+        static fn (LintFinding $f): string => $f->message,
+        Lint::standard()->check(Fixtures::emberfall()),
+    );
+
+    expect(implode('', $messages))->not->toContain('attack_while_summoning_sick');
+});
+
 it('reports ops the kernel has not grown yet', function (): void {
     // Warden's Hollow needs the cooperative ops, which are not implemented. The linter
     // saying so at load is the whole point: the alternative is UnknownOp at round 12 of

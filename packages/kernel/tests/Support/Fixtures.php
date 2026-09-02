@@ -37,6 +37,26 @@ final class Fixtures
     }
 
     /** @return array<string, mixed> */
+    /**
+     * Emberfall with a capacity on its play zone.
+     *
+     * No example game declares a `maxSize`, and adding one to Emberfall to suit a test
+     * would change the game the conformance fixtures are blessed against. The rule under
+     * test is the kernel's, so the variant lives here.
+     */
+    public static function cappedPlayZone(int $maxSize): SystemDocument
+    {
+        $document = self::json(self::path('emberfall') . '/game-system.json');
+
+        foreach ($document['zones'] as $index => $zone) {
+            if ($zone['id'] === 'play') {
+                $document['zones'][$index]['maxSize'] = $maxSize;
+            }
+        }
+
+        return (new SystemCompiler)->compile($document, self::sets('emberfall'));
+    }
+
     public static function deck(string $game, string $name): array
     {
         return self::json(self::path($game) . '/decks/' . $name . '.json');

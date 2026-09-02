@@ -7,6 +7,7 @@ use Gmd\Kernel\Diagnostics\UnknownOp;
 use Gmd\Kernel\Diagnostics\UnresolvedSelector;
 use Gmd\Kernel\Rng\Pcg64Rng;
 use Gmd\Kernel\Tests\Support\Board;
+use Gmd\Kernel\Tests\Support\Fixtures;
 
 function evaluatorBoard(): Board
 {
@@ -161,4 +162,51 @@ it('resolves an attachment host', function (): void {
     $brand = $board->id('core-016');
 
     expect($board->context(['self' => $brand])->evaluate('$host'))->toBe($scout);
+});
+
+it('knows whether a card could arrive in play', function (): void {
+    $board = Board::emberfall()->seat(0, 'core-001')->seat(1, 'core-002');
+    $board->inHand(0, 'core-010');
+    $context = $board->context();
+
+    // A character with room for it, using the zone its card type declares it plays to.
+    expect($context->evaluateBool(['op' => 'can_enter_play', 'card' => $board->id('core-010')]))->toBeTrue();
+});
+
+it('refuses a second copy of a unique card', function (): void {
+    // Emberfall's heroes are unique, and seat 0 already has one in play from setup.
+    $board = Board::emberfall()->seat(0, 'core-001');
+    $board->inHand(0, 'core-001');
+    $context = $board->context();
+
+    $inHand = $board->id('core-001', 1);
+    expect($context->evaluateBool(['op' => 'can_enter_play', 'card' => $inHand]))->toBeFalse();
+
+    // Uniqueness is per controller: the other seat has no hero of its own yet.
+    $other = Board::emberfall()->seat(0, 'core-002')->seat(1);
+    $other->inHand(1, 'core-001');
+    expect(
+        $other->context()->evaluateBool(['op' => 'can_enter_play', 'card' => $other->id('core-001')]),
+    )->toBeTrue();
+});
+
+it('refuses a zone that is already full', function (): void {
+    // No Emberfall zone declares a maxSize, so the cap is added to the system document here
+    // rather than to the example game — the point under test is the kernel's, not Emberfall's.
+    $capped = Board::of(Fixtures::cappedPlayZone(2))->seat(0, 'core-001');
+    $capped->inPlay(0, 'core-010')->inHand(0, 'core-011');
+    $context = $capped->context();
+
+    // The hero already in play plus one character fills a two-card zone.
+    expect($context->evaluateBool(['op' => 'can_enter_play', 'card' => $capped->id('core-011')]))->toBeFalse();
+});
+
+it('reads the zone it is asked about', function (): void {
+    $board = Board::emberfall()->seat(0, 'core-001');
+    $board->inHand(0, 'core-010');
+    $context = $board->context();
+
+    expect($context->evaluateBool([
+        'op' => 'can_enter_play', 'card' => $board->id('core-010'), 'zone' => 'nonesuch',
+    ]))->toBeFalse();
 });

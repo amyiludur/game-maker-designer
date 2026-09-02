@@ -19,9 +19,14 @@ bot cannot cheat by construction, so bot-derived statistics mean something.
 
 ### Strategies
 
+Only **Random** is built. It backs the fuzz harness and the solo table's opponent
+([ADR-0009](adr/0009-server-driven-bot-seats.md)); the rest are specified and waiting for
+M4. A bot profile whose strategy has no implementation is listed by the API with
+`implemented: false` rather than hidden, so an authored tuning is not silently dropped.
+
 | Strategy | What it does | Good for |
 |---|---|---|
-| **Random** | Uniform choice among legal actions | Fuzzing: finds crashes, infinite loops, illegal states. Run it first, always. |
+| **Random** ✓ | Uniform choice among legal actions | Fuzzing: finds crashes, infinite loops, illegal states. Run it first, always. |
 | **Scripted** | Fixed action sequence, fails loudly on divergence | Regression tests, reproducing a specific line |
 | **Heuristic** | Scores each legal action with a weighted feature sum | The workhorse — fast, tunable per game in JSON, ~thousands of matches/minute |
 | **MCTS** | Monte Carlo tree search with determinization for hidden info | Finding degenerate lines a human wouldn't; slow, used on suspect matchups |
