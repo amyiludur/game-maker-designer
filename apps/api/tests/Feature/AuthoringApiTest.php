@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Models\Card;
+use App\Models\DeckVersion;
 use App\Models\Game;
 use App\Support\Projectors\CardProjector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -155,5 +156,40 @@ final class AuthoringApiTest extends TestCase
         $this->assertFalse($illegal->json('data.legality.valid') ?? $illegal->json('data.valid'));
         $messages = array_column($illegal->json('data.violations'), 'message');
         $this->assertContains("Every card must match your hero's faction or be neutral.", $messages);
+    }
+
+    public function test_the_deck_list_and_the_deck_page_agree_about_legality(): void
+    {
+        // They agree by construction rather than by coincidence: the list reads a cached
+        // column and the page recomputes, so if the importer does not project legality the
+        // same deck shows a red glyph in one place and "Legal" in the other.
+        $listed = collect($this->getJson('/api/v1/games/emberfall/decks')->assertOk()->json('data'));
+        $this->assertCount(2, $listed);
+
+        foreach ($listed as $row) {
+            $page = $this->getJson("/api/v1/decks/{$row['id']}")->assertOk();
+            $this->assertSame(
+                $page->json('data.legality.valid'),
+                $row['valid'],
+                "the list and the page disagree about {$row['name']}",
+            );
+        }
+    }
+
+    public function test_reprojecting_decks_rebuilds_legality_and_is_idempotent(): void
+    {
+        DeckVersion::query()->update(['legality' => null]);
+
+        $this->artisan('decks:reproject')->assertSuccessful();
+        foreach (DeckVersion::query()->get() as $version) {
+            $this->assertTrue($version->legality['valid'] ?? false);
+        }
+
+        // A second run must find nothing to do. Postgres jsonb does not preserve object key
+        // order, so this fails unless the comparison is canonical — and a command that
+        // always reports changes cannot be trusted to tell you when something really moved.
+        $this->artisan('decks:reproject')
+            ->expectsOutputToContain('0 changed')
+            ->assertSuccessful();
     }
 }

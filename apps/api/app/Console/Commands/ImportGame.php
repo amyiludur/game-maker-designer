@@ -16,6 +16,7 @@ use App\Models\Workspace;
 use App\Services\GameCompiler;
 use App\Services\SchemaValidator;
 use App\Support\Projectors\CardProjector;
+use App\Support\Projectors\DeckProjector;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -41,6 +42,7 @@ final class ImportGame extends Command
         SchemaValidator $validator,
         GameCompiler $compiler,
         CardProjector $projector,
+        DeckProjector $deckProjector,
     ): int {
         $path = $this->resolve((string) $this->argument('path'));
         if (! is_dir($path)) {
@@ -104,6 +106,10 @@ final class ImportGame extends Command
                 ($report['lint']['compiled'] ?? false) ? 'yes' : 'no',
                 $errors,
             ));
+
+            // After compilation, not inside the transaction above: legality is evaluated
+            // against the compiled system, so it cannot be derived until there is one.
+            $this->projectDecks($game, $deckProjector);
         }
 
         $this->info(sprintf(
@@ -171,6 +177,20 @@ final class ImportGame extends Command
                 'document' => $document,
             ]);
             $deck->update(['head_version_id' => $deckVersion->id]);
+        }
+    }
+
+    /** Cache each imported deck's legality, so the list and the deck page agree. */
+    private function projectDecks(Game $game, DeckProjector $projector): void
+    {
+        foreach ($game->decks()->with('head')->get() as $deck) {
+            $head = $deck->head;
+            if ($head === null) {
+                continue;
+            }
+
+            $projector->apply($head);
+            $head->saveQuietly();
         }
     }
 
