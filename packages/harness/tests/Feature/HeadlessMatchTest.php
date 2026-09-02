@@ -90,11 +90,21 @@ it('narrates what happened as an ordered event stream', function (): void {
 });
 
 it('finishes a match inside the performance budget', function (): void {
-    $started = hrtime(true);
+    // Doc 13's CI gate, measured in CPU time rather than wall time. A wall clock on a shared
+    // machine measures what else is running — this test failed once while a ten-thousand
+    // match fuzz was using the other cores, which said nothing about the kernel.
+    $before = getrusage();
     emberfallMatch(11);
-    $milliseconds = (hrtime(true) - $started) / 1e6;
+    $after = getrusage();
 
-    // Doc 13's CI gate. Not a micro-benchmark — the point is that a ten-thousand-match
-    // batch stays feasible, which is what the balance tooling is for.
-    expect($milliseconds)->toBeLessThan(250.0, sprintf('a headless match took %.0fms', $milliseconds));
+    $milliseconds = (
+        ($after['ru_utime.tv_sec'] - $before['ru_utime.tv_sec']) * 1e6
+        + ($after['ru_utime.tv_usec'] - $before['ru_utime.tv_usec'])
+        + ($after['ru_stime.tv_sec'] - $before['ru_stime.tv_sec']) * 1e6
+        + ($after['ru_stime.tv_usec'] - $before['ru_stime.tv_usec'])
+    ) / 1000;
+
+    // The point is not the number: it is that a ten-thousand-match batch stays feasible,
+    // which is what the whole balance-measurement story depends on.
+    expect($milliseconds)->toBeLessThan(250.0, sprintf('a headless match used %.0fms of CPU', $milliseconds));
 });
