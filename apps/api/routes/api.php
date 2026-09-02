@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\DeckController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\MatchController;
+use App\Http\Controllers\Api\SetController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,17 +18,27 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::prefix('v1')->group(function (): void {
+    Route::get('game-templates', [GameController::class, 'templates']);
+
     Route::get('games', [GameController::class, 'index']);
+    Route::post('games', [GameController::class, 'store']);
     Route::get('games/{game}', [GameController::class, 'show']);
     Route::get('games/{game}/versions/{version}', [GameController::class, 'version']);
     Route::put('games/{game}/versions/{version}', [GameController::class, 'updateVersion']);
     Route::get('games/{game}/versions/{version}/compiled', [GameController::class, 'compiled']);
     Route::get('games/{game}/versions/{version}/lint', [GameController::class, 'lint']);
+    Route::post('games/{game}/versions/{version}/impact', [GameController::class, 'impact']);
+
+    Route::get('games/{game}/sets', [SetController::class, 'index']);
+    Route::post('games/{game}/sets', [SetController::class, 'store']);
+    Route::patch('sets/{set}', [SetController::class, 'update']);
+    Route::get('games/{game}/sets/{set}/completeness', [CardController::class, 'completeness']);
 
     Route::get('games/{game}/cards', [CardController::class, 'index']);
-    Route::get('games/{game}/sets/{set}/completeness', [CardController::class, 'completeness']);
+    Route::post('games/{game}/cards', [CardController::class, 'store']);
     Route::get('cards/{card}', [CardController::class, 'show']);
     Route::put('cards/{card}', [CardController::class, 'update']);
+    Route::post('cards/{card}/duplicate', [CardController::class, 'duplicate']);
 
     Route::get('games/{game}/decks', [DeckController::class, 'index']);
     Route::post('games/{game}/decks/validate', [DeckController::class, 'validateDeck']);

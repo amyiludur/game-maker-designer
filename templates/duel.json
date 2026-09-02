@@ -1,0 +1,379 @@
+{
+  "$schema": "../schemas/game-system.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "duel",
+  "version": "0.1.0",
+  "name": "Two-player duel",
+  "summary": "A competitive duel: spend a resource to put units into play, attack with them, and reduce the enemy identity to zero health.",
+
+  "players": { "min": 2, "max": 2, "mode": "competitive", "teams": false },
+
+  "vocabularies": {
+    "traits": [],
+    "rarities": ["common", "uncommon", "rare"],
+    "factions": []
+  },
+
+  "resources": [
+    { "id": "energy", "name": "Energy", "start": 0, "min": 0, "max": null, "carryOver": false }
+  ],
+
+  "counters": [{ "id": "damage", "name": "Damage", "visual": "pip-red" }],
+
+  "zones": [
+    { "id": "deck", "name": "Deck", "scope": "player", "visibility": "none", "ordered": true, "faceDown": true },
+    { "id": "hand", "name": "Hand", "scope": "player", "visibility": "owner", "ordered": false },
+    { "id": "play", "name": "In Play", "scope": "player", "visibility": "public", "ordered": false, "supportsAttachments": true },
+    { "id": "discard", "name": "Discard", "scope": "player", "visibility": "public", "ordered": true }
+  ],
+
+  "cardTypes": [
+    {
+      "id": "identity",
+      "name": "Identity",
+      "isIdentity": true,
+      "unique": true,
+      "playableTo": ["play"],
+      "attributes": [
+        { "id": "health", "name": "Health", "type": "integer", "min": 1, "required": true, "showOnCard": "bottom-right" }
+      ],
+      "modifiableAttributes": ["health"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "unit",
+      "name": "Unit",
+      "playableTo": ["play"],
+      "attributes": [
+        { "id": "cost", "name": "Cost", "type": "integer", "min": 0, "max": 10, "required": true, "showOnCard": "top-left" },
+        { "id": "attack", "name": "Attack", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-left" },
+        { "id": "health", "name": "Health", "type": "integer", "min": 1, "required": true, "showOnCard": "bottom-right" },
+        { "id": "traits", "name": "Traits", "type": "tagList", "vocabulary": "traits", "showOnCard": "type-line" }
+      ],
+      "modifiableAttributes": ["attack", "health", "cost"],
+      "abilitySlots": { "max": 3 }
+    },
+    {
+      "id": "event",
+      "name": "Event",
+      "playableTo": ["discard"],
+      "attributes": [
+        { "id": "cost", "name": "Cost", "type": "integer", "min": 0, "max": 10, "required": true, "showOnCard": "top-left" }
+      ],
+      "modifiableAttributes": ["cost"],
+      "abilitySlots": { "max": 2 }
+    }
+  ],
+
+  "keywords": [],
+
+  "setup": [
+    {
+      "op": "for_each_player",
+      "order": "seat",
+      "do": [
+        { "op": "put_into_play", "card": "$deck.identity", "controller": "$player", "ready": true },
+        { "op": "shuffle", "zone": "deck", "player": "$player" },
+        { "op": "draw", "player": "$player", "count": 5 }
+      ]
+    },
+    { "op": "set_first_player", "rule": "random" }
+  ],
+
+  "mulligan": { "enabled": true, "mode": "full_redraw", "times": 1 },
+
+  "round": {
+    "structure": "phased",
+    "firstPlayer": { "rule": "alternate" },
+    "triggerOrdering": "apnap",
+    "phases": [
+      {
+        "id": "refresh",
+        "name": "Refresh",
+        "steps": [
+          {
+            "id": "ready",
+            "name": "Ready cards",
+            "auto": [
+              {
+                "op": "for_each_player",
+                "order": "turn",
+                "do": [{ "op": "ready_all", "zone": "play", "player": "$player" }]
+              }
+            ]
+          },
+          {
+            "id": "income",
+            "name": "Gain Energy",
+            "auto": [
+              {
+                "op": "for_each_player",
+                "order": "turn",
+                "do": [
+                  {
+                    "op": "gain_resource",
+                    "player": "$player",
+                    "resource": "energy",
+                    "mode": "set",
+                    "amount": {
+                      "op": "min",
+                      "of": [{ "op": "add", "left": { "op": "round" }, "right": 1 }, 8]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "draw",
+            "name": "Draw",
+            "auto": [
+              {
+                "op": "for_each_player",
+                "order": "turn",
+                "do": [{ "op": "draw", "player": "$player", "count": 1 }]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "action",
+        "name": "Action",
+        "steps": [
+          { "id": "main", "name": "Main", "window": { "type": "alternating", "endOn": "consecutive_passes" } }
+        ]
+      },
+      {
+        "id": "combat",
+        "name": "Combat",
+        "steps": [
+          {
+            "id": "declare_attackers",
+            "name": "Declare attackers",
+            "window": { "type": "active_player", "actions": ["declare_attack"], "skipIfNoActions": true }
+          },
+          {
+            "id": "declare_blockers",
+            "name": "Declare blockers",
+            "window": { "type": "defending_player", "actions": ["declare_block"], "skipIfNoActions": true }
+          },
+          {
+            "id": "resolve",
+            "name": "Resolve combat",
+            "auto": [
+              {
+                "op": "resolve_combat",
+                "model": "simultaneous_strike",
+                "damageAttr": "attack",
+                "healthAttr": "health",
+                "damageCounter": "damage",
+                "unblockedTarget": "defending_identity"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "name": "End",
+        "steps": [
+          {
+            "id": "cleanup",
+            "name": "Cleanup",
+            "auto": [
+              { "op": "expire_modifiers", "duration": "round" },
+              { "op": "enforce_hand_size", "max": 7 }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  "actions": [
+    {
+      "id": "play_unit",
+      "name": "Play a unit",
+      "windows": ["action.main"],
+      "targets": [
+        {
+          "id": "card",
+          "query": { "zone": "hand", "controller": "$you", "types": ["unit"] },
+          "count": 1,
+          "chooser": "$you"
+        }
+      ],
+      "cost": [
+        {
+          "op": "pay_resource",
+          "player": "$you",
+          "resource": "energy",
+          "amount": { "op": "attr", "of": "$target.card", "attr": "cost" }
+        }
+      ],
+      "effect": [{ "op": "put_into_play", "card": "$target.card", "controller": "$you", "ready": true }],
+      "emits": ["card.played"],
+      "text": "Pay a unit's cost to put it into play."
+    },
+    {
+      "id": "play_event",
+      "name": "Play an event",
+      "windows": ["action.main"],
+      "targets": [
+        {
+          "id": "card",
+          "query": { "zone": "hand", "controller": "$you", "types": ["event"] },
+          "count": 1,
+          "chooser": "$you"
+        }
+      ],
+      "cost": [
+        {
+          "op": "pay_resource",
+          "player": "$you",
+          "resource": "energy",
+          "amount": { "op": "attr", "of": "$target.card", "attr": "cost" }
+        }
+      ],
+      "effect": [{ "op": "move_card", "card": "$target.card", "to": "discard", "controller": "$you" }],
+      "emits": ["card.played"],
+      "text": "Pay an event's cost, resolve its ability, then put it in your discard pile."
+    },
+    {
+      "id": "declare_attack",
+      "name": "Declare an attack",
+      "windows": ["combat.declare_attackers"],
+      "targets": [
+        {
+          "id": "attacker",
+          "query": {
+            "zone": "play",
+            "controller": "$you",
+            "types": ["unit"],
+            "where": { "op": "not", "of": { "op": "is_exhausted", "card": "$card" } }
+          },
+          "count": 1,
+          "chooser": "$you",
+          "prompt": "Choose an attacker"
+        }
+      ],
+      "cost": [{ "op": "exhaust", "card": "$target.attacker" }],
+      "requirements": [
+        { "op": "not", "of": { "op": "entered_this_round", "card": "$target.attacker" } }
+      ],
+      "effect": [{ "op": "declare_attack", "attacker": "$target.attacker" }],
+      "text": "Exhaust a ready unit that did not enter play this round to attack."
+    },
+    {
+      "id": "declare_block",
+      "name": "Declare a block",
+      "windows": ["combat.declare_blockers"],
+      "targets": [
+        {
+          "id": "blocker",
+          "query": {
+            "zone": "play",
+            "controller": "$you",
+            "types": ["unit"],
+            "where": { "op": "not", "of": { "op": "is_exhausted", "card": "$card" } }
+          },
+          "count": 1,
+          "chooser": "$you",
+          "prompt": "Choose a blocker"
+        },
+        {
+          "id": "attacker",
+          "query": { "zone": "play", "controller": "$opponent", "types": ["unit"] },
+          "count": 1,
+          "chooser": "$you",
+          "prompt": "Choose the attacker to block"
+        }
+      ],
+      "effect": [{ "op": "declare_block", "blocker": "$target.blocker", "attacker": "$target.attacker" }],
+      "text": "Assign a ready unit to block an attacker."
+    }
+  ],
+
+  "stateChecks": [
+    {
+      "id": "lethal_damage",
+      "scope": { "zone": "play", "types": ["unit"] },
+      "when": {
+        "op": "gte",
+        "left": { "op": "counter", "of": "$card", "counter": "damage" },
+        "right": { "op": "attr", "of": "$card", "attr": "health" }
+      },
+      "then": [{ "op": "destroy", "card": "$card" }]
+    }
+  ],
+
+  "winConditions": [
+    {
+      "id": "identity_destroyed",
+      "scope": { "players": "all" },
+      "check": {
+        "op": "gte",
+        "left": { "op": "counter", "of": "$player.identity", "counter": "damage" },
+        "right": { "op": "attr", "of": "$player.identity", "attr": "health" }
+      },
+      "outcome": { "loser": "$player" },
+      "text": "A player whose identity has damage equal to or greater than its health loses the game."
+    },
+    {
+      "id": "deck_out",
+      "scope": { "players": "all" },
+      "trigger": "on_draw_from_empty",
+      "check": {
+        "op": "eq",
+        "left": { "op": "zone_size", "zone": "deck", "player": "$player" },
+        "right": 0
+      },
+      "outcome": { "loser": "$player" },
+      "text": "A player who must draw from an empty deck loses the game."
+    },
+    {
+      "id": "round_limit",
+      "check": { "op": "gt", "left": { "op": "round" }, "right": 25 },
+      "outcome": { "draw": true },
+      "text": "If round 25 ends with no winner, the game is a draw."
+    }
+  ],
+
+  "deckbuilding": {
+    "deckSize": { "min": 30, "max": 40 },
+    "maxCopies": 3,
+    "identity": { "type": "identity", "count": 1, "zone": "play" },
+    "sideboard": null,
+    "constraints": []
+  },
+
+  "ui": {
+    "board": {
+      "layout": "duel-mirrored",
+      "rows": [
+        { "id": "opponent-play", "zone": "play", "player": "$opponent", "label": "Opponent" },
+        { "id": "own-play", "zone": "play", "player": "$you", "label": "You" }
+      ],
+      "docks": { "hand": "bottom", "deck": "bottom-right", "discard": "bottom-right", "identity": "left" }
+    },
+    "cardTemplate": "standard-portrait",
+    "theme": { "accent": "#5b8cae", "surface": "#14171a" }
+  },
+
+  "rulesText": {
+    "sections": [
+      {
+        "id": "overview",
+        "title": "Overview",
+        "body": "Each player commands an identity and a deck. Spend Energy to put units into play, attack with them, and reduce the opposing identity to zero health."
+      },
+      {
+        "id": "golden-rule",
+        "title": "The Golden Rule",
+        "body": "If the text of a card contradicts these rules, the card takes precedence."
+      }
+    ],
+    "generate": ["phases", "keywords", "zones", "deckbuilding"]
+  }
+}

@@ -12,7 +12,6 @@ use App\Models\Deck;
 use App\Models\DeckVersion;
 use App\Models\Game;
 use App\Models\GameVersion;
-use App\Models\User;
 use App\Models\Workspace;
 use App\Services\CardValidator;
 use App\Services\GameCompiler;
@@ -247,20 +246,7 @@ final class ImportGame extends Command
 
     private function workspace(): Workspace
     {
-        $slug = (string) $this->option('workspace');
-
-        $existing = Workspace::query()->where('slug', $slug)->first();
-        if ($existing !== null) {
-            return $existing;
-        }
-
-        $owner = User::query()->first() ?? User::create([
-            'name' => 'Designer',
-            'email' => 'designer@example.test',
-            'password' => bcrypt(Str::random(32)),
-        ]);
-
-        return Workspace::create(['name' => Str::headline($slug), 'slug' => $slug, 'owner_id' => $owner->id]);
+        return Workspace::ensure((string) $this->option('workspace'));
     }
 
     private function resolve(string $path): string

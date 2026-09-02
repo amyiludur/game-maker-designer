@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * Validates every document under examples/ against its JSON Schema, then runs the
- * cross-document integrity checks a JSON Schema cannot express.
+ * Validates every document under examples/ and templates/ against its JSON Schema, then runs
+ * the cross-document integrity checks a JSON Schema cannot express.
  *
  * The example games are test fixtures, not decoration: if one stops validating,
- * either the schemas or the example is wrong, and CI should say so.
+ * either the schemas or the example is wrong, and CI should say so. The starter templates
+ * are checked here for the same reason — a template that does not validate is a "New game"
+ * button that fails on the first press.
  */
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
 import { join } from 'node:path'
@@ -63,6 +65,10 @@ for (const game of games) {
       check(`${base}/${dir}/${f}`, schema)
     }
   }
+}
+
+for (const f of readdirSync(join(root, 'templates')).filter((f) => f.endsWith('.json'))) {
+  check(`templates/${f}`, 'game-system')
 }
 
 // ---------------------------------------------------------------------------

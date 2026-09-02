@@ -83,6 +83,9 @@ final class GameCompiler
                     'name' => $attribute->name,
                     'type' => $attribute->type,
                     'required' => $attribute->required,
+                    // Published so that a client building a blank card of this type reads the
+                    // same declared default the server does.
+                    'default' => $attribute->default,
                     'min' => $attribute->min,
                     'max' => $attribute->max,
                     'options' => $attribute->options,

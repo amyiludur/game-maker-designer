@@ -53,12 +53,73 @@ export interface CardDetail extends CardSummary {
   revisions: { revision: number; message: string | null; createdAt: string }[]
 }
 
+/** A starter system a new game can be built on. `templates/*.json`, as the picker needs it. */
+export interface GameTemplate {
+  id: string
+  name: string
+  summary: string | null
+  cardTypes: number
+  phases: number
+}
+
+export interface SetSummary {
+  id: string
+  code: string
+  name: string
+  releaseOrder: number
+  status: string
+  summary: string | null
+  cardCount: number
+  budget: Record<string, number>
+  goals: string[]
+}
+
+/** One version of a game's rules — the document the system editor edits. */
+export interface VersionDetail {
+  id: string
+  semver: string
+  status: 'draft' | 'published' | 'archived'
+  document: Record<string, unknown>
+}
+
+/** What one collection of the system document gained and lost. */
+export interface ImpactChange {
+  removed: string[]
+  added: string[]
+  changed: string[]
+}
+
+/**
+ * One consequence of a proposed system change, with the evidence for it.
+ *
+ * `evidence` is card codes, deck names or the places in the system that still name the thing
+ * being removed — the panel exists so a designer can go and look at them.
+ */
+export interface ImpactFinding {
+  severity: Severity
+  rule: string
+  subject: 'system' | 'cards' | 'decks' | 'matches'
+  message: string
+  count: number
+  evidence: string[]
+  fix?: string
+}
+
+export interface ImpactReport {
+  compiles: boolean
+  error: { message?: string } | null
+  changes: Record<string, ImpactChange>
+  findings: ImpactFinding[]
+  version: { from: string; suggested: string; classification: 'major' | 'minor' | 'patch' | 'none' }
+}
+
 /** One field of a card type, as the compiler describes it. The editor renders from this. */
 export interface FormField {
   id: string
   name: string
   type: 'integer' | 'decimal' | 'string' | 'text' | 'boolean' | 'enum' | 'tagList' | 'reference'
   required?: boolean
+  default?: unknown
   min?: number
   max?: number
   options?: string[]

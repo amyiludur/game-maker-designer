@@ -31,8 +31,8 @@ export const useGameStore = defineStore('game', () => {
     games.value = await api.games()
   }
 
-  async function load(slug: string): Promise<void> {
-    if (current.value?.slug === slug && compiled.value !== null) return
+  async function load(slug: string, force = false): Promise<void> {
+    if (!force && current.value?.slug === slug && compiled.value !== null) return
 
     loading.value = true
     try {
@@ -57,6 +57,17 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
+  /**
+   * Fetch this game again, cache or no cache.
+   *
+   * Editing the system changes the compiled bundle, and the compiled bundle is what every
+   * other screen builds itself from — so a saved system edit has to reach the card editor
+   * without a page reload.
+   */
+  async function reload(): Promise<void> {
+    if (current.value !== null) await load(current.value.slug, true)
+  }
+
   function applyAccent(accent: string | undefined): void {
     if (typeof document === 'undefined') return
     document.documentElement.style.setProperty('--accent', accent ?? '#5b8cae')
@@ -79,5 +90,6 @@ export const useGameStore = defineStore('game', () => {
     factionColor,
     loadGames,
     load,
+    reload,
   }
 })

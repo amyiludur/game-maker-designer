@@ -1,0 +1,160 @@
+{
+  "$schema": "../schemas/game-system.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "blank",
+  "version": "0.1.0",
+  "name": "Blank",
+  "summary": "The smallest system that compiles: four zones, one card type, a round that draws and passes, and a way for the game to end.",
+
+  "players": { "min": 2, "max": 2, "mode": "competitive", "teams": false },
+
+  "vocabularies": { "traits": [], "rarities": ["common"], "factions": [] },
+
+  "zones": [
+    { "id": "deck", "name": "Deck", "scope": "player", "visibility": "none", "ordered": true, "faceDown": true },
+    { "id": "hand", "name": "Hand", "scope": "player", "visibility": "owner", "ordered": false },
+    { "id": "play", "name": "In Play", "scope": "player", "visibility": "public", "ordered": false },
+    { "id": "discard", "name": "Discard", "scope": "player", "visibility": "public", "ordered": true }
+  ],
+
+  "cardTypes": [
+    {
+      "id": "card",
+      "name": "Card",
+      "playableTo": ["play"],
+      "attributes": [
+        { "id": "cost", "name": "Cost", "type": "integer", "min": 0, "required": true, "showOnCard": "top-left" }
+      ],
+      "modifiableAttributes": ["cost"],
+      "abilitySlots": { "max": 2 }
+    }
+  ],
+
+  "setup": [
+    {
+      "op": "for_each_player",
+      "order": "seat",
+      "do": [
+        { "op": "shuffle", "zone": "deck", "player": "$player" },
+        { "op": "draw", "player": "$player", "count": 5 }
+      ]
+    },
+    { "op": "set_first_player", "rule": "random" }
+  ],
+
+  "round": {
+    "structure": "phased",
+    "firstPlayer": { "rule": "alternate" },
+    "triggerOrdering": "apnap",
+    "phases": [
+      {
+        "id": "refresh",
+        "name": "Refresh",
+        "steps": [
+          {
+            "id": "draw",
+            "name": "Draw",
+            "auto": [
+              {
+                "op": "for_each_player",
+                "order": "turn",
+                "do": [{ "op": "draw", "player": "$player", "count": 1 }]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "action",
+        "name": "Action",
+        "steps": [
+          { "id": "main", "name": "Main", "window": { "type": "alternating", "endOn": "consecutive_passes" } }
+        ]
+      },
+      {
+        "id": "end",
+        "name": "End",
+        "steps": [
+          {
+            "id": "cleanup",
+            "name": "Cleanup",
+            "auto": [{ "op": "expire_modifiers", "duration": "round" }]
+          }
+        ]
+      }
+    ]
+  },
+
+  "actions": [
+    {
+      "id": "play_card",
+      "name": "Play a card",
+      "windows": ["action.main"],
+      "targets": [
+        {
+          "id": "card",
+          "query": { "zone": "hand", "controller": "$you", "types": ["card"] },
+          "count": 1,
+          "chooser": "$you"
+        }
+      ],
+      "effect": [{ "op": "put_into_play", "card": "$target.card", "controller": "$you", "ready": true }],
+      "emits": ["card.played"],
+      "text": "Put a card from your hand into play."
+    }
+  ],
+
+  "stateChecks": [],
+
+  "winConditions": [
+    {
+      "id": "deck_out",
+      "scope": { "players": "all" },
+      "trigger": "on_draw_from_empty",
+      "check": {
+        "op": "eq",
+        "left": { "op": "zone_size", "zone": "deck", "player": "$player" },
+        "right": 0
+      },
+      "outcome": { "loser": "$player" },
+      "text": "A player who must draw from an empty deck loses the game."
+    },
+    {
+      "id": "round_limit",
+      "check": { "op": "gt", "left": { "op": "round" }, "right": 25 },
+      "outcome": { "draw": true },
+      "text": "If round 25 ends with no winner, the game is a draw."
+    }
+  ],
+
+  "deckbuilding": {
+    "deckSize": { "min": 20, "max": null },
+    "maxCopies": 3,
+    "sideboard": null,
+    "constraints": []
+  },
+
+  "ui": {
+    "board": {
+      "layout": "duel-mirrored",
+      "rows": [
+        { "id": "opponent-play", "zone": "play", "player": "$opponent", "label": "Opponent" },
+        { "id": "own-play", "zone": "play", "player": "$you", "label": "You" }
+      ],
+      "docks": { "hand": "bottom", "deck": "bottom-right", "discard": "bottom-right" }
+    },
+    "cardTemplate": "standard-portrait",
+    "theme": { "accent": "#5b8cae", "surface": "#14171a" }
+  },
+
+  "rulesText": {
+    "sections": [
+      {
+        "id": "overview",
+        "title": "Overview",
+        "body": "Nothing has been designed yet. Add zones, card types, resources and phases, and this section is where the rulebook starts."
+      }
+    ],
+    "generate": ["phases", "zones", "deckbuilding"]
+  }
+}

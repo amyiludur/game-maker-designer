@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Game;
+use Gmd\Kernel\System\SystemDocument;
 use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Validator;
@@ -35,6 +36,25 @@ final class CardValidator
      */
     public function violations(Game $game, array $document): array
     {
+        $version = $game->currentVersion;
+        if ($version === null) {
+            return $this->schemas->violations($this->normalise($document), 'card');
+        }
+
+        return $this->violationsAgainst($this->compiler->compile($version), $document);
+    }
+
+    /**
+     * The same two checks against a system that is not the game's current one.
+     *
+     * This is what lets the impact report answer the question a designer actually has before
+     * changing a card type: which of my cards would stop being valid?
+     *
+     * @param  array<string, mixed>  $document
+     * @return list<array{pointer: string, message: string}>
+     */
+    public function violationsAgainst(SystemDocument $system, array $document): array
+    {
         $violations = $this->schemas->violations($this->normalise($document), 'card');
 
         // The type schema is only meaningful for a document that is otherwise a card; a
@@ -44,21 +64,15 @@ final class CardValidator
             return $violations;
         }
 
-        return $this->attributeViolations($game, $document);
+        return $this->attributeViolations($system, $document);
     }
 
     /**
      * @param  array<string, mixed>  $document
      * @return list<array{pointer: string, message: string}>
      */
-    private function attributeViolations(Game $game, array $document): array
+    private function attributeViolations(SystemDocument $system, array $document): array
     {
-        $version = $game->currentVersion;
-        if ($version === null) {
-            return [];
-        }
-
-        $system = $this->compiler->compile($version);
         $types = $this->compiler->descriptors($system)['cardTypes'] ?? [];
 
         $violations = [];

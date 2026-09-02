@@ -12,5 +12,6 @@ declare(strict_types=1);
 return [
     'schemas' => env('GMD_SCHEMAS_PATH', dirname(base_path(), 2) . '/schemas'),
     'examples' => env('GMD_EXAMPLES_PATH', dirname(base_path(), 2) . '/examples'),
+    'templates' => env('GMD_TEMPLATES_PATH', dirname(base_path(), 2) . '/templates'),
     'snapshot_every' => (int) env('GMD_SNAPSHOT_EVERY', 20),
 ];

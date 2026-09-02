@@ -42,7 +42,20 @@ final class DeckLegality
             return ['valid' => false, 'violations' => [['constraint' => 'no_version', 'message' => 'this game has no version to check against', 'severity' => 'error']], 'stats' => []];
         }
 
-        $system = $this->compiler->compile($version);
+        return $this->checkAgainst($this->compiler->compile($version), $document);
+    }
+
+    /**
+     * The same check against a system that is not the game's current one.
+     *
+     * The impact report asks exactly this: would this deck still be legal if the rules
+     * changed the way I am about to change them?
+     *
+     * @param  array<string, mixed>  $document
+     * @return array<string, mixed>
+     */
+    public function checkAgainst(SystemDocument $system, array $document): array
+    {
         $violations = [
             ...$this->sizeViolations($system, $document),
             ...$this->copyViolations($system, $document),

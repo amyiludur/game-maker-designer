@@ -5,8 +5,12 @@ import type {
   CompiledBundle,
   DeckLegality,
   GameSummary,
+  GameTemplate,
+  ImpactReport,
   LintFinding,
   MatchEnvelope,
+  SetSummary,
+  VersionDetail,
 } from './types'
 
 /**
@@ -89,6 +93,11 @@ async function paged<T>(path: string): Promise<Paged<T>> {
 export const api = {
   games: () => request<GameSummary[]>('/games'),
 
+  gameTemplates: () => request<GameTemplate[]>('/game-templates'),
+
+  createGame: (payload: { name: string; slug?: string; summary?: string; template?: string }) =>
+    request<GameSummary>('/games', { method: 'POST', body: JSON.stringify(payload) }),
+
   game: (game: string) =>
     request<GameSummary & { sets: { id: string; code: string; name: string; cardCount: number }[] }>(
       `/games/${game}`,
@@ -96,6 +105,22 @@ export const api = {
 
   compiled: (game: string, version: string) =>
     request<CompiledBundle>(`/games/${game}/versions/${version}/compiled`),
+
+  version: (game: string, version: string) => request<VersionDetail>(`/games/${game}/versions/${version}`),
+
+  saveVersion: (game: string, version: string, document: unknown) =>
+    request<{
+      id: string
+      semver: string
+      lint: { compiled: boolean; errors?: number; findings: LintFinding[] }
+    }>(`/games/${game}/versions/${version}`, { method: 'PUT', body: JSON.stringify({ document }) }),
+
+  /** What a proposed system would break. Writes nothing — the document does not exist yet. */
+  impact: (game: string, version: string, document: unknown) =>
+    request<ImpactReport>(`/games/${game}/versions/${version}/impact`, {
+      method: 'POST',
+      body: JSON.stringify({ document }),
+    }),
 
   lint: (game: string, version: string) =>
     request<{ compiled: boolean; errors?: number; findings: LintFinding[] }>(
@@ -107,11 +132,29 @@ export const api = {
 
   card: (code: string) => request<CardDetail>(`/cards/${code}`),
 
+  createCard: (
+    game: string,
+    payload: { type: string; name?: string; setId?: string; faction?: string; code?: string },
+  ) => request<CardDetail>(`/games/${game}/cards`, { method: 'POST', body: JSON.stringify(payload) }),
+
+  duplicateCard: (code: string, payload: { name?: string; setId?: string } = {}) =>
+    request<CardDetail>(`/cards/${code}/duplicate`, { method: 'POST', body: JSON.stringify(payload) }),
+
   saveCard: (code: string, document: unknown, message?: string) =>
     request<CardDetail>(`/cards/${code}`, {
       method: 'PUT',
       body: JSON.stringify({ document, message }),
     }),
+
+  sets: (game: string) => request<SetSummary[]>(`/games/${game}/sets`),
+
+  createSet: (
+    game: string,
+    payload: { code: string; name?: string; summary?: string; budget?: Record<string, number> },
+  ) => request<SetSummary>(`/games/${game}/sets`, { method: 'POST', body: JSON.stringify(payload) }),
+
+  saveSet: (set: string, payload: Record<string, unknown>) =>
+    request<SetSummary>(`/sets/${set}`, { method: 'PATCH', body: JSON.stringify(payload) }),
 
   completeness: (game: string, set: string) =>
     request<{

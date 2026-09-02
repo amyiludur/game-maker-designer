@@ -7,12 +7,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Card;
 use App\Models\CardRevision;
+use App\Models\CardSet;
 use App\Models\Game;
+use App\Services\CardDraft;
 use App\Services\CardValidator;
 use App\Support\Projectors\CardProjector;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Cards.
@@ -71,6 +74,135 @@ final class CardController extends Controller
     public function show(Card $card): JsonResponse
     {
         return response()->json(['data' => $this->detail($card)]);
+    }
+
+    /**
+     * Author a new card.
+     *
+     * The client sends what it cannot derive — the type, the set, a name — and the server
+     * builds the document, because what a blank card of a given type contains is a fact
+     * about the game system, not about the editor.
+     */
+    public function store(
+        Request $request,
+        Game $game,
+        CardDraft $drafts,
+        CardValidator $validator,
+        CardProjector $projector,
+    ): JsonResponse {
+        $type = (string) $request->input('type', '');
+        $set = $this->resolveSet($game, $request->input('setId'));
+
+        try {
+            $document = $drafts->blank(
+                $game,
+                $type,
+                $set,
+                trim((string) $request->input('name', '')) ?: 'Untitled',
+                $request->input('faction'),
+            );
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['error' => ['code' => 'unknown_card_type', 'message' => $e->getMessage()]], 422);
+        }
+
+        if (($code = trim((string) $request->input('code', ''))) !== '') {
+            $document['code'] = $code;
+        }
+
+        return $this->create($game, $set, $document, $validator, $projector, 'created');
+    }
+
+    /** Copy a card. The fastest way to author the fourth of something is to copy the third. */
+    public function duplicate(
+        Request $request,
+        Card $card,
+        CardDraft $drafts,
+        CardValidator $validator,
+        CardProjector $projector,
+    ): JsonResponse {
+        $game = $card->game;
+        $set = $request->has('setId') ? $this->resolveSet($game, $request->input('setId')) : $card->set;
+
+        $document = $drafts->copyOf($card->document ?? [], $game, $set, $request->input('name'));
+
+        return $this->create($game, $set, $document, $validator, $projector, "copied from {$card->code}");
+    }
+
+    /**
+     * Write a new card, or say why not.
+     *
+     * @param  array<string, mixed>  $document
+     */
+    private function create(
+        Game $game,
+        ?CardSet $set,
+        array $document,
+        CardValidator $validator,
+        CardProjector $projector,
+        string $message,
+    ): JsonResponse {
+        $code = (string) $document['code'];
+
+        if (Card::query()->where('game_id', $game->id)->where('code', $code)->exists()) {
+            return response()->json([
+                'error' => ['code' => 'code_taken', 'message' => "this game already has a card called \"{$code}\""],
+            ], 409);
+        }
+
+        $violations = $validator->violations($game, $document);
+        if ($violations !== []) {
+            return response()->json([
+                'error' => [
+                    'code' => 'invalid_document',
+                    'message' => 'the card document is not valid',
+                    'details' => ['violations' => $violations],
+                ],
+            ], 422);
+        }
+
+        $card = DB::transaction(function () use ($game, $set, $document, $projector, $message): Card {
+            $card = new Card([
+                'game_id' => $game->id,
+                'set_id' => $set?->id,
+                'code' => (string) $document['code'],
+                'document' => $document,
+                'status' => (string) ($document['design']['status'] ?? 'draft'),
+            ]);
+            $card->id = Str::uuid7()->toString();
+            $projector->apply($card);
+            $card->save();
+
+            // Revision 1 is the card as created, so the history starts at "how it began"
+            // rather than at the first edit — the same rule the importer follows.
+            $revision = CardRevision::create([
+                'card_id' => $card->id,
+                'revision' => 1,
+                'document' => $document,
+                'message' => $message,
+            ]);
+            $card->forceFill(['head_revision_id' => $revision->id])->saveQuietly();
+
+            return $card;
+        });
+
+        return response()->json(['data' => $this->detail($card->refresh())], 201);
+    }
+
+    /** The named set, or the game's first — a card authored into nothing is hard to find later. */
+    private function resolveSet(Game $game, mixed $id): ?CardSet
+    {
+        $sets = CardSet::query()->where('game_id', $game->id);
+
+        if (is_string($id) && $id !== '') {
+            // Postgres rejects a non-UUID string against a uuid column outright rather than
+            // simply not matching it, so the id comparison only happens for something that
+            // could be one.
+            return Str::isUuid($id)
+                ? $sets->find($id)
+                : $sets->where('code', $id)->first();
+        }
+
+        return $sets->orderBy('release_order')->first();
     }
 
     /**
@@ -138,7 +270,7 @@ final class CardController extends Controller
     }
 
     /** Planned versus authored, per card type — the set completeness view. */
-    public function completeness(Game $game, \App\Models\CardSet $set): JsonResponse
+    public function completeness(Game $game, CardSet $set): JsonResponse
     {
         $authored = $set->cards()
             ->selectRaw('card_type, count(*) as total')
