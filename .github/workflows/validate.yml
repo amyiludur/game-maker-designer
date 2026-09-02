@@ -108,17 +108,21 @@ jobs:
           composer install --no-interaction --no-progress
           cp .env.example .env
           php artisan key:generate
+      # phpunit.xml points the suite at its own database so a test run cannot destroy a
+      # development one. The service container only creates `gmd`.
+      - name: Create the test database
+        run: PGPASSWORD=gmd psql -h 127.0.0.1 -U gmd -d gmd -c 'CREATE DATABASE gmd_test'
       - name: Migrate
         working-directory: apps/api
         run: php artisan migrate --force
-      # Imported rather than hand-seeded: the examples are what the kernel is tested against,
-      # so a bespoke fixture would leave the only interesting question — does this work with
-      # real data — unasked. Both games, because one of them is the co-op shape.
+      # A real import of both example games, including the co-op one. The feature tests
+      # import their own, but they import Emberfall; this is what would catch a game document
+      # that only the other shape exercises.
       - name: Import the example games
         working-directory: apps/api
         run: |
           php artisan games:import ../../examples/emberfall
-          php artisan games:import ../../examples/wardens-hollow || true
+          php artisan games:import ../../examples/wardens-hollow
       - name: Feature tests
         working-directory: apps/api
         run: php artisan test
@@ -214,13 +218,20 @@ jobs:
         working-directory: apps/api
         run: |
           php artisan migrate --force
-          php artisan db:seed --force
           php artisan games:import ../../examples/emberfall
+      # The port and host are in apps/web/vite.config.ts, so both the dev loop and CI reach
+      # the SPA at the same address and the Playwright baseURL needs no override.
       - name: Start the servers
         run: |
           (cd apps/api && php artisan serve --port=8811 &)
-          npm run web -- --port 5273 --host 127.0.0.1 &
-          npx wait-on http://127.0.0.1:5273 http://127.0.0.1:8811/api/v1/games
+          npm run web &
+          for _ in $(seq 1 60); do
+            curl -sf http://127.0.0.1:5273 > /dev/null \
+              && curl -sf http://127.0.0.1:8811/api/v1/games > /dev/null \
+              && exit 0
+            sleep 1
+          done
+          echo "servers did not come up" && exit 1
       - name: Playwright
         run: |
           npx playwright install --with-deps chromium
