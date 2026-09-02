@@ -6,6 +6,7 @@ namespace Gmd\Harness\Cli;
 
 use Gmd\Harness\Cli\Command\CompileCommand;
 use Gmd\Harness\Cli\Command\FuzzCommand;
+use Gmd\Harness\Cli\Command\LintCommand;
 use Gmd\Harness\Cli\Command\PlayCommand;
 use Gmd\Harness\Cli\Command\ReplayCommand;
 use Gmd\Kernel\Diagnostics\KernelException;
@@ -19,6 +20,7 @@ final class Application
         'replay' => ReplayCommand::class,
         'fuzz' => FuzzCommand::class,
         'compile' => CompileCommand::class,
+        'lint' => LintCommand::class,
     ];
 
     /** @param list<string> $argv */
@@ -68,6 +70,7 @@ final class Application
           gmd replay <file> [--bless] [--reason="..."]      Verify or record a golden replay
           gmd fuzz <game> [--matches=N] [--seed=N]          Random bots, invariants checked
           gmd compile <game>                                Compile a game and report on it
+          gmd lint <game>                                   Report authoring mistakes
 
         <game> is a directory under examples/, or a path to one.
 

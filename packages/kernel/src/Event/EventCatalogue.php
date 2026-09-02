@@ -48,6 +48,17 @@ final class EventCatalogue
         'ability.resolved' => ['card', 'ability'],
         'player.lost' => ['player', 'reason'],
         'game.ended' => ['winners', 'losers', 'reason'],
+
+        // Beyond doc 06's list, and emitted by the kernel because games need them: a card
+        // turning over is the signature beat of a double-sided game, and a draw from an
+        // empty deck is what a "deck out" win condition listens for — without the event it
+        // would have nothing to fire on.
+        'card.flipped' => ['card', 'from', 'to'],
+        'card.replaced' => ['card', 'with'],
+        'deck.exhausted' => ['player'],
+        'zone.shuffled' => ['zone', 'player'],
+        'modifiers.expired' => ['duration', 'count'],
+        'first_player.set' => ['player'],
     ];
 
     public static function isCore(string $type): bool
