@@ -1,14 +1,20 @@
 {
-  "name": "game-maker-designer-specs",
+  "name": "game-maker-designer",
   "version": "0.1.0",
   "private": true,
-  "description": "Design specifications, JSON Schemas and worked example for the Game Maker Designer LCG platform.",
+  "description": "An LCG design, authoring, balancing and playtesting platform.",
   "type": "module",
   "scripts": {
-    "validate": "node scripts/validate-examples.mjs"
+    "validate": "node scripts/validate-examples.mjs",
+    "web": "npm run dev --workspace @gmd/web",
+    "web:build": "npm run build --workspace @gmd/web",
+    "web:test": "npm run test --workspace @gmd/web"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
-  }
+  },
+  "workspaces": [
+    "apps/web"
+  ]
 }

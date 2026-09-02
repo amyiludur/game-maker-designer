@@ -1,0 +1,174 @@
+/*
+ * The design token layer, transcribed from design/HANDOFF.md.
+ *
+ * Custom properties rather than build-time values, for two reasons the handoff is explicit
+ * about. Themes have to swap without a rebuild — a light theme is a required and not-yet-
+ * designed gap, and this is the seam it will arrive through. And `--accent` is not a chrome
+ * token at all: it is game data, read from the loaded game's `ui.theme.accent`, so the
+ * mockups' hardcoded #c0392b is the one value not to copy.
+ */
+
+:root {
+  /* Surfaces — seven, deepest first. */
+  --surface-0: #0b0f13; /* input wells, card-face panes */
+  --surface-1: #0d1114; /* board background, toolbars */
+  --surface-2: #0e1216; /* app background */
+  --surface-3: #11171c; /* panels, rails */
+  --surface-4: #141a20; /* raised rows, table headers */
+  --surface-5: #1a222a; /* active nav, panel headers */
+  --surface-6: #212b34; /* chips, selected states */
+
+  --border-faint: #1a2127;
+  --border-subtle: #1e262e;
+  --border-default: #26313b;
+  --border-strong: #2f3b45;
+  --border-hover: #3c4a57;
+
+  /* text-4 is the floor, and it is for non-interactive hints only: anything clickable
+     uses text-2 or lighter, which is what keeps the palette at WCAG 2.2 AA. */
+  --text-1: #e2e8ee;
+  --text-2: #a8b6c2;
+  --text-3: #7c8b98;
+  --text-4: #6c7c8a;
+
+  --error: #d05c4c;
+  --error-text: #f0b4a0;
+  --error-surface: #1c1512;
+  --error-border: #4a2620;
+
+  --warn: #d1913c;
+  --warn-text: #c98a3c;
+  --warn-surface: #1a1611;
+  --warn-border: #40331c;
+
+  --ok: #6f9e7c;
+  --ok-text: #a8d4b0;
+  --ok-surface: #101614;
+  --ok-border: #1e3326; /* not in the handoff; derived to match the other semantic pairs */
+
+  --info: #5b8cae;
+  --info-text: #a6b6ce;
+  --info-surface: #101519;
+  --info-border: #21323f;
+
+  --token-ref: #c98a3c; /* $self, $target.x — DSL selectors read as references, not literals */
+
+  /* Set at runtime from the loaded game's ui.theme.accent. The fallback is a neutral
+     blue rather than any one game's colour, so an unloaded app does not wear Emberfall's. */
+  --accent: #5b8cae;
+  --accent-contrast: #ffffff;
+
+  --font-ui: Archivo, 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-card: Bitter, Georgia, 'Times New Roman', serif;
+
+  /* 4px base grid. */
+  --gap-1: 2px;
+  --gap-2: 4px;
+  --gap-3: 6px;
+  --gap-4: 8px;
+  --gap-5: 10px;
+  --gap-6: 12px;
+  --gap-7: 14px;
+  --gap-8: 16px;
+
+  --radius-chip: 2px;
+  --radius-control: 3px;
+  --radius-card: 4px;
+  --radius-face: 6px;
+
+  --control-sm: 22px;
+  --control: 26px;
+  --control-lg: 30px;
+  --row: 30px;
+  --topbar: 44px;
+  --rail: 56px;
+
+  --shadow-face: 0 12px 34px -10px rgba(0, 0, 0, 0.9);
+  --shadow-in-play: 0 6px 18px -8px rgba(0, 0, 0, 0.9);
+}
+
+/*
+ * Compact density: row heights and section gaps shrink, type sizes do not. That is the
+ * mechanism the handoff names, and leaving the type alone is what keeps it readable rather
+ * than merely smaller.
+ */
+:root[data-density='compact'] {
+  --row: 26px;
+  --gap-7: 10px;
+  --gap-8: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--surface-2);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.45;
+  /* Tabular numerals throughout: a column of costs that jitters as digits change is
+     harder to scan, and this application is mostly columns of numbers. */
+  font-feature-settings: 'tnum' 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Monospace labels: 9–9.5px, uppercase, widely tracked. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.muted {
+  color: var(--text-3);
+}
+
+a {
+  color: var(--text-2);
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Focus is never removed, only restyled: keyboard play is a stated requirement, and an
+   invisible focus ring makes the whole application unusable without a mouse. */
+:focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 1px;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}

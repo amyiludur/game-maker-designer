@@ -14,6 +14,7 @@ use App\Models\GameVersion;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Services\GameCompiler;
+use App\Services\CardValidator;
 use App\Services\SchemaValidator;
 use App\Support\Projectors\CardProjector;
 use App\Support\Projectors\DeckProjector;
@@ -43,6 +44,7 @@ final class ImportGame extends Command
         GameCompiler $compiler,
         CardProjector $projector,
         DeckProjector $deckProjector,
+        CardValidator $cards,
     ): int {
         $path = $this->resolve((string) $this->argument('path'));
         if (! is_dir($path)) {
@@ -110,6 +112,15 @@ final class ImportGame extends Command
             // After compilation, not inside the transaction above: legality is evaluated
             // against the compiled system, so it cannot be derived until there is one.
             $this->projectDecks($game, $deckProjector);
+
+            // Cards are checked against their card type's compiled schema, which only
+            // exists once the system has compiled. Reported rather than fatal: the import
+            // has already written the rows, and a designer needs to see the bad card in the
+            // editor to fix it.
+            $bad = $this->reportCardViolations($game, $cards);
+            if ($bad > 0) {
+                return self::FAILURE;
+            }
         }
 
         $this->info(sprintf(
@@ -178,6 +189,27 @@ final class ImportGame extends Command
             ]);
             $deck->update(['head_version_id' => $deckVersion->id]);
         }
+    }
+
+    /** @return int how many cards do not match their card type's schema */
+    private function reportCardViolations(Game $game, CardValidator $validator): int
+    {
+        $bad = 0;
+
+        foreach ($game->cards()->orderBy('code')->get() as $card) {
+            $violations = $validator->violations($game, $card->document ?? []);
+            if ($violations === []) {
+                continue;
+            }
+
+            $bad++;
+            $this->error("  {$card->code} is not valid:");
+            foreach ($violations as $violation) {
+                $this->line("    {$violation['pointer']}  {$violation['message']}");
+            }
+        }
+
+        return $bad;
     }
 
     /** Cache each imported deck's legality, so the list and the deck page agree. */

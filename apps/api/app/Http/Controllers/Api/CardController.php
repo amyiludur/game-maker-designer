@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Card;
 use App\Models\CardRevision;
 use App\Models\Game;
-use App\Services\SchemaValidator;
+use App\Services\CardValidator;
 use App\Support\Projectors\CardProjector;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -70,29 +70,45 @@ final class CardController extends Controller
 
     public function show(Card $card): JsonResponse
     {
-        return response()->json(['data' => [
+        return response()->json(['data' => $this->detail($card)]);
+    }
+
+    /**
+     * One card in full.
+     *
+     * Saving returns this too, and not a shorter version of it: the editor renders whatever
+     * comes back, so a response missing `revisions` is a response the editor cannot draw.
+     *
+     * @return array<string, mixed>
+     */
+    private function detail(Card $card): array
+    {
+        return [
             ...$this->summarise($card),
             'document' => $card->document,
-            'revisions' => $card->revisions()->get()
+            'revisions' => $card->revisions()->orderBy('revision')->get()
                 ->map(fn (CardRevision $r): array => [
                     'revision' => $r->revision,
                     'message' => $r->message,
                     'createdAt' => $r->created_at,
                 ])->all(),
-        ]]);
+        ];
     }
 
     /** Save a card. Every save is a revision; nothing is overwritten in place. */
     public function update(
         Request $request,
         Card $card,
-        SchemaValidator $validator,
+        CardValidator $validator,
         CardProjector $projector,
     ): JsonResponse {
         /** @var array<string, mixed> $document */
         $document = $request->input('document', []);
 
-        $violations = $validator->violations($document, 'card');
+        // Both schemas: the card schema, and the compiled schema for this card's type. The
+        // second one is game data, which is what makes "cost is 0-10" Emberfall's rule
+        // rather than this application's.
+        $violations = $validator->violations($card->game, $document);
         if ($violations !== []) {
             return response()->json([
                 'error' => [
@@ -118,7 +134,7 @@ final class CardController extends Controller
             $card->save();
         });
 
-        return response()->json(['data' => [...$this->summarise($card->refresh()), 'document' => $card->document]]);
+        return response()->json(['data' => $this->detail($card->refresh())]);
     }
 
     /** Planned versus authored, per card type — the set completeness view. */

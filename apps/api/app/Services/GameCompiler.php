@@ -163,7 +163,11 @@ final class GameCompiler
 
         return array_filter([
             'type' => 'object',
-            'properties' => $properties,
+            // `\stdClass` when empty, not `[]`: a card type with no attributes — a treachery,
+            // a scheme — otherwise compiles to `"properties": []`, which is not valid JSON
+            // Schema, and every validator handed this bundle rejects the schema rather than
+            // the card.
+            'properties' => $properties === [] ? new \stdClass : $properties,
             'required' => $required === [] ? null : $required,
             'additionalProperties' => false,
         ], static fn (mixed $v): bool => $v !== null);

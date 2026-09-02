@@ -21,6 +21,9 @@ final class DeckController extends Controller
         return response()->json([
             'data' => $decks->map(fn (Deck $deck): array => [
                 'id' => $deck->id,
+                // A match is started against a deck *version*, not a deck: the deck moves on
+                // and a match already played must still say what was in it.
+                'headVersionId' => $deck->head_version_id,
                 'name' => $deck->name,
                 'archetype' => $deck->archetype,
                 'cardCount' => array_sum(array_column($deck->head?->document['cards'] ?? [], 'count')),

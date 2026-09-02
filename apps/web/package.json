@@ -1,0 +1,30 @@
+{
+    "name": "@gmd/web",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "typecheck": "vue-tsc --noEmit",
+        "test": "vitest run",
+        "types": "node scripts/generate-types.mjs",
+        "types:check": "node scripts/generate-types.mjs && git diff --exit-code -- src/api/documents.gen.d.ts"
+    },
+    "dependencies": {
+        "pinia": "^2.2.6",
+        "vue": "^3.5.13",
+        "vue-router": "^4.4.5"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.1",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vue/test-utils": "^2.4.6",
+        "happy-dom": "^15.11.6",
+        "json-schema-to-typescript": "^15.0.3",
+        "typescript": "^5.7.2",
+        "vite": "^6.0.3",
+        "vitest": "^3.2.7",
+        "vue-tsc": "^2.1.10"
+    }
+}
