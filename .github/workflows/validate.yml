@@ -94,7 +94,7 @@ jobs:
           POSTGRES_DB: gmd
         ports: ['5432:5432']
         options: >-
-          --health-cmd pg_isready --health-interval 10s
+          --health-cmd "pg_isready -U gmd" --health-interval 10s
           --health-timeout 5s --health-retries 5
     env:
       DB_CONNECTION: pgsql
@@ -195,7 +195,7 @@ jobs:
           POSTGRES_DB: gmd
         ports: ['5432:5432']
         options: >-
-          --health-cmd pg_isready --health-interval 10s
+          --health-cmd "pg_isready -U gmd" --health-interval 10s
           --health-timeout 5s --health-retries 5
     env:
       DB_CONNECTION: pgsql
@@ -233,15 +233,19 @@ jobs:
       # the SPA at the same address and the Playwright baseURL needs no override.
       - name: Start the servers
         run: |
-          (cd apps/api && php artisan serve --port=8811 &)
-          npm run web &
+          (cd apps/api && php artisan serve --port=8811 > /tmp/api.log 2>&1 &)
+          npm run web > /tmp/web.log 2>&1 &
           for _ in $(seq 1 60); do
             curl -sf http://127.0.0.1:5273 > /dev/null \
               && curl -sf http://127.0.0.1:8811/api/v1/games > /dev/null \
               && exit 0
             sleep 1
           done
-          echo "servers did not come up" && exit 1
+          # A timeout used to say only that the poll gave up, which cost a whole round trip
+          # to learn the dev server had been running the entire time on another address.
+          echo '--- servers did not come up'
+          tail -40 /tmp/api.log /tmp/web.log
+          exit 1
       - name: Playwright
         run: |
           npx playwright install --with-deps chromium

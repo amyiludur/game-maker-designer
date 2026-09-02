@@ -175,6 +175,7 @@ export interface AbilityExpressionNode {
     | 'is_face_down'
     | 'is_attached'
     | 'entered_this_round'
+    | 'can_enter_play'
     | 'has_permission'
     | 'has_restriction'
     | 'exists'
