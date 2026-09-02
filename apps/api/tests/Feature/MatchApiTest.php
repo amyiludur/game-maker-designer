@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\BotProfile;
 use App\Models\Deck;
 use App\Models\Game;
 use App\Models\GameMatch;
@@ -29,10 +30,16 @@ final class MatchApiTest extends TestCase
         $this->artisan('games:import', ['path' => 'emberfall'])->assertSuccessful();
     }
 
-    private function startMatch(int $seed = 48): array
+    private function startMatch(int $seed = 48, bool $botOpponent = false): array
     {
         $game = Game::query()->where('slug', 'emberfall')->firstOrFail();
         $decks = Deck::query()->where('game_id', $game->id)->orderBy('name')->get();
+
+        $seat1 = ['seat' => 1, 'deckVersionId' => $decks[1]->head_version_id];
+        if ($botOpponent) {
+            $seat1['botProfileId'] = BotProfile::query()->whereNull('game_id')
+                ->where('strategy', 'random')->firstOrFail()->id;
+        }
 
         $response = $this->postJson('/api/v1/matches', [
             'gameVersionId' => $game->current_version_id,
@@ -40,12 +47,15 @@ final class MatchApiTest extends TestCase
             'seed' => $seed,
             'seats' => [
                 ['seat' => 0, 'deckVersionId' => $decks[0]->head_version_id],
-                ['seat' => 1, 'deckVersionId' => $decks[1]->head_version_id],
+                $seat1,
             ],
         ])->assertCreated();
 
         return $response->json('data');
     }
+
+    /** A seed whose setup gives the first turn to seat 1, which is the bot's. */
+    private const BOT_FIRST_SEED = 4;
 
     public function test_it_deals_an_opening_position_and_offers_legal_actions(): void
     {
@@ -194,5 +204,120 @@ final class MatchApiTest extends TestCase
         $this->assertSame('emberfall', $replay['gameId']);
         $this->assertSame(48, $replay['seed']);
         $this->assertSame([['seq' => 1, 'seat' => 0, 'actionId' => 'pass']], $replay['actions']);
+    }
+
+    public function test_a_bot_seat_moves_without_the_board_waiting_on_a_human(): void
+    {
+        // Emberfall's setup ends with `set_first_player {"rule": "random"}`, so on this seed
+        // the bot has the first turn. Without a bot driving seat 1 the board would sit here
+        // for ever with nothing for p0 to do, which is exactly what it used to do.
+        $withoutBot = $this->startMatch(self::BOT_FIRST_SEED);
+        $this->assertSame(0, $withoutBot['match']['actionCount']);
+        $this->assertEmpty($withoutBot['legalActions']);
+
+        $withBot = $this->startMatch(self::BOT_FIRST_SEED, botOpponent: true);
+        $this->assertGreaterThan(0, $withBot['match']['actionCount']);
+        $this->assertNotEmpty($withBot['legalActions']);
+    }
+
+    public function test_a_bot_move_is_an_ordinary_row_in_the_action_log(): void
+    {
+        $data = $this->startMatch(self::BOT_FIRST_SEED, botOpponent: true);
+
+        $log = $this->getJson("/api/v1/matches/{$data['match']['id']}/log")->assertOk()->json('data');
+        $this->assertNotEmpty($log);
+
+        // Nothing marks it as a bot's: undo, replay and reconstruction have to treat it as
+        // the action it is, and they do that by not knowing the difference.
+        foreach ($log as $entry) {
+            $this->assertSame(1, $entry['seat']);
+            $this->assertNotNull($entry['action']['actionId'] ?? $entry['action']['op'] ?? null);
+        }
+    }
+
+    public function test_the_same_seed_plays_the_same_bot(): void
+    {
+        // The bot's RNG is derived from the match seed and the action count, so "reproduce
+        // that match" stays answerable for a solo game as well as a scripted one.
+        $first = $this->startMatch(self::BOT_FIRST_SEED, botOpponent: true);
+        $second = $this->startMatch(self::BOT_FIRST_SEED, botOpponent: true);
+
+        $this->assertSame($first['stateHash'], $second['stateHash']);
+        $this->assertSame($first['match']['actionCount'], $second['match']['actionCount']);
+    }
+
+    public function test_the_bot_answers_and_the_events_come_back_with_the_human_move(): void
+    {
+        $data = $this->startMatch(self::BOT_FIRST_SEED, botOpponent: true);
+        $action = $data['legalActions'][0];
+
+        $response = $this->postJson("/api/v1/matches/{$data['match']['id']}/actions", [
+            'side' => 'p0',
+            'actionId' => $action['actionId'],
+            'params' => $action['params'],
+            'expectedVersion' => $data['version'],
+        ])->assertOk()->json('data');
+
+        // More than one action was recorded by one request: the human's, then the bot's
+        // reply. The events of both come back together, because they are one animation.
+        $this->assertGreaterThan($data['match']['actionCount'] + 1, $response['match']['actionCount']);
+        $this->assertNotEmpty($response['events']);
+    }
+
+    public function test_a_solo_match_can_be_played_to_a_result(): void
+    {
+        $data = $this->startMatch(self::BOT_FIRST_SEED, botOpponent: true);
+        $id = $data['match']['id'];
+
+        for ($move = 0; $move < 400 && ($data['view']['result'] ?? null) === null; $move++) {
+            $choice = $data['view']['pendingChoice'] ?? null;
+
+            if ($choice !== null) {
+                $data = $this->postJson("/api/v1/matches/{$id}/choice", [
+                    'side' => 'p0',
+                    'choiceId' => $choice['id'],
+                    'selection' => array_slice($choice['options']['cards'] ?? [], 0, 1),
+                    'expectedVersion' => $data['version'],
+                ])->assertOk()->json('data');
+
+                continue;
+            }
+
+            $this->assertNotEmpty($data['legalActions'], 'the board stalled with nothing for p0 to do');
+            $action = $data['legalActions'][0];
+
+            $data = $this->postJson("/api/v1/matches/{$id}/actions", [
+                'side' => 'p0',
+                'actionId' => $action['actionId'],
+                'params' => $action['params'],
+                'expectedVersion' => $data['version'],
+            ])->assertOk()->json('data');
+        }
+
+        $this->assertNotNull($data['view']['result'], 'the match never reached a result');
+        $this->assertSame('complete', GameMatch::query()->findOrFail($id)->status);
+    }
+
+    public function test_undo_rewinds_past_the_bots_reply(): void
+    {
+        $data = $this->startMatch(self::BOT_FIRST_SEED, botOpponent: true);
+        $id = $data['match']['id'];
+        $opening = $data['stateHash'];
+        $before = $data['match']['actionCount'];
+
+        $action = $data['legalActions'][0];
+        $this->postJson("/api/v1/matches/{$id}/actions", [
+            'side' => 'p0',
+            'actionId' => $action['actionId'],
+            'params' => $action['params'],
+            'expectedVersion' => $data['version'],
+        ])->assertOk();
+
+        // Back to before the human's move, which means undoing the bot's reply too — and it
+        // needs no special handling, because a bot's move is just another entry.
+        $rewound = $this->postJson("/api/v1/matches/{$id}/undo", ['toSequence' => $before])
+            ->assertOk()->json('data');
+
+        $this->assertSame($opening, $rewound['stateHash']);
     }
 }

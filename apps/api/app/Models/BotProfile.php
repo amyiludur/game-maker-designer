@@ -26,4 +26,20 @@ final class BotProfile extends Model
     {
         return $this->belongsTo(Game::class);
     }
+
+    /**
+     * The built-in random opponent.
+     *
+     * Game-agnostic on purpose: uniform choice among the legal actions needs to know nothing
+     * about a game, which is why doc 09 lists it as the strategy to "run first, always". It
+     * has no `game_id`, so every game gets an opponent to play against without anyone
+     * authoring one.
+     */
+    public static function ensureRandom(): self
+    {
+        return self::query()->firstOrCreate(
+            ['game_id' => null, 'strategy' => 'random'],
+            ['name' => 'Random'],
+        );
+    }
 }

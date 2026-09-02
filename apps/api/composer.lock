@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb981876db4ccc8378f6b2c071912bd1",
+    "content-hash": "287b54182cdf202d9a0dc776d368ee57",
     "packages": [
         {
             "name": "brick/math",
@@ -578,6 +578,41 @@
                 }
             ],
             "time": "2025-12-03T09:33:47+00:00"
+        },
+        {
+            "name": "gmd/harness",
+            "version": "0.1.0",
+            "dist": {
+                "type": "path",
+                "url": "../../packages/harness",
+                "reference": "cd460e9dece7f70ad9f677bba425fa2948471f73"
+            },
+            "require": {
+                "gmd/kernel": "*",
+                "php": "^8.3"
+            },
+            "bin": [
+                "bin/gmd"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gmd\\Harness\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Gmd\\Harness\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Drivers around the rules kernel: fixture loading, bots, headless matches, replays, fuzzing.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "gmd/kernel",

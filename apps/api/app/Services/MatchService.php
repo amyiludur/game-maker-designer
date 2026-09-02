@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\BotProfile;
 use App\Models\DeckVersion;
 use App\Models\GameMatch;
 use App\Models\GameVersion;
@@ -14,8 +15,12 @@ use Gmd\Kernel\Contract\Action;
 use Gmd\Kernel\Contract\ChoiceResponse;
 use Gmd\Kernel\Contract\MatchSetup;
 use Gmd\Kernel\Contract\SeatSetup;
+use Gmd\Kernel\Contract\Agent;
+use Gmd\Kernel\Contract\Side;
 use Gmd\Kernel\Contract\StepResult;
+use Gmd\Harness\Agent\RandomAgent;
 use Gmd\Kernel\Kernel;
+use Gmd\Kernel\Rng\Pcg64Rng;
 use Gmd\Kernel\State\Codec\StateCodec;
 use Gmd\Kernel\State\Codec\StateHasher;
 use Gmd\Kernel\State\GameState;
@@ -35,9 +40,23 @@ use Illuminate\Support\Facades\DB;
  * reconstruction folds it away. The log stays complete and append-only, replay stays exact,
  * and a playtest note can still see that an undo happened, which is often the interesting
  * part.
+ *
+ * Bot seats are driven here, not in the browser. Doc 08 puts it as "solo and simulation
+ * differ only in whether a human sits in one of the seats" — so a bot's move is an ordinary
+ * row in the action log, taken by the same kernel, and undo, replay and reconstruction need
+ * to know nothing about it.
  */
 final class MatchService
 {
+    /**
+     * How many moves bots may make in one request.
+     *
+     * A cap, not a budget: a solo turn is a handful of moves, and reaching a hundred means
+     * the game is not progressing. Failing loudly beats holding the connection open while a
+     * loop that cannot end tries to end.
+     */
+    private const BOT_STEP_CAP = 100;
+
     public function __construct(private readonly GameCompiler $compiler) {}
 
     /**
@@ -75,6 +94,10 @@ final class MatchService
                 'status' => GameMatch::ACTIVE,
                 'seed' => $seed,
                 'config' => $config,
+                // Written rather than left to the column default, because Eloquent does not
+                // read defaults back and the API would answer `actionCount: null` for a
+                // match that has taken no actions.
+                'action_count' => 0,
                 'initial_state' => StateCodec::encode($initial),
             ]);
 
@@ -99,7 +122,10 @@ final class MatchService
         $state = $this->kernel($match->gameVersion)->settle($this->initialState($match))->state;
         $this->cache($match, $state);
 
-        return $state;
+        // Emberfall's setup ends with `set_first_player {"rule": "random"}`, so about half
+        // of all matches open with the bot to move. Without this the board would simply sit
+        // there, which is exactly what it used to do.
+        return $this->driveBots($match, new StepResult($state))->state;
     }
 
     /** The current position, from the cache, a snapshot, or the log. */
@@ -118,18 +144,23 @@ final class MatchService
      */
     public function act(GameMatch $match, Action $action, ?int $expectedVersion = null): StepResult
     {
-        return $this->advance($match, $expectedVersion, fn (Kernel $kernel, GameState $state): StepResult => $kernel->apply($state, $action), $action);
+        return $this->driveBots($match, $this->advance(
+            $match,
+            $expectedVersion,
+            fn (Kernel $kernel, GameState $state): StepResult => $kernel->apply($state, $action),
+            $action,
+        ));
     }
 
     public function answer(GameMatch $match, ChoiceResponse $response, ?int $expectedVersion = null): StepResult
     {
-        return $this->advance(
+        return $this->driveBots($match, $this->advance(
             $match,
             $expectedVersion,
             fn (Kernel $kernel, GameState $state): StepResult => $kernel->answer($state, $response),
             null,
             ['op' => 'choice', 'choiceId' => $response->choiceId, 'selection' => $response->selection],
-        );
+        ));
     }
 
     /**
@@ -300,6 +331,136 @@ final class MatchService
         $this->cache($match, $next);
 
         return new StepResult($next, [...$applied->events, ...$settled->events]);
+    }
+
+    /**
+     * Play out every bot move that is now due, and return everything that happened.
+     *
+     * The loop is the harness's `MatchRunner` loop — legal actions, choose, apply, settle —
+     * because a bot at the live table and a bot in a 10,000-match fuzz run have to take the
+     * same path through the same engine, or the thing that was fuzzed is not the thing being
+     * played.
+     *
+     * Each decision goes through `advance()`, so it is written to the append-only log with
+     * its seat, snapshots keep their cadence, and `undo()` and `rebuild()` treat it as the
+     * ordinary action it is. The events are appended to the caller's, which is what lets the
+     * browser animate the opponent's turn from the same stream it already drains.
+     */
+    private function driveBots(GameMatch $match, StepResult $result): StepResult
+    {
+        $bots = $this->botSeats($match);
+        if ($bots === []) {
+            return $result;
+        }
+
+        $kernel = $this->kernel($match->gameVersion);
+        $state = $result->state;
+        $events = $result->events;
+        $steps = 0;
+
+        while (! $state->isOver()) {
+            if ($steps++ >= self::BOT_STEP_CAP) {
+                throw new \RuntimeException(
+                    "the bots made " . self::BOT_STEP_CAP . ' moves without the match ending or handing back'
+                );
+            }
+
+            $choice = $state->pendingChoice();
+
+            if ($choice !== null) {
+                if (! isset($bots[$choice->seat()])) {
+                    break;
+                }
+
+                $response = $this->agentFor($match, $bots[$choice->seat()], $choice->seat())
+                    ->resolveChoice($kernel->view($state, $choice->side), $choice);
+
+                $step = $this->advance(
+                    $match,
+                    null,
+                    fn (Kernel $k, GameState $s): StepResult => $k->answer($s, $response),
+                    null,
+                    ['op' => 'choice', 'choiceId' => $response->choiceId, 'selection' => $response->selection],
+                );
+
+                $state = $step->state;
+                $events = [...$events, ...$step->events];
+
+                continue;
+            }
+
+            $seat = $state->priority();
+            if ($seat === null || ! isset($bots[$seat])) {
+                break;
+            }
+
+            $side = Side::player($seat);
+            $legal = $kernel->legalActions($state, $side);
+            if ($legal->isEmpty()) {
+                // Nothing for this seat to do and no choice open: the position is waiting on
+                // something other than a decision, so hand it back rather than spin.
+                break;
+            }
+
+            $action = $this->agentFor($match, $bots[$seat], $seat)
+                ->chooseAction($kernel->view($state, $side), $legal);
+
+            $step = $this->advance(
+                $match,
+                null,
+                fn (Kernel $k, GameState $s): StepResult => $k->apply($s, $action),
+                $action,
+            );
+
+            $state = $step->state;
+            $events = [...$events, ...$step->events];
+        }
+
+        return new StepResult($state, $events);
+    }
+
+    /**
+     * The seats a bot is sitting in, keyed by seat.
+     *
+     * @return array<int, MatchPlayer>
+     */
+    private function botSeats(GameMatch $match): array
+    {
+        $bots = [];
+        foreach ($match->players as $player) {
+            if ($player->isBot()) {
+                $bots[(int) $player->seat] = $player;
+            }
+        }
+
+        return $bots;
+    }
+
+    /**
+     * The agent playing one seat.
+     *
+     * Its RNG is the match seed advanced by the number of actions taken so far, so a bot
+     * decision is a pure function of (seed, seat, sequence): the same seed replays the same
+     * solo match, and nothing has to be added to the hashed state to make that true. It is
+     * deliberately a different stream from the game's own — a bot drawing from the game
+     * generator would change the shuffle by thinking.
+     */
+    private function agentFor(GameMatch $match, MatchPlayer $player, int $seat): Agent
+    {
+        $profile = $player->bot_profile_id === null
+            ? null
+            : BotProfile::query()->find($player->bot_profile_id);
+
+        $strategy = $profile?->strategy ?? 'random';
+
+        return match ($strategy) {
+            'random' => new RandomAgent(
+                Pcg64Rng::at((int) $match->seed + $seat + 1, $match->action_count + 1),
+            ),
+            default => throw new \RuntimeException(
+                "bot strategy \"{$strategy}\" is not implemented yet; only \"random\" is"
+            ),
+        };
     }
 
     public function kernel(GameVersion $version): Kernel

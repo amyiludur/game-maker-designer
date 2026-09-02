@@ -33,6 +33,8 @@ Route::prefix('v1')->group(function (): void {
     Route::post('games/{game}/decks/validate', [DeckController::class, 'validateDeck']);
     Route::get('decks/{deck}', [DeckController::class, 'show']);
 
+    Route::get('games/{game}/bot-profiles', [MatchController::class, 'botProfiles']);
+
     Route::post('matches', [MatchController::class, 'store']);
     Route::get('matches/{match}', [MatchController::class, 'show']);
     Route::post('matches/{match}/actions', [MatchController::class, 'act']);

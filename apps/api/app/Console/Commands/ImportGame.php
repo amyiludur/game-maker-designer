@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use App\Models\Card;
 use App\Models\CardRevision;
 use App\Models\CardSet;
+use App\Models\BotProfile;
 use App\Models\Deck;
 use App\Models\DeckVersion;
 use App\Models\Game;
@@ -95,6 +96,7 @@ final class ImportGame extends Command
 
             $this->importSets($path, $game, $projector);
             $this->importDecks($path, $game, $version);
+            $this->importBots($path, $game);
 
             return $game;
         });
@@ -124,11 +126,12 @@ final class ImportGame extends Command
         }
 
         $this->info(sprintf(
-            'imported %s — %d card(s) in %d set(s), %d deck(s)',
+            'imported %s — %d card(s) in %d set(s), %d deck(s), %d bot(s)',
             $game->name,
             $game->cards()->count(),
             $game->sets()->count(),
             $game->decks()->count(),
+            BotProfile::query()->where('game_id', $game->id)->count(),
         ));
 
         return self::SUCCESS;
@@ -168,6 +171,22 @@ final class ImportGame extends Command
                 ]);
                 $card->forceFill(['head_revision_id' => $revision->id])->saveQuietly();
             }
+        }
+    }
+
+    private function importBots(string $path, Game $game): void
+    {
+        // The built-in random opponent is not this game's, but every game needs one to be
+        // playable, and this is the command that makes a game playable.
+        BotProfile::ensureRandom();
+
+        foreach ($this->jsonIn($path . '/bots') as $name => $document) {
+            BotProfile::create([
+                'game_id' => $game->id,
+                'name' => (string) ($document['name'] ?? $name),
+                'strategy' => (string) ($document['strategy'] ?? 'random'),
+                'config' => $document['config'] ?? [],
+            ]);
         }
     }
 

@@ -9,11 +9,12 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "gmd/harness": "*",
+        "gmd/kernel": "*",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "gmd/kernel": "*",
-        "opis/json-schema": "^2.3"
+        "opis/json-schema": "^2.3",
+        "php": "^8.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -92,6 +93,13 @@
         {
             "type": "path",
             "url": "../../packages/kernel",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../packages/harness",
             "options": {
                 "symlink": true
             }

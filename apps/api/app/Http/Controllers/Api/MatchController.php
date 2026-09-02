@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BotProfile;
+use App\Models\Game;
 use App\Models\GameMatch;
 use App\Models\GameVersion;
 use App\Services\MatchService;
@@ -28,6 +30,33 @@ use Illuminate\Http\Request;
 final class MatchController extends Controller
 {
     public function __construct(private readonly MatchService $matches) {}
+
+    /**
+     * The opponents available for this game.
+     *
+     * The game's own profiles plus the built-in game-agnostic ones, so a game nobody has
+     * tuned a bot for still has something to play against.
+     */
+    public function botProfiles(Game $game): JsonResponse
+    {
+        $profiles = BotProfile::query()
+            ->where('game_id', $game->id)
+            ->orWhereNull('game_id')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json([
+            'data' => $profiles->map(fn (BotProfile $profile): array => [
+                'id' => $profile->id,
+                'name' => $profile->name,
+                'strategy' => $profile->strategy,
+                // Only `random` is implemented in this pass; the rest are authored and
+                // waiting for the bot they describe (doc 09), and the UI says so rather than
+                // offering an opponent that would throw.
+                'implemented' => $profile->strategy === 'random',
+            ])->all(),
+        ]);
+    }
 
     public function store(Request $request): JsonResponse
     {
