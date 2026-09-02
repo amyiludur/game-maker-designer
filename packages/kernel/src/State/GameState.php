@@ -199,6 +199,11 @@ final readonly class GameState implements StateView
         return $this->triggerQueue;
     }
 
+    public function priority(): ?int
+    {
+        return $this->priority;
+    }
+
     public function isOver(): bool
     {
         return $this->result !== null;

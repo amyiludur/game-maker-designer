@@ -140,6 +140,41 @@ final class Draft implements StateView
         return $this->rng;
     }
 
+    /**
+     * A throwaway copy of this position, for asking "what would happen if".
+     *
+     * Used by the cost checker, which pays a cost for real on a copy and then discards it.
+     * Copying is nearly free — PHP shares the underlying arrays until one side writes — and
+     * it costs far less than rebuilding a committed state just to fork from it.
+     */
+    public function fork(Rng $rng): self
+    {
+        $fork = new self(
+            $this->base,
+            $rng,
+            $this->zones,
+            $this->instances,
+            $this->adversaries,
+            $this->modifiers,
+            [],
+            $this->triggerQueue,
+            $this->vars,
+            $this->pendingChoice,
+            $this->result,
+            $this->round,
+            $this->phase,
+            $this->step,
+            $this->activeSeat,
+            $this->firstSeat,
+            $this->priority,
+            $this->consecutivePasses,
+            $this->players,
+        );
+        $fork->mutationCounter = $this->mutationCounter;
+
+        return $fork;
+    }
+
     /** @return list<EventRecord> everything emitted since this draft opened */
     public function emitted(): array
     {
@@ -458,6 +493,21 @@ final class Draft implements StateView
     public function priority(): ?int
     {
         return $this->priority;
+    }
+
+    public function isOver(): bool
+    {
+        return $this->result !== null;
+    }
+
+    public function seed(): int
+    {
+        return $this->base->seed;
+    }
+
+    public function rngPosition(): int
+    {
+        return $this->rng->position();
     }
 
     public function setConsecutivePasses(int $passes): void

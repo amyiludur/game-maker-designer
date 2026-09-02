@@ -59,6 +59,12 @@ final readonly class ActionTemplate
         return ProgramRef::action($this->id, 'cost');
     }
 
+    /** Cost, effect and emitted events as one script — what taking the action actually runs. */
+    public function playProgram(): ProgramRef
+    {
+        return ProgramRef::action($this->id, 'play');
+    }
+
     public function isAvailableIn(string $qualifiedStep): bool
     {
         return $this->windows === [] || in_array($qualifiedStep, $this->windows, true);

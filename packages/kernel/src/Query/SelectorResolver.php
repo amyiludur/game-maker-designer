@@ -40,6 +40,8 @@ final class SelectorResolver
             // An attachment's host is always derivable from $self, so a card never has to
             // be handed it explicitly to say "the character I am attached to".
             'host' => $this->hostOf($context),
+            // $deck.identity, used by setup scripts: whose deck we are currently setting up.
+            'deck' => $context->bindings->get('player') ?? $context->bindings->get('you'),
             default => throw UnresolvedSelector::because(
                 "selector \"{$selector}\" is not bound in this context",
                 ['selector' => $selector, 'bound' => array_keys($context->bindings->all())],

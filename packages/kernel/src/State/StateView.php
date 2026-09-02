@@ -22,6 +22,14 @@ interface StateView
 
     public function step(): string;
 
+    /** The phase and step together, which is how a window is addressed: "action.main". */
+    public function qualifiedStep(): string;
+
+    /** Which seat may act right now, or null when no window is open. */
+    public function priority(): ?int;
+
+    public function isOver(): bool;
+
     public function version(): int;
 
     public function playerCount(): int;

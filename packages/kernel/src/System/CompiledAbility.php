@@ -67,7 +67,20 @@ final readonly class CompiledAbility
         return $this->kind === self::KIND_STATIC || $this->kind === self::KIND_CONSTANT;
     }
 
+    /**
+     * What resolving this ability runs.
+     *
+     * An ability with targets gets a compiled prelude that chooses them, so target
+     * selection goes through the same resumable machinery as everything else rather than
+     * being special-cased in the trigger queue.
+     */
     public function effectProgram(): ProgramRef
+    {
+        return $this->program($this->targets === [] ? 'effect' : 'resolve');
+    }
+
+    /** The effect body alone, without target selection. Read by the modifier engine. */
+    public function bodyProgram(): ProgramRef
     {
         return $this->program('effect');
     }

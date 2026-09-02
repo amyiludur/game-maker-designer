@@ -35,6 +35,7 @@ final readonly class SystemDocument
      * @param  array<string, mixed>  $mulligan
      * @param  array<string, mixed>  $ui
      * @param  list<string>  $declaredEvents  events this game emits beyond the core catalogue
+     * @param  array<string, true>  $continuousCodes  card codes carrying a static ability
      */
     public function __construct(
         public string $id,
@@ -64,6 +65,7 @@ final readonly class SystemDocument
         public string $firstPlayerRule = 'alternate',
         public string $triggerOrdering = 'apnap',
         public bool $hasSetup = false,
+        public array $continuousCodes = [],
     ) {}
 
     public function mode(): string
@@ -200,6 +202,19 @@ final readonly class SystemDocument
     public function abilitiesTriggeredBy(string $event): array
     {
         return $this->triggerIndex[$event] ?? [];
+    }
+
+    /**
+     * Card codes carrying a static or constant ability, as a lookup set.
+     *
+     * Continuous effects are derived from the board on every read, so this is asked once
+     * per instance per rebuild. Most cards have none.
+     *
+     * @return array<string, true>
+     */
+    public function continuousAbilityCodes(): array
+    {
+        return $this->continuousCodes;
     }
 
     /** @return list<string> trait names this game recognises */

@@ -57,6 +57,17 @@ final class ModifierEngine
      */
     private ?array $computing = null;
 
+    /**
+     * Printed characteristics per (card, face, player count).
+     *
+     * Every instance of Cinder Scout has the same printed attributes, traits and keywords,
+     * and a board rebuild happens after nearly every mutation — so working them out once
+     * per card rather than once per copy per rebuild is most of the cost of the layer walk.
+     *
+     * @var array<string, array{0: array<string, mixed>, 1: list<string>, 2: list<string>, 3: string}>
+     */
+    private array $printedCache = [];
+
     public function __construct()
     {
         /** @var \WeakMap<StateView, array{stamp: int, board: array<string, CharacteristicSet>}> $cache */
@@ -196,16 +207,32 @@ final class ModifierEngine
      */
     private function baseBoard(EvalContext $context): array
     {
+        $players = $context->state->playerCount();
         $board = [];
+
         foreach ($context->state->instances() as $id => $instance) {
+            // The digest is in the key because one engine may outlive one game: two systems
+            // can have a card with the same code and different printed values.
+            $key = $context->system->digest . '|' . $instance->code . '@' . $instance->face . '@' . $players;
             $face = $context->system->cards->get($instance->code)->face($instance->face);
+
+            if (! isset($this->printedCache[$key])) {
+                $this->printedCache[$key] = [
+                    $this->printed($context, $instance),
+                    $face->traits(),
+                    array_map(static fn (array $k): string => (string) $k['id'], $face->keywords),
+                    $face->name,
+                ];
+            }
+            [$attributes, $traits, $keywords, $name] = $this->printedCache[$key];
+
             $board[$id] = new CharacteristicSet(
                 instanceId: $id,
-                name: $face->name,
-                attributes: $this->printed($context, $instance),
+                name: $name,
+                attributes: $attributes,
                 types: [$face->type],
-                traits: $face->traits(),
-                keywords: array_map(static fn (array $k): string => (string) $k['id'], $face->keywords),
+                traits: $traits,
+                keywords: $keywords,
                 permissions: $face->permissions,
                 restrictions: $face->restrictions,
                 abilities: $face->abilities,
@@ -356,7 +383,15 @@ final class ModifierEngine
     private function derivedModifiers(EvalContext $context): array
     {
         $derived = [];
+        $continuous = $context->system->continuousAbilityCodes();
+
         foreach ($context->state->instances() as $id => $instance) {
+            // Most cards on the table have no continuous ability at all; the compiler
+            // already knows which do, so the rest are skipped without touching their faces.
+            if (! isset($continuous[$instance->code])) {
+                continue;
+            }
+
             $face = $context->system->cards->get($instance->code)->face($instance->face);
             foreach ($face->abilities as $ability) {
                 if (! $ability->isContinuous() || ! $ability->hasEffect) {
@@ -402,7 +437,7 @@ final class ModifierEngine
      */
     private function staticChanges(SystemDocument $system, CompiledAbility $ability): array
     {
-        $ref = $ability->effectProgram();
+        $ref = $ability->bodyProgram();
         if (! $system->programs->has($ref)) {
             return [];
         }

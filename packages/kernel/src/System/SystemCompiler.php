@@ -33,6 +33,9 @@ final class SystemCompiler
     /** @var array<string, list<CompiledAbility>> */
     private array $triggerIndex = [];
 
+    /** @var array<string, true> */
+    private array $continuousCodes = [];
+
     /**
      * @param  array<string, mixed>  $system  the game-system document
      * @param  list<array<string, mixed>>  $sets  set documents, each with a `cards` list
@@ -41,6 +44,7 @@ final class SystemCompiler
     {
         $this->programs = [];
         $this->triggerIndex = [];
+        $this->continuousCodes = [];
 
         foreach (['id', 'version', 'name', 'zones', 'cardTypes', 'round', 'winConditions'] as $required) {
             if (! isset($system[$required])) {
@@ -63,6 +67,7 @@ final class SystemCompiler
             if ($action->hasCost) {
                 $this->addProgram($action->costProgram(), $raw['cost']);
             }
+            $this->addProgram($action->playProgram(), $this->playScript($action, $raw));
         }
 
         $round = $system['round'];
@@ -157,6 +162,7 @@ final class SystemCompiler
             firstPlayerRule: (string) ($round['firstPlayer']['rule'] ?? 'alternate'),
             triggerOrdering: (string) ($round['triggerOrdering'] ?? 'apnap'),
             hasSetup: $hasSetup,
+            continuousCodes: $this->continuousCodes,
         );
 
         return $document;
@@ -349,14 +355,79 @@ final class SystemCompiler
         );
     }
 
-    /** @param array<string, mixed> $raw */
+    /**
+     * An action, as one script: pay, then do, then announce.
+     *
+     * Compiling the three parts into a single program is what makes taking an action a
+     * single resumable stack item. Costs must be paid before the effect runs, and the
+     * action's `emits` must fire after it — an interpreter that had to coordinate three
+     * separate items to get that order right would be one more thing to get wrong.
+     *
+     * The convention for `emits`: a target named `card` is the card the action is about,
+     * and is carried in the event payload. That is what lets "when you play a card"
+     * triggers work without every action emitting the event by hand.
+     *
+     * @param  array<string, mixed>  $raw
+     * @return list<mixed>
+     */
+    private function playScript(ActionTemplate $action, array $raw): array
+    {
+        $script = [...($raw['cost'] ?? []), ...($raw['effect'] ?? [])];
+
+        $namesCard = false;
+        foreach ($action->targets as $target) {
+            if (($target['id'] ?? null) === 'card') {
+                $namesCard = true;
+            }
+        }
+
+        foreach ($action->emits as $event) {
+            $payload = ['player' => '$you', 'action' => $action->id];
+            if ($namesCard) {
+                $payload['card'] = '$target.card';
+            }
+            $script[] = ['op' => 'emit', 'type' => $event, 'payload' => $payload];
+        }
+
+        return $script;
+    }
+
+    /**
+     * Register an ability's scripts.
+     *
+     * An ability with targets also gets a `.resolve` program: its target selection compiled
+     * in front of its effect. Choosing targets is then an ordinary op sequence, which means
+     * it can raise a choice, park, and resume like anything else — instead of the trigger
+     * queue needing its own copy of that machinery.
+     *
+     * @param  array<string, mixed>  $raw
+     */
     private function addAbilityPrograms(string $prefix, array $raw): void
     {
-        if (isset($raw['effect']) && $raw['effect'] !== []) {
-            $this->addProgram(new ProgramRef($prefix . '.effect'), $raw['effect']);
+        $effect = $raw['effect'] ?? [];
+
+        if ($effect !== []) {
+            $this->addProgram(new ProgramRef($prefix . '.effect'), $effect);
         }
         if (isset($raw['cost']) && $raw['cost'] !== []) {
             $this->addProgram(new ProgramRef($prefix . '.cost'), $raw['cost']);
+        }
+
+        $targets = $raw['targets'] ?? [];
+        if ($targets !== []) {
+            $selection = array_map(
+                static fn (array $target): array => [
+                    'op' => 'select_target',
+                    'id' => $target['id'],
+                    'query' => $target['query'] ?? [],
+                    'count' => $target['count'] ?? 1,
+                    'optional' => $target['optional'] ?? false,
+                    'chooser' => $target['chooser'] ?? '$you',
+                    'prompt' => $target['prompt'] ?? 'Choose a target',
+                ],
+                $targets,
+            );
+            $this->addProgram(new ProgramRef($prefix . '.resolve'), [...$selection, ...$effect]);
         }
     }
 
@@ -365,6 +436,9 @@ final class SystemCompiler
         $event = $ability->triggerEvent();
         if ($event !== null) {
             $this->triggerIndex[$event][] = $ability;
+        }
+        if ($ability->isContinuous() && $ability->hasEffect) {
+            $this->continuousCodes[$ability->ownerCode] = true;
         }
     }
 
