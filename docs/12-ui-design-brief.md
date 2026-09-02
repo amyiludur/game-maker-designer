@@ -262,7 +262,9 @@ a note into a card edit or a regression test in one action.
 
 ## Constraints
 
-* Vue 3 + Tailwind; tokens as CSS custom properties so themes swap without a rebuild.
+* Vue 3; tokens as CSS custom properties so themes swap without a rebuild — and so `--accent`
+  can be set from the loaded game's `ui.theme.accent` at runtime, which is the one thing in
+  these mockups that must not be hardcoded.
 * No design that requires the client to know game rules.
 * Every screen works with **any** game defined in the JSON format — nothing Emberfall-specific
   in the chrome.

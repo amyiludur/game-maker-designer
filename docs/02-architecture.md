@@ -4,17 +4,31 @@
 
 | Layer | Choice | Why |
 |---|---|---|
-| Backend | **Laravel 11** (PHP 8.3+) | Requested; strong queue/broadcast/validation story |
+| Backend | **Laravel 12** (PHP 8.4) | Laravel 11 reached end of life before this was built; 12 is the closest supported version and every package needed supports it |
 | Rules kernel | **Plain PHP**, framework-free package (`packages/kernel`) | Must run in HTTP, in queue workers, and in tests with no Laravel bootstrapping |
 | Database | **PostgreSQL 16** | `jsonb` + GIN indexes; we lean on JSON heavily |
 | Cache / queue | **Redis** | Job queue for simulations, live table state cache |
 | Realtime | **Laravel Reverb** (WebSocket) | First-party, self-hosted, no external dependency |
-| Frontend | **Vue 3** + TypeScript + Vite | Requested |
-| State | **Pinia** | Store-per-domain, good TS inference |
+| Frontend | **Vue 3.5** + TypeScript 5.7 + **Vite 6** | Requested |
+| State | **Pinia 2** | Store-per-domain, good TS inference |
 | Routing | **Vue Router 4** | |
-| Styling | **Tailwind CSS** + a small token layer | Fast iteration; tokens keep it coherent |
+| Styling | **Plain CSS over a custom-property token layer** | See below — the accent is game data, so it cannot be a build-time colour |
 | Validation | **JSON Schema draft 2020-12** — `opis/json-schema` (PHP), `ajv` (TS) | One contract, both sides |
-| Testing | Pest (PHP), Vitest + Playwright (TS) | |
+| Testing | **Pest 3** (kernel/harness), PHPUnit (app), **Vitest 3** + **Playwright 1.6** (TS) | |
+
+**Not yet built**, and named here so the table is not read as a description of the tree:
+Redis is optional (the cache store is configurable and match state rebuilds from the action
+log without it), there is no Docker Compose environment, and Reverb is not installed —
+online multiplayer is M5, and solo and hotseat are REST. There is no authentication yet.
+
+**Why not Tailwind.** The design handoff's `--accent` is *game data* — `ui.theme.accent`,
+`#c0392b` for Emberfall — read from the loaded game document at runtime. A build-time colour
+palette cannot express that, and the whole point of a multi-game platform is that Emberfall
+does not look like Warden's Hollow. The token layer is CSS custom properties
+(`apps/web/src/design/tokens.css`) and the components use them directly.
+
+The tree these live in, and which parts may depend on which, is
+[doc 17](17-repository-layout.md).
 
 ## The layer cake
 

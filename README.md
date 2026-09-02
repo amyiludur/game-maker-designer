@@ -42,12 +42,17 @@ validate the worked example, and the example game is complete enough to build a 
 | 14 | [Roadmap](docs/14-roadmap.md) | Milestones, in build order, with exit criteria |
 | 15 | [Glossary](docs/15-glossary.md) | LCG terms and platform terms |
 | 16 | [Cooperative & adversary games](docs/16-cooperative-and-adversary-games.md) | 1–4 players vs. an automated villain and its encounter deck |
+| 17 | [Repository layout](docs/17-repository-layout.md) | Where the code lives, what may depend on what, every command |
 
 Architecture decisions with their trade-offs are recorded in [`docs/adr/`](docs/adr/).
 
 ## Repository layout
 
 ```
+packages/kernel/          The rules engine — framework-free PHP, no I/O, no clock
+packages/harness/         Drivers around it: fixtures, bots, headless matches, replays, fuzz
+apps/api/                 Laravel 12 — persistence, HTTP, compilation, match lifecycle
+apps/web/                 Vue 3 + Vite SPA
 docs/                     Specifications and plans
   adr/                    Architecture decision records
 schemas/                  JSON Schema (draft 2020-12) — the machine-readable contracts
@@ -56,6 +61,9 @@ examples/wardens-hollow/  Worked example 2 — 1-4 player co-op vs. an automated
 scripts/                  validate-examples.mjs — schema + cross-document integrity checks
 design/                   High-fidelity screen designs + handoff (six screens, dark theme)
 ```
+
+What may depend on what, and every command worth knowing, is
+[doc 17](docs/17-repository-layout.md).
 
 ## The worked examples
 
@@ -94,9 +102,41 @@ editor, card browser, deck builder, simulation report — drawn against the Embe
 with a full token set and per-screen specs in [`design/HANDOFF.md`](design/HANDOFF.md).
 They cover the competitive duel shape; the cooperative play table is not yet designed.
 
+## Running it
+
+```bash
+pg_ctlcluster 16 main start                       # Postgres 16, no Docker Compose yet
+
+composer install && npm install
+cd apps/api && composer install
+cp .env.example .env && php artisan key:generate
+php artisan migrate && php artisan db:seed
+php artisan games:import ../../examples/emberfall
+php artisan serve --port=8811                     # and, in another shell:
+npm run web                                       # http://127.0.0.1:5273
+```
+
+Play a match headlessly, with no database and no browser:
+
+```bash
+php packages/harness/bin/gmd play emberfall --seed 1 --log
+php packages/harness/bin/gmd fuzz emberfall --matches=200
+php packages/harness/bin/gmd replay examples/emberfall/replays/round-one-opening.json
+```
+
+## What is built
+
+| Milestone | State |
+|---|---|
+| M2 · The kernel | **Done.** 10,000 random-bot matches with zero invariant violations; the golden replay reproduces bit-identically |
+| M0 · Foundations | **Done**, except auth and a Docker Compose environment |
+| M1 · Authoring | Card browser and card editor; the system editor is not built |
+| M3 · Play in the browser | A solo match against the random bot plays end to end; no animation layer, no replay scrubber |
+| M3.5 · Co-op | The kernel is co-op-shaped (side ids, not seat integers), but `reveal_encounter` and `run_activation` are not implemented — Warden's Hollow lints two errors and cannot be played yet |
+| M4–M6 | Not started |
+
 ## Next steps
 
-1. Scaffold the Laravel + Vue application per [docs/14-roadmap.md](docs/14-roadmap.md) M0–M1.
-2. Build the designer UI from [`design/`](design/) and
-   [docs/11-frontend-architecture.md](docs/11-frontend-architecture.md).
-3. Implement the rules kernel against the Emberfall conformance replay.
+1. The remaining co-op ops, so Warden's Hollow plays (M3.5).
+2. The system editor, so a game can be defined without touching a file (M1).
+3. Authentication and workspace scoping, which every route currently goes without (M5).

@@ -10,8 +10,8 @@ real game before any polish is spent.
 
 **Goal:** the skeleton runs, deploys, and has one end-to-end vertical slice.
 
-* Laravel 11 + Postgres + Redis, Docker Compose dev environment
-* Vue 3 + Vite + Tailwind + Pinia, auth, workspaces, memberships
+* Laravel 12 + Postgres + Redis, Docker Compose dev environment
+* Vue 3 + Vite + Pinia over a CSS custom-property token layer, auth, workspaces, memberships
 * Migrations for games, game_versions, sets, cards, card_revisions
 * JSON Schema validation wired on both sides, types generated from schemas
 * CI: lint, unit, schema validation

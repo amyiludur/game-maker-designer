@@ -140,4 +140,5 @@ A completed match is a first-class artifact:
   but "here is the exact sequence".
 * **Export** — `replay.json` conforming to [`replay.schema.json`](../schemas/replay.schema.json),
   which can be attached to a regression test in one command
-  (`php artisan test:add-replay <file>`). A playtester's bug becomes a permanent test.
+  (`php packages/harness/bin/gmd replay <file> --bless`). A playtester's bug becomes a
+  permanent test.

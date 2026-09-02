@@ -129,7 +129,8 @@ Replaying must reproduce every checkpoint hash exactly. These fixtures:
 * prove determinism across machines and PHP versions,
 * catch unintended rules changes when the kernel is refactored,
 * are the contract any future TypeScript kernel must satisfy ([ADR-0002](adr/0002-single-authoritative-kernel.md)),
-* are generated for free from real playtests (`php artisan test:add-replay <file>`).
+* are generated for free from real playtests: export the match's replay, then
+  `php packages/harness/bin/gmd replay <file> --bless` fills in the hashes.
 
 When a golden replay breaks after a *deliberate* rules change, the diff shows the first
 diverging action — you re-bless it with an explicit command that records why.
@@ -164,14 +165,31 @@ diverging action — you re-bless it with an explicit command that records why.
 ## 6. CI pipeline
 
 ```
-lint          php-cs-fixer, phpstan level 8, eslint, prettier, tsc --noEmit
 schemas       validate every examples/** file against its schema
-unit          Pest (kernel + app), Vitest
-conformance   replay every golden fixture, assert hashes
-fuzz          200 random-bot matches per example game, assert invariants
-e2e           Playwright against a seeded app
-perf          assert headless match < 250ms and legalActions < 20ms on a fixed board
+kernel        Pest — unit, timing, layers, property invariants, architecture
+conformance   replay every golden fixture, assert every checkpoint hash
+fuzz          200 random-bot matches, asserting invariants after every action
+api           migrate, import both example games, php artisan test
+web           generated types are current, vue-tsc, vite build, Vitest
+lint          php-cs-fixer, eslint, prettier
+e2e           Playwright against a seeded app  (advisory)
 ```
+
+Implemented in `.github/workflows/validate.yml`. Two deviations from the list above as it was
+originally written, both deliberate:
+
+* **`phpstan level 8` is absent.** It belongs here, but it ships as a phar from GitHub
+  releases which this project's build environment cannot reach, and depending on something
+  that cannot be installed would make the whole pipeline unrunnable to gain a check that
+  would not run. `vue-tsc --noEmit`, ESLint and the architecture tests cover part of it.
+* **Fuzz runs Emberfall only**, not "per example game". Warden's Hollow declares two ops the
+  kernel does not implement yet (`reveal_encounter`, `run_activation` — the co-op ops
+  deferred from this pass), so it cannot be played headlessly, and a permanently red job
+  teaches people to ignore the pipeline.
+
+The `perf` gate is asserted in the kernel's own suite rather than as a CI stage, measured in
+CPU time via `getrusage()` — wall-clock made it flake whenever anything else was running on
+the box, which is most of the time on a shared runner.
 
 The `perf` gate exists because simulation throughput is a product feature: a kernel that
 gets 5× slower quietly turns a coffee-break batch into an overnight one.
