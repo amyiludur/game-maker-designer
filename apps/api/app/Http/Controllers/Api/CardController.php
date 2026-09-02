@@ -71,7 +71,14 @@ final class CardController extends Controller
         ]);
     }
 
-    public function show(Card $card): JsonResponse
+    /**
+     * One card, addressed inside its game.
+     *
+     * `$game` is unused here beyond routing: the binding has already narrowed the lookup to
+     * it, which is the whole point — a card code is unique inside a game and not across the
+     * platform, so `core-001` alone names two different cards once a second game exists.
+     */
+    public function show(Game $game, Card $card): JsonResponse
     {
         return response()->json(['data' => $this->detail($card)]);
     }
@@ -115,6 +122,7 @@ final class CardController extends Controller
     /** Copy a card. The fastest way to author the fourth of something is to copy the third. */
     public function duplicate(
         Request $request,
+        Game $game,
         Card $card,
         CardDraft $drafts,
         CardValidator $validator,
@@ -230,6 +238,7 @@ final class CardController extends Controller
     /** Save a card. Every save is a revision; nothing is overwritten in place. */
     public function update(
         Request $request,
+        Game $game,
         Card $card,
         CardValidator $validator,
         CardProjector $projector,

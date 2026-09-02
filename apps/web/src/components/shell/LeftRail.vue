@@ -14,6 +14,7 @@ const route = useRoute()
 const items = computed(() => {
   const slug = games.current?.slug
   return [
+    { key: 'SY', label: 'System', to: slug ? `/g/${slug}/system` : '/', name: 'system' },
     { key: 'CA', label: 'Cards', to: slug ? `/g/${slug}/cards` : '/', name: 'cards' },
     { key: 'DE', label: 'Decks', to: slug ? `/g/${slug}/decks` : '/', name: 'decks' },
     { key: 'PL', label: 'Playtest', to: slug ? `/g/${slug}/play` : '/', name: 'play' },

@@ -36,9 +36,12 @@ Route::prefix('v1')->group(function (): void {
 
     Route::get('games/{game}/cards', [CardController::class, 'index']);
     Route::post('games/{game}/cards', [CardController::class, 'store']);
-    Route::get('cards/{card}', [CardController::class, 'show']);
-    Route::put('cards/{card}', [CardController::class, 'update']);
-    Route::post('cards/{card}/duplicate', [CardController::class, 'duplicate']);
+    // Always scoped by game: a card code is unique inside a game and not across the
+    // platform, so `/cards/core-001` names two different cards once a second game exists —
+    // and the wrong one is the one you would then save over. An id works here too.
+    Route::get('games/{game}/cards/{card}', [CardController::class, 'show']);
+    Route::put('games/{game}/cards/{card}', [CardController::class, 'update']);
+    Route::post('games/{game}/cards/{card}/duplicate', [CardController::class, 'duplicate']);
 
     Route::get('games/{game}/decks', [DeckController::class, 'index']);
     Route::post('games/{game}/decks/validate', [DeckController::class, 'validateDeck']);

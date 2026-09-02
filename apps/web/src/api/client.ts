@@ -130,18 +130,23 @@ export const api = {
   cards: (game: string, filters: Record<string, unknown> = {}) =>
     paged<CardSummary>(`/games/${game}/cards${query(filters)}`),
 
-  card: (code: string) => request<CardDetail>(`/cards/${code}`),
+  // Game-scoped: a card code is unique inside a game, not across the platform, so
+  // `/cards/core-001` alone can name two different cards.
+  card: (game: string, code: string) => request<CardDetail>(`/games/${game}/cards/${code}`),
 
   createCard: (
     game: string,
     payload: { type: string; name?: string; setId?: string; faction?: string; code?: string },
   ) => request<CardDetail>(`/games/${game}/cards`, { method: 'POST', body: JSON.stringify(payload) }),
 
-  duplicateCard: (code: string, payload: { name?: string; setId?: string } = {}) =>
-    request<CardDetail>(`/cards/${code}/duplicate`, { method: 'POST', body: JSON.stringify(payload) }),
+  duplicateCard: (game: string, code: string, payload: { name?: string; setId?: string } = {}) =>
+    request<CardDetail>(`/games/${game}/cards/${code}/duplicate`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
 
-  saveCard: (code: string, document: unknown, message?: string) =>
-    request<CardDetail>(`/cards/${code}`, {
+  saveCard: (game: string, code: string, document: unknown, message?: string) =>
+    request<CardDetail>(`/games/${game}/cards/${code}`, {
       method: 'PUT',
       body: JSON.stringify({ document, message }),
     }),

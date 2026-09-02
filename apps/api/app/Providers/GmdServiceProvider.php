@@ -36,12 +36,18 @@ final class GmdServiceProvider extends ServiceProvider
         // is skipped unless the value actually looks like one: Postgres rejects a
         // non-UUID string against a uuid column outright rather than simply not matching.
         Route::bind('game', static fn (string $value): Game => self::findBy(Game::query(), $value, 'slug'));
-        Route::bind('card', static fn (string $value): Card => self::findBy(Card::query(), $value, 'code'));
+        Route::bind('card', static fn (string $value, $route): Card => self::findBy(
+            self::scopedTo(Card::query(), $route),
+            $value,
+            'code',
+        ));
 
-        // A semver and a set code are unique inside a game, not across the platform: both
-        // examples have a set called `core`, and an unscoped lookup answers
-        // /games/wardens-hollow/sets/core with whichever one was imported first. When the
-        // route names a game, it decides.
+        // A semver, a set code and a *card* code are unique inside a game, not across the
+        // platform: both examples have a set called `core`, and two games can each have a
+        // `core-001`. An unscoped lookup answers with whichever was imported first — which
+        // for a card means the editor showing, and then saving over, another game's card.
+        // When the route names a game, it decides; when it does not, `findBy` refuses an
+        // ambiguous code rather than guessing.
         Route::bind('version', static fn (string $value, $route): GameVersion => self::findBy(
             self::scopedTo(GameVersion::query(), $route),
             $value,
@@ -86,6 +92,14 @@ final class GmdServiceProvider extends ServiceProvider
             return $query->findOrFail($value);
         }
 
-        return $query->where($column, $value)->firstOrFail();
+        $matches = $query->where($column, $value)->limit(2)->get();
+
+        if ($matches->count() > 1) {
+            // Two games own this name. Returning either one silently is how an edit lands on
+            // the wrong game's card, so the caller is told to say which game it means.
+            abort(409, "\"{$value}\" is ambiguous — more than one game has it. Address it by id, or use the game-scoped route.");
+        }
+
+        return $matches->first() ?? abort(404);
     }
 }

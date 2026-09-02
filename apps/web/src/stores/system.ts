@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, toRaw } from 'vue'
 
 import { ApiError_, api } from '@/api/client'
 import type { ImpactReport, LintFinding } from '@/api/types'
@@ -52,8 +52,16 @@ export const useSystemStore = defineStore('system', () => {
     const games = useGameStore()
     await games.load(game)
 
-    const version = games.current?.version
-    if (version === undefined || version === null) return
+    // Asked of the API rather than read off the game store when the store has not caught up.
+    // Two `games.load()` calls race on arrival — App.vue's route watcher and this one — and
+    // the loser used to return here silently, leaving the editor showing an empty document
+    // for a game that has one.
+    const version =
+      games.current?.slug === game && games.current.version != null
+        ? games.current.version
+        : ((await api.game(game)).version ?? null)
+
+    if (version === null) return
     if (slug.value === game && semver.value === version.semver && dirty.value) return
 
     loading.value = true
@@ -66,7 +74,7 @@ export const useSystemStore = defineStore('system', () => {
       committed.value = JSON.stringify(detail.document)
       report.value = null
       violations.value = []
-      lint.value = games.lint
+      lint.value = games.current?.slug === game ? games.lint : []
     } finally {
       loading.value = false
     }
@@ -96,7 +104,9 @@ export const useSystemStore = defineStore('system', () => {
    */
   function write(path: string, value: unknown): void {
     const keys = path.split('.')
-    const next = structuredClone(document_.value)
+    // `toRaw` first: `structuredClone` cannot clone a reactive proxy, and it throws rather
+    // than degrading — which silently swallowed every edit the system editor made.
+    const next = structuredClone(toRaw(document_.value))
 
     let node = next as Record<string, unknown>
     for (const key of keys.slice(0, -1)) {

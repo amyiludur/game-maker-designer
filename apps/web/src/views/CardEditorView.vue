@@ -54,7 +54,7 @@ const abilities = computed<AbilityHeader[]>(() =>
 watch(
   () => props.card,
   async (code) => {
-    const loaded = await api.card(code)
+    const loaded = await api.card(props.game, code)
 
     // Cloned from the response, not from the ref: reading it back through Vue's reactive
     // proxy makes `structuredClone` throw, which left the editor with an empty document and
@@ -71,7 +71,7 @@ async function save(): Promise<void> {
   saving.value = true
   violations.value = []
   try {
-    detail.value = await api.saveCard(props.card, toRaw(document_.value))
+    detail.value = await api.saveCard(props.game, props.card, toRaw(document_.value))
     saved.value = new Date().toLocaleTimeString()
   } catch (error) {
     if (error instanceof ApiError_) violations.value = error.violations

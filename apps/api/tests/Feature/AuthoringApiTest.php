@@ -78,7 +78,7 @@ final class AuthoringApiTest extends TestCase
         $broken = $card->document;
         unset($broken['name']);
 
-        $response = $this->putJson("/api/v1/cards/{$card->code}", ['document' => $broken])->assertStatus(422);
+        $response = $this->putJson("/api/v1/games/emberfall/cards/{$card->code}", ['document' => $broken])->assertStatus(422);
 
         $this->assertSame('invalid_document', $response->json('error.code'));
         $this->assertNotEmpty($response->json('error.details.violations'));
@@ -94,7 +94,7 @@ final class AuthoringApiTest extends TestCase
         $document['attributes']['cost'] = 4;
         $document['name'] = 'Cinder Sprinter';
 
-        $this->putJson("/api/v1/cards/{$card->code}", ['document' => $document, 'message' => 'test'])->assertOk();
+        $this->putJson("/api/v1/games/emberfall/cards/{$card->code}", ['document' => $document, 'message' => 'test'])->assertOk();
 
         $card->refresh();
         $this->assertSame(4, $card->cost);
@@ -191,5 +191,39 @@ final class AuthoringApiTest extends TestCase
         $this->artisan('decks:reproject')
             ->expectsOutputToContain('0 changed')
             ->assertSuccessful();
+    }
+
+    public function test_a_card_code_names_a_card_inside_its_game_and_not_across_games(): void
+    {
+        // Card codes are unique per game (`unique(['game_id','code'])`), so two games can
+        // each own a `core-001`. Resolving one globally meant the editor could open — and
+        // then save over — the wrong game's card.
+        $this->artisan('games:import', ['path' => 'wardens-hollow'])->assertSuccessful();
+
+        $emberfall = Game::query()->where('slug', 'emberfall')->firstOrFail();
+        $mine = Card::query()->where('game_id', $emberfall->id)->firstOrFail();
+
+        $other = Game::query()->where('slug', 'wardens-hollow')->firstOrFail();
+        $twin = Card::query()->where('game_id', $other->id)->firstOrFail();
+        $twin->forceFill(['code' => $mine->code])->saveQuietly();
+
+        // Scoped by game, each name resolves to its own game's card.
+        $this->getJson("/api/v1/games/emberfall/cards/{$mine->code}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $mine->id);
+
+        $this->getJson("/api/v1/games/wardens-hollow/cards/{$mine->code}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $twin->id);
+
+        // An id addresses a card just as well, through the same scoped route.
+        $this->getJson("/api/v1/games/emberfall/cards/{$mine->id}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $mine->id);
+
+        // And a card that belongs to another game is simply not found in this one, rather
+        // than being served because its code happens to match.
+        $onlyOther = Card::query()->where('game_id', $other->id)->where('code', '!=', $mine->code)->firstOrFail();
+        $this->getJson("/api/v1/games/emberfall/cards/{$onlyOther->code}")->assertNotFound();
     }
 }

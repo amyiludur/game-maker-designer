@@ -55,14 +55,14 @@ describe('api client', () => {
       },
     })
 
-    const error = (await api.saveCard('EMB-001', {}).catch((e: unknown) => e)) as ApiError_
+    const error = (await api.saveCard('emberfall', 'EMB-001', {}).catch((e: unknown) => e)) as ApiError_
     expect(error.violations).toEqual([{ pointer: '/attributes/cost', message: 'must be <= 9' }])
   })
 
   it('reports an empty violation list rather than undefined when there is none', async () => {
     respond(500, { error: { code: 'server_error', message: 'Boom.' } })
 
-    const error = (await api.saveCard('EMB-001', {}).catch((e: unknown) => e)) as ApiError_
+    const error = (await api.saveCard('emberfall', 'EMB-001', {}).catch((e: unknown) => e)) as ApiError_
     expect(error.violations).toEqual([])
     expect(error.message).toBe('Boom.')
   })

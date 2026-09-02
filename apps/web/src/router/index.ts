@@ -11,6 +11,12 @@ export const router = createRouter({
   routes: [
     { path: '/', name: 'dashboard', component: () => import('@/views/DashboardView.vue') },
     {
+      path: '/g/:game/system',
+      name: 'system',
+      component: () => import('@/views/SystemEditorView.vue'),
+      props: true,
+    },
+    {
       path: '/g/:game/cards',
       name: 'cards',
       component: () => import('@/views/CardBrowserView.vue'),

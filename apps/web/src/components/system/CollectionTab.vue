@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, toRaw } from 'vue'
 
 import AbilityNode from '@/components/editor/AbilityNode.vue'
 import EntityList from '@/components/system/EntityList.vue'
@@ -35,6 +35,13 @@ watch(
     selected.value = entries.value[0]?.id ?? null
   },
 )
+
+// And whenever the collection itself changes under us. The initial value is read once at
+// setup, so a tab mounted while the document is still loading would otherwise select
+// nothing and keep showing "nothing here yet" over a full list.
+watch(entries, (next) => {
+  if (!next.some((entry) => entry.id === selected.value)) selected.value = next[0]?.id ?? null
+})
 
 const current = computed<SystemEntity | null>(
   () => entries.value.find((entry) => entry.id === selected.value) ?? null,
@@ -73,7 +80,8 @@ function write(key: string, value: unknown): void {
   if (current.value === null) return
 
   const parts = key.split('.')
-  const next = structuredClone(current.value) as Record<string, unknown>
+  // Raw, not the reactive proxy: `structuredClone` throws on a proxy.
+  const next = structuredClone(toRaw(current.value)) as Record<string, unknown>
 
   let node = next
   for (const part of parts.slice(0, -1)) {

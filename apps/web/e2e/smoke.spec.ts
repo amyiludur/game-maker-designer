@@ -142,3 +142,59 @@ test('the deck builder shows legality in the game’s own words', async ({ page 
   // The curve and the type split are the server's numbers, not the client's arithmetic.
   await expect(page.locator('.curve .col').first()).toBeVisible()
 })
+
+test('a game can be created, and its rules edited, from the browser', async ({ page }) => {
+  // The test this suite was missing. The system editor shipped once with its components,
+  // store and API all present and no route to reach them — everything compiled, every unit
+  // test passed, and the feature did not exist as far as anyone using it was concerned.
+  await page.goto('/')
+  await page.getByRole('button', { name: 'New game' }).click()
+
+  const name = `Probe ${Date.now()}`
+  await page.locator('.form input').fill(name)
+  await page.getByRole('button', { name: 'Create' }).click()
+
+  await expect(page).toHaveURL(/\/g\/probe-\d+\/system/)
+  await expect(page.locator('.tabs button').first()).toBeVisible()
+
+  // Reachable from the rail, not only by typing the URL.
+  await page.goto(page.url().replace('/system', '/cards'))
+  await expect(page.locator('nav[aria-label="Sections"] a', { hasText: 'SY' })).toBeVisible()
+  await page.locator('nav[aria-label="Sections"] a', { hasText: 'SY' }).click()
+  await expect(page).toHaveURL(/\/system/)
+
+  await page.locator('.tabs button', { hasText: 'Zones' }).click()
+  await page.locator('.pane input[type="text"]').nth(1).fill('Battlefield')
+
+  // An edit has to actually reach the document. `structuredClone` on a Vue proxy throws,
+  // which once made every edit here a silent no-op.
+  await expect(page.locator('.dirty')).toBeVisible()
+
+  await page.getByRole('button', { name: /Check impact/ }).click()
+  await expect(page.locator('.panel, .impact').first()).toBeVisible()
+
+  await page.getByRole('button', { name: /^Save/ }).click()
+  await expect(page.locator('.dirty')).toHaveCount(0)
+
+  // And the rename survives a reload, which is the only proof it was written.
+  await page.reload()
+  await page.locator('.tabs button', { hasText: 'Zones' }).click()
+  await expect(page.locator('.pane input[type="text"]').nth(1)).toHaveValue('Battlefield')
+})
+
+test('a new card opens its own game’s card, not another game’s', async ({ page }) => {
+  // Card codes are unique per game, so a second game gets its own `core-001`. Resolving one
+  // globally meant this navigated to Emberfall's hero — and would then have saved over it.
+  await page.goto('/')
+  await page.getByRole('button', { name: 'New game' }).click()
+  await page.locator('.form input').fill(`Probe ${Date.now()}`)
+  await page.getByRole('button', { name: 'Create' }).click()
+  await expect(page).toHaveURL(/\/system/)
+
+  const slug = /\/g\/([^/]+)\//.exec(page.url())?.[1] ?? ''
+  await page.goto(`/g/${slug}/cards`)
+
+  await page.locator('select.new').selectOption({ index: 1 })
+  await expect(page).toHaveURL(new RegExp(`/g/${slug}/cards/`))
+  await expect(page.locator('input.title')).toHaveValue('Untitled')
+})

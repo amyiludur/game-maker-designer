@@ -167,7 +167,7 @@ final class AuthoringCreationTest extends TestCase
     {
         $this->artisan('games:import', ['path' => 'emberfall'])->assertSuccessful();
 
-        $response = $this->postJson('/api/v1/cards/core-020/duplicate')->assertCreated();
+        $response = $this->postJson('/api/v1/games/emberfall/cards/core-020/duplicate')->assertCreated();
 
         // Numbering continues past the highest code in the set rather than filling the gaps
         // the example leaves at core-003..009: a code that once meant a card should not come

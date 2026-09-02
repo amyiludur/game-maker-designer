@@ -46,6 +46,25 @@ const factionCounts = computed(() => cards.counts('faction'))
 function open(code: string): void {
   void router.push(`/g/${props.game}/cards/${code}`)
 }
+
+const adding = ref(false)
+
+/**
+ * A new card, straight into the editor.
+ *
+ * The type is asked for and nothing else: the server drafts a document that satisfies that
+ * card type's compiled schema — required attributes at their minimums, a free code — because
+ * a new card that fails validation the moment it exists is not a starting point.
+ */
+async function create(type: string): Promise<void> {
+  adding.value = true
+  try {
+    const card = await api.createCard(props.game, { type })
+    await router.push(`/g/${props.game}/cards/${card.code}`)
+  } finally {
+    adding.value = false
+  }
+}
 </script>
 
 <template>
@@ -110,6 +129,15 @@ function open(code: string): void {
         </div>
         <span class="spacer" />
         <span class="count mono">{{ cards.total }} cards</span>
+
+        <select
+          class="new mono"
+          :disabled="adding || games.cardTypes.length === 0"
+          @change="create(($event.target as HTMLSelectElement).value)"
+        >
+          <option value="">+ new card</option>
+          <option v-for="type in games.cardTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
+        </select>
         <div class="toggle">
           <button :class="{ on: view === 'table' }" @click="view = 'table'">Table</button>
           <button :class="{ on: view === 'grid' }" @click="view = 'grid'">Grid</button>
@@ -457,5 +485,21 @@ function open(code: string): void {
   padding-left: 16px;
   font-size: 11px;
   color: var(--text-3);
+}
+
+.new {
+  height: 24px;
+  background: var(--surface-0);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+  color: var(--text-2);
+  padding: 0 var(--gap-3);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.new:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 </style>
