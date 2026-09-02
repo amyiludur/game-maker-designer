@@ -1,0 +1,27 @@
+{
+    "name": "gmd/harness",
+    "description": "Drivers around the rules kernel: fixture loading, bots, headless matches, replays, fuzzing.",
+    "type": "library",
+    "license": "proprietary",
+    "version": "0.1.0",
+    "require": {
+        "php": "^8.3",
+        "gmd/kernel": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gmd\\Harness\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Gmd\\Harness\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/gmd"
+    ],
+    "config": {
+        "sort-packages": true
+    }
+}

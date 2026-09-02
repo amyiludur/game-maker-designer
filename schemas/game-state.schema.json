@@ -4,136 +4,595 @@
   "title": "Game State",
   "description": "The complete, serialisable state of a match. Derived characteristics (attack, health, cost) are deliberately absent: they are computed from card definitions plus active modifiers.",
   "type": "object",
-  "required": ["systemVersion", "seed", "rngPosition", "version", "round", "activePlayer", "phase", "step", "players", "zones", "instances"],
+  "required": [
+    "systemVersion",
+    "seed",
+    "rngPosition",
+    "version",
+    "round",
+    "activePlayer",
+    "phase",
+    "step",
+    "players",
+    "zones",
+    "instances"
+  ],
   "properties": {
-    "systemVersion": { "type": "string" },
-    "seed": { "type": "integer" },
-    "rngPosition": { "type": "integer", "minimum": 0, "description": "Values drawn so far; with seed, reconstructs the generator" },
-    "version": { "type": "integer", "minimum": 0, "description": "Optimistic-lock counter, incremented per action" },
-    "round": { "type": "integer", "minimum": 0 },
-    "activePlayer": { "type": "integer", "minimum": 0 },
-    "playerCount": { "type": "integer", "minimum": 1 },
-    "firstPlayer": { "type": "integer", "minimum": 0 },
-    "phase": { "type": "string" },
-    "step": { "type": "string" },
-    "priority": { "type": ["integer", "null"] },
-    "consecutivePasses": { "type": "integer", "minimum": 0 },
-
+    "systemVersion": {
+      "type": "string"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "rngPosition": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Values drawn so far; with seed, reconstructs the generator"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optimistic-lock counter, incremented per action"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "activePlayer": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "playerCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "firstPlayer": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "phase": {
+      "type": "string"
+    },
+    "step": {
+      "type": "string"
+    },
+    "priority": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "consecutivePasses": {
+      "type": "integer",
+      "minimum": 0
+    },
     "players": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["seat", "resources"],
+        "required": [
+          "seat",
+          "resources"
+        ],
         "properties": {
-          "seat": { "type": "integer", "minimum": 0 },
-          "resources": { "type": "object", "additionalProperties": { "type": "integer" } },
-          "flags": { "type": "object" },
-          "identityInstance": { "type": ["string", "null"] },
-          "status": { "enum": ["playing", "won", "lost", "conceded", "eliminated"] }
+          "seat": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "resources": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "flags": {
+            "type": "object"
+          },
+          "identityInstance": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "playing",
+              "won",
+              "lost",
+              "conceded",
+              "eliminated"
+            ]
+          }
         },
         "additionalProperties": false
       }
     },
-
     "zones": {
       "type": "object",
       "description": "Keyed by qualified zone id (p0.hand, shared.removed). Value is an ordered array of instance ids.",
-      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
     },
-
     "adversaries": {
       "type": "object",
       "description": "Engine-controlled sides, keyed by adversary id. anchors maps anchor id to instance id.",
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "anchors": { "type": "object", "additionalProperties": { "type": "string" } },
-          "flags": { "type": "object" }
+          "anchors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "object"
+          }
         },
         "additionalProperties": false
       }
     },
-
     "instances": {
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": ["code", "owner", "controller", "zone"],
+        "required": [
+          "code",
+          "owner",
+          "controller",
+          "zone"
+        ],
         "properties": {
-          "code": { "type": "string" },
-          "owner": { "type": "string", "description": "Side id: p0, p1, ... for players; the adversary id for engine-controlled sides." },
-          "controller": { "type": "string", "description": "Side id. An enemy engaged with player 2 sits in zone p1.engaged with controller \"villain\"." },
-          "zone": { "type": "string" },
-          "face": { "enum": ["front", "back"], "default": "front" },
-          "exhausted": { "type": "boolean", "default": false },
-          "faceDown": { "type": "boolean", "default": false },
-          "counters": { "type": "object", "additionalProperties": { "type": "integer" } },
-          "attachedTo": { "type": ["string", "null"] },
-          "attachments": { "type": "array", "items": { "type": "string" } },
-          "enteredOnRound": { "type": "integer" },
-          "revealedTo": { "type": "array", "items": { "type": "string" } },
-          "usedLimits": { "type": "object" }
+          "code": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Side id: p0, p1, ... for players; the adversary id for engine-controlled sides."
+          },
+          "controller": {
+            "type": "string",
+            "description": "Side id. An enemy engaged with player 2 sits in zone p1.engaged with controller \"villain\"."
+          },
+          "zone": {
+            "type": "string"
+          },
+          "face": {
+            "enum": [
+              "front",
+              "back"
+            ],
+            "default": "front"
+          },
+          "exhausted": {
+            "type": "boolean",
+            "default": false
+          },
+          "faceDown": {
+            "type": "boolean",
+            "default": false
+          },
+          "counters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "attachedTo": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enteredOnRound": {
+            "type": "integer"
+          },
+          "revealedTo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usedLimits": {
+            "type": "object"
+          }
         },
         "additionalProperties": false
       }
     },
-
     "modifiers": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "source", "layer", "timestamp", "changes"],
+        "required": [
+          "id",
+          "source",
+          "layer",
+          "timestamp",
+          "changes"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "source": { "type": "string" },
-          "layer": { "type": "integer", "minimum": 0, "maximum": 9 },
-          "timestamp": { "type": "integer" },
-          "query": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/query" },
-          "changes": { "type": "array" },
-          "duration": { "type": "string" }
+          "id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "layer": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9
+          },
+          "timestamp": {
+            "type": "integer"
+          },
+          "query": {
+            "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/query"
+          },
+          "changes": {
+            "type": "array"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The selector this modifier was created from, kept for the inspector's breakdown."
+          },
+          "targets": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Instance ids resolved once, when the modifier was created. A modifier carries either targets (fixed at creation, e.g. Bolster) or query (re-evaluated on every recompute, e.g. an aura). The difference is player-observable."
+          },
+          "abilityId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
         "additionalProperties": false
       }
     },
-
-    "stack": { "type": "array", "items": { "type": "object" } },
-    "triggerQueue": { "type": "array", "items": { "type": "object" } },
-
+    "stack": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/stackItem"
+      }
+    },
+    "triggerQueue": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/triggerRecord"
+      }
+    },
     "pendingChoice": {
-      "type": ["object", "null"],
-      "required": ["seat", "kind"],
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "seat",
+        "kind"
+      ],
       "properties": {
-        "seat": { "type": "integer" },
-        "kind": { "enum": ["choose_cards", "choose_players", "choose_option", "choose_number", "yes_no", "order_items", "distribute"] },
-        "prompt": { "type": "string" },
-        "options": { "type": "object" },
+        "seat": {
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "choose_cards",
+            "choose_players",
+            "choose_option",
+            "choose_number",
+            "yes_no",
+            "order_items",
+            "distribute"
+          ]
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object"
+        },
         "count": {},
-        "optional": { "type": "boolean" },
+        "optional": {
+          "type": "boolean"
+        },
         "source": {
           "type": "object",
           "properties": {
-            "instance": { "type": "string" },
-            "ability": { "type": "string" }
+            "instance": {
+              "type": "string"
+            },
+            "ability": {
+              "type": "string"
+            }
           },
           "additionalProperties": false
+        },
+        "id": {
+          "type": "string",
+          "description": "Short id, unique within its source ability (e.g. \"victim\")."
+        },
+        "key": {
+          "type": "string",
+          "description": "Fully qualified id: <sourceInstance>.<abilityId>.<id>. Replay entries may answer a choice by either key or short id."
         }
       },
       "additionalProperties": false
     },
-
-    "vars": { "type": "object" },
-    "log": { "type": "array", "items": { "type": "object" } },
-
+    "vars": {
+      "type": "object"
+    },
+    "log": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/eventRecord"
+      },
+      "description": "Recent events, capped. Excluded from the conformance state hash: it is a presentation buffer, and hashing it would make the hash depend on truncation policy."
+    },
     "result": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
-        "winner": { "type": ["integer", "null"] },
-        "reason": { "type": "string" },
-        "rounds": { "type": "integer" },
-        "draw": { "type": "boolean" }
+        "winner": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "rounds": {
+          "type": "integer"
+        },
+        "draw": {
+          "type": "boolean"
+        },
+        "winners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Side ids. Cooperative outcomes win or lose as a table (doc 16 \u00a76)."
+        },
+        "losers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "programRef": {
+      "type": "string",
+      "description": "Stable pointer to an effect script in the compiled system, e.g. \"card:core-024#a1.effect\", \"action:play_event.effect\", \"system:setup\", \"adversary:warden.activation\". Stack items reference programs rather than inlining them, so a suspended stack stays small and serialisable."
+    },
+    "bindings": {
+      "type": "object",
+      "description": "Serialised selector bindings in force for this item: self, you, opponent, target.<id>, event.<field>, each, player, host, param.<id>."
+    },
+    "stackFrame": {
+      "type": "object",
+      "required": [
+        "program",
+        "pc"
+      ],
+      "properties": {
+        "program": {
+          "$ref": "#/$defs/programRef"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keys walked from the program root to this frame's op list."
+        },
+        "pc": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Index of the next op to run in this frame."
+        },
+        "items": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Loop collection for for_each / for_each_player / repeat."
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "vars": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "stackItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "controller",
+        "frames"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "action",
+            "ability",
+            "state_check",
+            "adversary_activation",
+            "setup",
+            "step"
+          ]
+        },
+        "controller": {
+          "type": "string",
+          "description": "Side id."
+        },
+        "frames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stackFrame"
+          },
+          "description": "Innermost frame last."
+        },
+        "bindings": {
+          "$ref": "#/$defs/bindings"
+        },
+        "sourceInstance": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "abilityId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "awaiting": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Id of the pendingChoice this item is parked on, if any."
+        }
+      },
+      "additionalProperties": false
+    },
+    "triggerRecord": {
+      "type": "object",
+      "required": [
+        "id",
+        "event",
+        "controller",
+        "program"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "event": {
+          "type": "string"
+        },
+        "controller": {
+          "type": "string",
+          "description": "Side id."
+        },
+        "program": {
+          "$ref": "#/$defs/programRef"
+        },
+        "bindings": {
+          "$ref": "#/$defs/bindings"
+        },
+        "sourceInstance": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "abilityId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "queuedAt": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Order this trigger fired in; the tiebreak within one controller under triggerOrdering \"declaration\"."
+        }
+      },
+      "additionalProperties": false
+    },
+    "eventRecord": {
+      "type": "object",
+      "required": [
+        "seq",
+        "type"
+      ],
+      "properties": {
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "type": {
+          "type": "string",
+          "description": "An event from the core catalogue, or one the system declares."
+        },
+        "payload": {
+          "type": "object"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "round": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "phase": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "step": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }

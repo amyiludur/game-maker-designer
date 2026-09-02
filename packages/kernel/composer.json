@@ -1,0 +1,25 @@
+{
+    "name": "gmd/kernel",
+    "description": "Deterministic, framework-free rules kernel for the Game Maker Designer LCG platform.",
+    "type": "library",
+    "license": "proprietary",
+    "version": "0.1.0",
+    "require": {
+        "php": "^8.3",
+        "ext-json": "*",
+        "ext-random": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gmd\\Kernel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Gmd\\Kernel\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
