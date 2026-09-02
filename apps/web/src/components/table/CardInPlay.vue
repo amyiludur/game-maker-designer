@@ -24,7 +24,11 @@ function delta(attribute: string): string | null {
   <article
     class="card"
     :class="{ exhausted: card.exhausted, targetable, dimmed, hidden: card.hidden }"
-    :aria-label="card.hidden ? 'Face-down card' : `${card.name}, attack ${card.attributes?.attack ?? '—'}, health ${card.attributes?.health ?? '—'}`"
+    :aria-label="
+      card.hidden
+        ? 'Face-down card'
+        : `${card.name}, attack ${card.attributes?.attack ?? '—'}, health ${card.attributes?.health ?? '—'}`
+    "
   >
     <template v-if="card.hidden">
       <span class="back" />
@@ -69,7 +73,9 @@ function delta(attribute: string): string | null {
   box-shadow: var(--shadow-in-play);
   display: flex;
   flex-direction: column;
-  transition: transform 120ms ease, opacity 120ms ease;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
 }
 
 .card.exhausted {

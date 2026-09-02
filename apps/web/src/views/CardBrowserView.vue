@@ -54,7 +54,11 @@ function open(code: string): void {
       <section>
         <h2 class="label">Type</h2>
         <label v-for="type in games.cardTypes" :key="type.id" class="facet">
-          <input type="checkbox" :checked="cards.filters.type.includes(type.id)" @change="cards.toggle('type', type.id)" />
+          <input
+            type="checkbox"
+            :checked="cards.filters.type.includes(type.id)"
+            @change="cards.toggle('type', type.id)"
+          />
           <span>{{ type.name }}</span>
           <span class="count mono">{{ typeCounts[type.id] ?? 0 }}</span>
         </label>
@@ -113,12 +117,7 @@ function open(code: string): void {
       </header>
 
       <div v-if="view === 'grid'" class="grid">
-        <CardThumb
-          v-for="card in cards.cards"
-          :key="card.id"
-          v-bind="card"
-          @click="open(card.code)"
-        />
+        <CardThumb v-for="card in cards.cards" :key="card.id" v-bind="card" @click="open(card.code)" />
       </div>
 
       <table v-else class="table">
@@ -141,7 +140,11 @@ function open(code: string): void {
             <td class="name">{{ card.name }}</td>
             <td>{{ card.type }}</td>
             <td>
-              <span v-if="card.faction" class="swatch" :style="{ background: games.factionColor(card.faction) }" />
+              <span
+                v-if="card.faction"
+                class="swatch"
+                :style="{ background: games.factionColor(card.faction) }"
+              />
               {{ card.faction }}
             </td>
             <td class="num">{{ card.cost }}</td>
@@ -171,7 +174,9 @@ function open(code: string): void {
             }"
           />
         </div>
-        <span class="mono count">{{ row.authored }}<span v-if="row.planned">/{{ row.planned }}</span></span>
+        <span class="mono count"
+          >{{ row.authored }}<span v-if="row.planned">/{{ row.planned }}</span></span
+        >
       </div>
 
       <h2 class="label" style="margin-top: 16px">By cost</h2>

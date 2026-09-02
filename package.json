@@ -1,20 +1,25 @@
 {
-  "name": "game-maker-designer",
-  "version": "0.1.0",
-  "private": true,
-  "description": "An LCG design, authoring, balancing and playtesting platform.",
-  "type": "module",
-  "scripts": {
-    "validate": "node scripts/validate-examples.mjs",
-    "web": "npm run dev --workspace @gmd/web",
-    "web:build": "npm run build --workspace @gmd/web",
-    "web:test": "npm run test --workspace @gmd/web"
-  },
-  "devDependencies": {
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1"
-  },
-  "workspaces": [
-    "apps/web"
-  ]
+    "name": "game-maker-designer",
+    "version": "0.1.0",
+    "private": true,
+    "description": "An LCG design, authoring, balancing and playtesting platform.",
+    "type": "module",
+    "scripts": {
+        "validate": "node scripts/validate-examples.mjs",
+        "web": "npm run dev --workspace @gmd/web",
+        "web:build": "npm run build --workspace @gmd/web",
+        "web:test": "npm run test --workspace @gmd/web",
+        "typecheck": "npm run typecheck --workspace @gmd/web",
+        "types": "npm run types --workspace @gmd/web",
+        "types:check": "npm run types:check --workspace @gmd/web",
+        "lint": "npm run lint --workspace @gmd/web",
+        "e2e": "npm run e2e --workspace @gmd/web"
+    },
+    "devDependencies": {
+        "ajv": "^8.17.1",
+        "ajv-formats": "^3.0.1"
+    },
+    "workspaces": [
+        "apps/web"
+    ]
 }

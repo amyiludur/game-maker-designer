@@ -93,7 +93,7 @@ final class EffectInterpreter
             $this->events,
             $item,
             $frame,
-            (new Bindings($item->bindings))->withAll($frame->vars),
+            new Bindings($item->bindings)->withAll($frame->vars),
         );
 
         $op->execute($node, $context);

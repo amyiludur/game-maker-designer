@@ -40,7 +40,8 @@ const breadcrumb = computed(() => {
       class="badge error"
       :to="`/g/${games.current?.slug}/cards`"
       :title="`${games.lintErrors.length} lint error(s)`"
-    >◆ {{ games.lintErrors.length }}</RouterLink>
+      >◆ {{ games.lintErrors.length }}</RouterLink
+    >
     <span v-if="games.lintWarnings.length > 0" class="badge warn">▲ {{ games.lintWarnings.length }}</span>
   </header>
 </template>

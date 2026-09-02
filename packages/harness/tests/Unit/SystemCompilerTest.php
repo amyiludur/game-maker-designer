@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 use Gmd\Harness\Loader\FixtureLoader;
-use Gmd\Kernel\System\CompiledAbility;
-
 use Gmd\Harness\Tests\Support\Examples;
+use Gmd\Kernel\System\CompiledAbility;
 
 /*
  * The compiler is exercised against the two worked example games rather than toy fixtures.

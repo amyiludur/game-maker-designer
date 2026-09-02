@@ -126,8 +126,28 @@ export const useMatchStore = defineStore('match', () => {
   }
 
   return {
-    matchId, side, view, legalActions, version, stateHash, status, actionCount,
-    pending, problem, eventQueue, pendingChoice, isOver, round, step, targetable,
-    absorb, open, act, choose, undo, drain, card,
+    matchId,
+    side,
+    view,
+    legalActions,
+    version,
+    stateHash,
+    status,
+    actionCount,
+    pending,
+    problem,
+    eventQueue,
+    pendingChoice,
+    isOver,
+    round,
+    step,
+    targetable,
+    absorb,
+    open,
+    act,
+    choose,
+    undo,
+    drain,
+    card,
   }
 })

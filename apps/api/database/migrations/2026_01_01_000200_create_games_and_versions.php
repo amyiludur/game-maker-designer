@@ -18,8 +18,7 @@ use Illuminate\Support\Facades\Schema;
  * A replay from six months ago has to reproduce against the rules it was played under, and
  * a well-meaning update in a controller would quietly destroy that.
  */
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('games', function (Blueprint $table): void {

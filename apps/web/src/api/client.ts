@@ -89,12 +89,18 @@ async function paged<T>(path: string): Promise<Paged<T>> {
 export const api = {
   games: () => request<GameSummary[]>('/games'),
 
-  game: (game: string) => request<GameSummary & { sets: { id: string; code: string; name: string; cardCount: number }[] }>(`/games/${game}`),
+  game: (game: string) =>
+    request<GameSummary & { sets: { id: string; code: string; name: string; cardCount: number }[] }>(
+      `/games/${game}`,
+    ),
 
-  compiled: (game: string, version: string) => request<CompiledBundle>(`/games/${game}/versions/${version}/compiled`),
+  compiled: (game: string, version: string) =>
+    request<CompiledBundle>(`/games/${game}/versions/${version}/compiled`),
 
   lint: (game: string, version: string) =>
-    request<{ compiled: boolean; errors?: number; findings: LintFinding[] }>(`/games/${game}/versions/${version}/lint`),
+    request<{ compiled: boolean; errors?: number; findings: LintFinding[] }>(
+      `/games/${game}/versions/${version}/lint`,
+    ),
 
   cards: (game: string, filters: Record<string, unknown> = {}) =>
     paged<CardSummary>(`/games/${game}/cards${query(filters)}`),
@@ -128,7 +134,9 @@ export const api = {
     >(`/games/${game}/decks`),
 
   deck: (id: string) =>
-    request<{ id: string; name: string; document: Record<string, unknown>; legality: DeckLegality }>(`/decks/${id}`),
+    request<{ id: string; name: string; document: Record<string, unknown>; legality: DeckLegality }>(
+      `/decks/${id}`,
+    ),
 
   validateDeck: (game: string, document: unknown) =>
     request<DeckLegality>(`/games/${game}/decks/validate`, {
@@ -150,11 +158,15 @@ export const api = {
 
   match: (id: string, side: string) => request<MatchEnvelope>(`/matches/${id}${query({ side })}`),
 
-  act: (id: string, payload: { side: string; actionId: string; params?: Record<string, string>; expectedVersion?: number }) =>
-    request<MatchEnvelope>(`/matches/${id}/actions`, { method: 'POST', body: JSON.stringify(payload) }),
+  act: (
+    id: string,
+    payload: { side: string; actionId: string; params?: Record<string, string>; expectedVersion?: number },
+  ) => request<MatchEnvelope>(`/matches/${id}/actions`, { method: 'POST', body: JSON.stringify(payload) }),
 
-  choose: (id: string, payload: { side: string; choiceId: string; selection?: string[]; expectedVersion?: number }) =>
-    request<MatchEnvelope>(`/matches/${id}/choice`, { method: 'POST', body: JSON.stringify(payload) }),
+  choose: (
+    id: string,
+    payload: { side: string; choiceId: string; selection?: string[]; expectedVersion?: number },
+  ) => request<MatchEnvelope>(`/matches/${id}/choice`, { method: 'POST', body: JSON.stringify(payload) }),
 
   undo: (id: string, toSequence: number) =>
     request<MatchEnvelope>(`/matches/${id}/undo`, { method: 'POST', body: JSON.stringify({ toSequence }) }),

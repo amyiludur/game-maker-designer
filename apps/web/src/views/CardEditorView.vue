@@ -33,7 +33,23 @@ const vocabularies = computed<Record<string, string[]>>(() => ({
   rarities: games.compiled?.vocabularies.rarities ?? [],
 }))
 
-const abilities = computed(() => (document_.value.abilities as unknown[]) ?? [])
+/**
+ * The card's abilities, named.
+ *
+ * The shape comes from `ability.schema.json`; only the header fields are read here, because
+ * everything below the header is drawn generically by `AbilityNode` — which is what lets a
+ * game invent an ability kind this editor has never heard of.
+ */
+interface AbilityHeader {
+  id?: string
+  kind?: string
+  speed?: string
+  text?: string
+}
+
+const abilities = computed<AbilityHeader[]>(() =>
+  Array.isArray(document_.value.abilities) ? (document_.value.abilities as AbilityHeader[]) : [],
+)
 
 watch(
   () => props.card,
@@ -79,11 +95,15 @@ async function save(): Promise<void> {
       <p class="meta mono">
         {{ detail.code }} · {{ detail.type }}
         <span v-if="detail.faction">
-          · <span class="swatch" :style="{ background: games.factionColor(detail.faction) }" />{{ detail.faction }}
+          · <span class="swatch" :style="{ background: games.factionColor(detail.faction) }" />{{
+            detail.faction
+          }}
         </span>
       </p>
 
-      <h2 class="label section">Attributes <span class="muted">from cardTypes.{{ type }}</span></h2>
+      <h2 class="label section">
+        Attributes <span class="muted">from cardTypes.{{ type }}</span>
+      </h2>
       <AttributeForm
         v-if="compiledType"
         v-model="attributes"
@@ -93,28 +113,29 @@ async function save(): Promise<void> {
       <p v-else class="muted">This card's type is not in the compiled bundle.</p>
 
       <h2 class="label section">Abilities</h2>
-      <p v-if="abilities.length === 0" class="muted">No abilities. Its behaviour is whatever its keywords grant.</p>
+      <p v-if="abilities.length === 0" class="muted">
+        No abilities. Its behaviour is whatever its keywords grant.
+      </p>
       <article v-for="(ability, index) in abilities" :key="index" class="ability">
         <header>
-          <span class="id mono">{{ (ability as Record<string, string>).id }}</span>
-          <span class="kind mono">
-            {{ (ability as Record<string, string>).kind }} · {{ (ability as Record<string, string>).speed }}
-          </span>
+          <span class="id mono">{{ ability.id }}</span>
+          <span class="kind mono">{{ ability.kind }} · {{ ability.speed }}</span>
           <span class="spacer" />
-          <label class="toggle mono">
-            <input v-model="showDepthBadges" type="checkbox" /> depth
-          </label>
+          <label class="toggle mono"> <input v-model="showDepthBadges" type="checkbox" /> depth </label>
         </header>
         <AbilityNode :node="ability" :show-depth-badges="showDepthBadges" />
-        <p v-if="(ability as Record<string, string>).text" class="generated">
-          {{ (ability as Record<string, string>).text }}
-        </p>
+        <p v-if="ability.text" class="generated">{{ ability.text }}</p>
       </article>
     </section>
 
     <aside class="context">
       <nav class="tabs">
-        <button v-for="name in (['lint', 'json', 'revisions'] as const)" :key="name" :class="{ on: tab === name }" @click="tab = name">
+        <button
+          v-for="name in ['lint', 'json', 'revisions'] as const"
+          :key="name"
+          :class="{ on: tab === name }"
+          @click="tab = name"
+        >
           {{ name }}
         </button>
       </nav>

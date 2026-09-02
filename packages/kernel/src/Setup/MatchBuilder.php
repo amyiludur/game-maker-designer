@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Gmd\Kernel\Setup;
 
 use Gmd\Kernel\Contract\MatchSetup;
-use Gmd\Kernel\Contract\SeatSetup;
 use Gmd\Kernel\Contract\Side;
 use Gmd\Kernel\Diagnostics\BadDocument;
 use Gmd\Kernel\State\GameState;

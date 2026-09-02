@@ -5,7 +5,10 @@ import { ApiError_, api } from './client'
 function respond(status: number, body: unknown): void {
   vi.stubGlobal(
     'fetch',
-    vi.fn(async () => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })),
+    vi.fn(
+      async () =>
+        new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } }),
+    ),
   )
 }
 
@@ -37,7 +40,9 @@ describe('api client', () => {
   it('does not treat any other 409 as stale', async () => {
     respond(409, { error: { code: 'match_finished', message: 'Already over.' } })
 
-    const error = (await api.act('m1', { side: 'p0', actionId: 'pass' }).catch((e: unknown) => e)) as ApiError_
+    const error = (await api
+      .act('m1', { side: 'p0', actionId: 'pass' })
+      .catch((e: unknown) => e)) as ApiError_
     expect(error.isStale).toBe(false)
   })
 
@@ -80,7 +85,10 @@ describe('api client', () => {
   })
 
   it('falls back to the status line when the body is not JSON', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response('<html>502</html>', { status: 502, statusText: 'Bad Gateway' })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('<html>502</html>', { status: 502, statusText: 'Bad Gateway' })),
+    )
 
     const error = (await api.games().catch((e: unknown) => e)) as ApiError_
     expect(error.status).toBe(502)

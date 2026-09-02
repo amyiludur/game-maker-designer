@@ -9,10 +9,9 @@ use Gmd\Kernel\Diagnostics\KernelException;
 use Gmd\Kernel\Effect\EffectInterpreter;
 use Gmd\Kernel\Rng\Pcg64Rng;
 use Gmd\Kernel\State\Draft;
-use Gmd\Kernel\State\GameState;
-use Gmd\Kernel\State\StateView;
 use Gmd\Kernel\State\StackFrame;
 use Gmd\Kernel\State\StackItem;
+use Gmd\Kernel\State\StateView;
 use Gmd\Kernel\System\ActionTemplate;
 use Gmd\Kernel\System\SystemDocument;
 

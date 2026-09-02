@@ -32,7 +32,7 @@ final class FuzzCommand extends Command
         $started = hrtime(true);
         $done = 0;
 
-        $report = (new FuzzRunner($game, new Kernel($game->system)))->run(
+        $report = new FuzzRunner($game, new Kernel($game->system))->run(
             $matches,
             $firstSeed,
             function (int $seed, ?FuzzFailure $failure) use (&$done, $matches, $started): void {

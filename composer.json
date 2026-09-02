@@ -45,7 +45,6 @@
     "prefer-stable": true,
     "scripts": {
         "test": "pest",
-        "analyse": "phpstan analyse",
         "cs": "php-cs-fixer fix --dry-run --diff",
         "cs:fix": "php-cs-fixer fix"
     }

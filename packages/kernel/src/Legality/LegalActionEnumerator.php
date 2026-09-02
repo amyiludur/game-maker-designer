@@ -9,7 +9,6 @@ use Gmd\Kernel\Contract\Action;
 use Gmd\Kernel\Contract\ActionList;
 use Gmd\Kernel\Contract\LegalAction;
 use Gmd\Kernel\Contract\Side;
-use Gmd\Kernel\Effect\OpContext;
 use Gmd\Kernel\Expr\Bindings;
 use Gmd\Kernel\Expr\EvalContext;
 use Gmd\Kernel\Expr\Runtime;

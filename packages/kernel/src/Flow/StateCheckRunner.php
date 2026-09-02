@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Gmd\Kernel\Flow;
 
 use Gmd\Kernel\Effect\OpContext;
-use Gmd\Kernel\Expr\Bindings;
 use Gmd\Kernel\State\Draft;
 use Gmd\Kernel\State\StackFrame;
 use Gmd\Kernel\State\StackItem;

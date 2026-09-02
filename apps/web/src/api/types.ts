@@ -154,7 +154,13 @@ export interface PlayerView {
   step: string
   activeSide: string
   zones: Record<string, ViewCard[]>
-  players: { seat: number; side: string; resources: Record<string, number>; identityInstance: string | null; status: string }[]
+  players: {
+    seat: number
+    side: string
+    resources: Record<string, number>
+    identityInstance: string | null
+    status: string
+  }[]
   pendingChoice?: PendingChoice | null
   result?: { winners: string[]; losers: string[]; reason: string; rounds: number; draw?: boolean } | null
   log?: { seq: number; type: string; payload: Record<string, unknown> }[]

@@ -36,7 +36,7 @@ final class PlayCommand extends Command
         }
 
         $started = hrtime(true);
-        $outcome = (new MatchRunner($kernel, $agents))->run(new MatchSetup($seats, seed: $seed));
+        $outcome = new MatchRunner($kernel, $agents)->run(new MatchSetup($seats, seed: $seed));
         $elapsed = (hrtime(true) - $started) / 1e6;
 
         $this->line();

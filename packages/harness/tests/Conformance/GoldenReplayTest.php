@@ -38,7 +38,7 @@ it('reproduces every golden replay exactly', function (string $file): void {
         return;
     }
 
-    $result = (new ReplayRunner($loader))->verify($replay);
+    $result = new ReplayRunner($loader)->verify($replay);
 
     expect($result->problems)->toBe([], "the replay could not be run to the end:\n  "
         . implode("\n  ", $result->problems));

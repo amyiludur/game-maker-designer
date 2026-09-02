@@ -8,8 +8,8 @@ const games = useGameStore()
   <div class="dashboard">
     <h1>Games</h1>
     <p class="muted intro">
-      A game is data. Its zones, phases, resources, card types and win conditions live in one
-      JSON document, and one deterministic kernel plays whatever that document says.
+      A game is data. Its zones, phases, resources, card types and win conditions live in one JSON document,
+      and one deterministic kernel plays whatever that document says.
     </p>
 
     <div class="cards">

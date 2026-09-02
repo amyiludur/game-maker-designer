@@ -18,8 +18,7 @@ use Illuminate\Support\Facades\Schema;
  * Append-only is enforced by the database, not by convention: a rule the application layer
  * merely intends to follow is a rule that gets broken by a migration script at 2am.
  */
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('matches', function (Blueprint $table): void {

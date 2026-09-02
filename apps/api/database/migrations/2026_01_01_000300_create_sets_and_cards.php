@@ -20,8 +20,7 @@ use Illuminate\Support\Facades\Schema;
  * the reproject command, so the test that proves index columns are droppable would silently
  * cover less than it claims. One mechanism, one test.
  */
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('sets', function (Blueprint $table): void {

@@ -12,18 +12,22 @@ import { computed } from 'vue'
  * background step. One of the three would be enough to see; all three make it readable at
  * four levels deep, which is where these trees actually live.
  */
-const props = withDefaults(
-  defineProps<{ node: unknown; depth?: number; showDepthBadges?: boolean }>(),
-  { depth: 0, showDepthBadges: true },
-)
+const props = withDefaults(defineProps<{ node: unknown; depth?: number; showDepthBadges?: boolean }>(), {
+  depth: 0,
+  showDepthBadges: true,
+})
 
-const isNode = computed(() => typeof props.node === 'object' && props.node !== null && !Array.isArray(props.node))
+const isNode = computed(
+  () => typeof props.node === 'object' && props.node !== null && !Array.isArray(props.node),
+)
 const op = computed(() => (isNode.value ? (props.node as Record<string, unknown>).op : undefined))
 
 /** Everything but the op, split into leaves and branches so branches render below. */
 const entries = computed(() => {
   if (!isNode.value) return []
-  return Object.entries(props.node as Record<string, unknown>).filter(([key]) => key !== 'op' && key !== 'text')
+  return Object.entries(props.node as Record<string, unknown>).filter(
+    ([key]) => key !== 'op' && key !== 'text',
+  )
 })
 
 const leaves = computed(() => entries.value.filter(([, value]) => !isBranch(value)))
@@ -37,8 +41,8 @@ function isSelector(value: unknown): boolean {
   return typeof value === 'string' && value.startsWith('$')
 }
 
-const background = computed(() =>
-  ['var(--surface-4)', '#0f1418', 'var(--surface-0)'][Math.min(props.depth, 2)],
+const background = computed(
+  () => ['var(--surface-4)', '#0f1418', 'var(--surface-0)'][Math.min(props.depth, 2)],
 )
 </script>
 

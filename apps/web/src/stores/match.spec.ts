@@ -116,7 +116,9 @@ describe('match store', () => {
   it('reports any other failure without touching the position', async () => {
     const store = useMatchStore()
     store.absorb(envelope())
-    vi.mocked(api.act).mockRejectedValue(new ApiError_(422, { code: 'illegal_action', message: 'Not a legal action.' }))
+    vi.mocked(api.act).mockRejectedValue(
+      new ApiError_(422, { code: 'illegal_action', message: 'Not a legal action.' }),
+    )
 
     await store.act(store.legalActions[1]!)
 
@@ -129,7 +131,11 @@ describe('match store', () => {
     store.absorb(envelope())
 
     let release: (value: MatchEnvelope) => void = () => {}
-    vi.mocked(api.act).mockReturnValue(new Promise((resolve) => { release = resolve }))
+    vi.mocked(api.act).mockReturnValue(
+      new Promise((resolve) => {
+        release = resolve
+      }),
+    )
 
     const first = store.act(store.legalActions[0]!)
     await store.act(store.legalActions[1]!)

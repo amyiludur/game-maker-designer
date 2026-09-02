@@ -16,7 +16,7 @@ use Gmd\Kernel\Kernel;
 
 it('never violates a structural invariant over many random matches', function (): void {
     $game = Examples::emberfall();
-    $report = (new FuzzRunner($game, new Kernel($game->system)))->run(matches: 60);
+    $report = new FuzzRunner($game, new Kernel($game->system))->run(matches: 60);
 
     $failures = array_map(fn ($f): string => $f->describe(), $report->failures);
 
@@ -26,7 +26,7 @@ it('never violates a structural invariant over many random matches', function ()
 
 it('finishes every random match rather than stalling', function (): void {
     $game = Examples::emberfall();
-    $report = (new FuzzRunner($game, new Kernel($game->system)))->run(matches: 30, firstSeed: 5000);
+    $report = new FuzzRunner($game, new Kernel($game->system))->run(matches: 30, firstSeed: 5000);
 
     // A stall means the settle loop reached a position where nobody could act and nothing
     // was resolving, which is a kernel bug rather than a legitimate way for a game to end.
@@ -35,7 +35,7 @@ it('finishes every random match rather than stalling', function (): void {
 
 it('reaches both of the ways the game can end', function (): void {
     $game = Examples::emberfall();
-    $report = (new FuzzRunner($game, new Kernel($game->system)))->run(matches: 40);
+    $report = new FuzzRunner($game, new Kernel($game->system))->run(matches: 40);
 
     expect(array_keys($report->reasons))->toContain('hero_burned');
     // Random bots play badly and often run out the clock; doc 09's 5% STALL threshold is a

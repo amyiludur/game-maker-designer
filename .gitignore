@@ -14,3 +14,6 @@ vendor/
 /apps/web/dist/
 /apps/web/test-results/
 /apps/web/playwright-report/
+
+# PHP CS Fixer configuration
+/.php-cs-fixer.php

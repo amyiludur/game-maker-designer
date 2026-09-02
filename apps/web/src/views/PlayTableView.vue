@@ -6,12 +6,12 @@ import type { LegalAction } from '@/api/types'
 import { useGameStore } from '@/stores/game'
 import { useMatchStore } from '@/stores/match'
 
-const props = defineProps<{ match: string }>()
+const props = defineProps<{ matchId: string }>()
 
 const match = useMatchStore()
 const games = useGameStore()
 
-onMounted(() => void match.open(props.match, 'p0'))
+onMounted(() => void match.open(props.matchId, 'p0'))
 
 const zones = computed(() => match.view?.zones ?? {})
 
@@ -95,13 +95,16 @@ function name(value: string): string {
               v-for="stepEntry in phase.steps"
               :key="stepEntry.id"
               :class="{ current: phase.id === match.view.phase && stepEntry.id === match.view.step }"
-            >{{ stepEntry.name }}</span>
+              >{{ stepEntry.name }}</span
+            >
           </span>
         </div>
       </div>
       <div class="whose">
         <span class="label">Waiting on</span>
-        <span class="mono">{{ match.pendingChoice ? `p${match.pendingChoice.seat}` : match.view.activeSide }}</span>
+        <span class="mono">{{
+          match.pendingChoice ? `p${match.pendingChoice.seat}` : match.view.activeSide
+        }}</span>
       </div>
 
       <!-- The state hash is on screen because a playtest note that carries one can be
@@ -118,54 +121,56 @@ function name(value: string): string {
 
     <div class="middle">
       <main class="board">
-      <section v-for="row in rows" :key="row.id" class="row" :data-zone="row.key">
-        <header class="row-head">
-          <span class="label">{{ row.label }}</span>
-          <span class="mono muted">{{ (zones[row.key] ?? []).length }}</span>
-        </header>
-        <div class="strip">
-          <CardInPlay
-            v-for="card in zones[row.key] ?? []"
-            :key="card.id"
-            :card="card"
-            :targetable="match.targetable.has(card.id)"
-            :dimmed="match.pendingChoice !== null && !match.targetable.has(card.id)"
-            @click="actionFor(card.id) && match.act(actionFor(card.id)!)"
-          />
-          <p v-if="(zones[row.key] ?? []).length === 0" class="muted empty">empty</p>
-        </div>
-      </section>
+        <section v-for="row in rows" :key="row.id" class="row" :data-zone="row.key">
+          <header class="row-head">
+            <span class="label">{{ row.label }}</span>
+            <span class="mono muted">{{ (zones[row.key] ?? []).length }}</span>
+          </header>
+          <div class="strip">
+            <CardInPlay
+              v-for="card in zones[row.key] ?? []"
+              :key="card.id"
+              :card="card"
+              :targetable="match.targetable.has(card.id)"
+              :dimmed="match.pendingChoice !== null && !match.targetable.has(card.id)"
+              @click="actionFor(card.id) && match.act(actionFor(card.id)!)"
+            />
+            <p v-if="(zones[row.key] ?? []).length === 0" class="muted empty">empty</p>
+          </div>
+        </section>
       </main>
 
-    <!-- The choice prompt is docked, not modal: the board it is asking about has to stay
+      <!-- The choice prompt is docked, not modal: the board it is asking about has to stay
          visible, which is the whole reason the design refuses a dialog here. -->
-    <div v-if="match.pendingChoice" class="prompt">
-      <span class="mono id">{{ match.pendingChoice.key }}</span>
-      <span class="text">{{ match.pendingChoice.prompt }}</span>
-      <span class="spacer" />
-      <button
-        v-for="candidate in match.pendingChoice.options?.cards ?? []"
-        :key="candidate"
-        class="choice"
-        @click="match.choose([candidate])"
-      >
-        {{ match.card(`${match.side}.play`, candidate)?.name ?? candidate }}
-      </button>
-      <button v-if="match.pendingChoice.optional" class="choice ghost" @click="match.choose([])">Decline</button>
-    </div>
+      <div v-if="match.pendingChoice" class="prompt">
+        <span class="mono id">{{ match.pendingChoice.key }}</span>
+        <span class="text">{{ match.pendingChoice.prompt }}</span>
+        <span class="spacer" />
+        <button
+          v-for="candidate in match.pendingChoice.options?.cards ?? []"
+          :key="candidate"
+          class="choice"
+          @click="match.choose([candidate])"
+        >
+          {{ match.card(`${match.side}.play`, candidate)?.name ?? candidate }}
+        </button>
+        <button v-if="match.pendingChoice.optional" class="choice ghost" @click="match.choose([])">
+          Decline
+        </button>
+      </div>
 
-    <!-- The log is the server's account of what happened, not the client's reconstruction
+      <!-- The log is the server's account of what happened, not the client's reconstruction
          of it: every line here came down with a response. -->
-    <aside class="log">
-      <h2 class="label">Log</h2>
-      <ol>
-        <li v-for="entry in log" :key="entry.seq" data-log-entry>
-          <span class="mono seq">{{ entry.seq }}</span>
-          <span class="mono type">{{ entry.type }}</span>
-          <span class="muted detail">{{ describe(entry) }}</span>
-        </li>
-      </ol>
-    </aside>
+      <aside class="log">
+        <h2 class="label">Log</h2>
+        <ol>
+          <li v-for="entry in log" :key="entry.seq" data-log-entry>
+            <span class="mono seq">{{ entry.seq }}</span>
+            <span class="mono type">{{ entry.type }}</span>
+            <span class="muted detail">{{ describe(entry) }}</span>
+          </li>
+        </ol>
+      </aside>
     </div>
 
     <footer class="dock">
@@ -182,7 +187,10 @@ function name(value: string): string {
 
       <div class="actions">
         <span class="resources mono">
-          <template v-for="(amount, id) in match.view.players.find((p) => p.side === match.side)?.resources ?? {}" :key="id">
+          <template
+            v-for="(amount, id) in match.view.players.find((p) => p.side === match.side)?.resources ?? {}"
+            :key="id"
+          >
             {{ id }} {{ amount }}
           </template>
         </span>
@@ -195,7 +203,9 @@ function name(value: string): string {
         >
           <span class="mono key">{{ index + 1 }}</span> {{ action.label }}
         </button>
-        <button v-if="passAction" class="action" data-action="pass" @click="match.act(passAction)">Pass</button>
+        <button v-if="passAction" class="action" data-action="pass" @click="match.act(passAction)">
+          Pass
+        </button>
         <button class="action ghost" :disabled="match.actionCount === 0" @click="match.undo()">Undo</button>
       </div>
 

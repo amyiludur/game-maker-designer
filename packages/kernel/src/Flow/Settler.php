@@ -15,9 +15,9 @@ use Gmd\Kernel\Expr\Bindings;
 use Gmd\Kernel\Expr\Runtime;
 use Gmd\Kernel\Legality\LegalActionEnumerator;
 use Gmd\Kernel\State\Draft;
+use Gmd\Kernel\State\ProgramRef;
 use Gmd\Kernel\State\StackFrame;
 use Gmd\Kernel\State\StackItem;
-use Gmd\Kernel\State\ProgramRef;
 use Gmd\Kernel\System\SystemDocument;
 
 /**

@@ -11,14 +11,14 @@ use App\Models\GameVersion;
 use App\Models\MatchAction;
 use App\Models\MatchPlayer;
 use App\Models\MatchSnapshot;
+use Gmd\Harness\Agent\RandomAgent;
 use Gmd\Kernel\Contract\Action;
+use Gmd\Kernel\Contract\Agent;
 use Gmd\Kernel\Contract\ChoiceResponse;
 use Gmd\Kernel\Contract\MatchSetup;
 use Gmd\Kernel\Contract\SeatSetup;
-use Gmd\Kernel\Contract\Agent;
 use Gmd\Kernel\Contract\Side;
 use Gmd\Kernel\Contract\StepResult;
-use Gmd\Harness\Agent\RandomAgent;
 use Gmd\Kernel\Kernel;
 use Gmd\Kernel\Rng\Pcg64Rng;
 use Gmd\Kernel\State\Codec\StateCodec;
@@ -361,7 +361,7 @@ final class MatchService
         while (! $state->isOver()) {
             if ($steps++ >= self::BOT_STEP_CAP) {
                 throw new \RuntimeException(
-                    "the bots made " . self::BOT_STEP_CAP . ' moves without the match ending or handing back'
+                    'the bots made ' . self::BOT_STEP_CAP . ' moves without the match ending or handing back',
                 );
             }
 
@@ -458,7 +458,7 @@ final class MatchService
                 Pcg64Rng::at((int) $match->seed + $seat + 1, $match->action_count + 1),
             ),
             default => throw new \RuntimeException(
-                "bot strategy \"{$strategy}\" is not implemented yet; only \"random\" is"
+                "bot strategy \"{$strategy}\" is not implemented yet; only \"random\" is",
             ),
         };
     }

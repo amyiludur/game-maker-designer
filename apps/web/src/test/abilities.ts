@@ -27,7 +27,11 @@ export function randomEffect(rand: Rand, depth = 0): Record<string, unknown> {
   if (shape === 2) {
     return {
       op: 'if',
-      condition: { op: rand.pick(['gt', 'lt', 'eq'] as const), left: rand.pick(SELECTORS), right: rand.int(5) },
+      condition: {
+        op: rand.pick(['gt', 'lt', 'eq'] as const),
+        left: rand.pick(SELECTORS),
+        right: rand.int(5),
+      },
       then: randomEffect(rand, depth + 1),
       ...(rand.bool() ? { else: randomEffect(rand, depth + 1) } : {}),
     }
@@ -48,7 +52,9 @@ export function randomAbility(rand: Rand): Record<string, unknown> {
     id: `a${rand.int(1000)}`,
     kind,
     speed: rand.pick(SPEEDS),
-    ...(kind === 'triggered' ? { trigger: { event: 'enters_play', filter: { op: 'is', left: '$event.card', right: '$self' } } } : {}),
+    ...(kind === 'triggered'
+      ? { trigger: { event: 'enters_play', filter: { op: 'is', left: '$event.card', right: '$self' } } }
+      : {}),
     ...(kind === 'activated' ? { cost: { op: 'pay_resource', amount: rand.int(4) } } : {}),
     effect: randomEffect(rand),
     text: 'Generated for a property test.',

@@ -55,7 +55,8 @@ final readonly class FuzzReport
     public function describe(): string
     {
         $lines = [sprintf('%d matches, %d failure(s)', $this->matches, count($this->failures))];
-        $lines[] = sprintf('  rounds: mean %.1f, min %d, max %d',
+        $lines[] = sprintf(
+            '  rounds: mean %.1f, min %d, max %d',
             $this->meanRounds(),
             $this->rounds === [] ? 0 : min($this->rounds),
             $this->rounds === [] ? 0 : max($this->rounds),

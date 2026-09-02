@@ -49,7 +49,13 @@ describe('AbilityNode', () => {
     const ability = {
       id: 'a1',
       kind: 'triggered',
-      effect: { op: 'sequence', effects: [{ op: 'draw', amount: 1 }, { op: 'deal_damage', target: '$target', amount: 2 }] },
+      effect: {
+        op: 'sequence',
+        effects: [
+          { op: 'draw', amount: 1 },
+          { op: 'deal_damage', target: '$target', amount: 2 },
+        ],
+      },
     }
 
     const wrapper = mount(AbilityNode, { props: { node: ability } })

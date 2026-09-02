@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Schema;
  * A/B balance test possible — the same decks against v0.4 and v0.5 — and what stops a
  * three-month-old replay from being reinterpreted by today's cards.
  */
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('decks', function (Blueprint $table): void {

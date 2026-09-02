@@ -12,8 +12,8 @@ use App\Models\GameMatch;
 use App\Models\GameVersion;
 use App\Services\SchemaValidator;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 final class GmdServiceProvider extends ServiceProvider
 {

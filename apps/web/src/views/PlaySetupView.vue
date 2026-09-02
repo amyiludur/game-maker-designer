@@ -70,8 +70,8 @@ async function start(): Promise<void> {
   <div class="setup">
     <h1>New playtest</h1>
     <p class="muted">
-      A match is pinned to one game version, one deck per seat and a seed. Supply the seed and
-      the same match deals the same cards — which is how a bug report becomes a regression test.
+      A match is pinned to one game version, one deck per seat and a seed. Supply the seed and the same match
+      deals the same cards — which is how a bug report becomes a regression test.
     </p>
 
     <label v-for="(_, seat) in seats" :key="seat" class="field">

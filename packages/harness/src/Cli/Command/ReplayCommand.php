@@ -31,7 +31,7 @@ final class ReplayCommand extends Command
         $this->line('  ' . $path);
         $this->line();
 
-        $result = (new ReplayRunner($loader))->verify($replay);
+        $result = new ReplayRunner($loader)->verify($replay);
 
         foreach ($result->problems as $problem) {
             $this->line('  ✗ ' . $problem);

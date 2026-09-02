@@ -9,7 +9,12 @@ type DeckEntry = DeckDocument['cards'][number]
 const props = defineProps<{ game: string }>()
 
 const decks = ref<Awaited<ReturnType<typeof api.decks>>>([])
-const selected = ref<{ id: string; name: string; document: Record<string, unknown>; legality: DeckLegality } | null>(null)
+const selected = ref<{
+  id: string
+  name: string
+  document: Record<string, unknown>
+  legality: DeckLegality
+} | null>(null)
 
 onMounted(async () => {
   decks.value = await api.decks(props.game)
@@ -77,8 +82,10 @@ function tenths(value: number): string {
 
       <h2 class="label section">Shape</h2>
       <dl class="stats">
-        <dt>Cards</dt><dd class="mono">{{ selected.legality.stats.total }}</dd>
-        <dt>Average cost</dt><dd class="mono">{{ tenths(selected.legality.stats.averageCostTenths) }}</dd>
+        <dt>Cards</dt>
+        <dd class="mono">{{ selected.legality.stats.total }}</dd>
+        <dt>Average cost</dt>
+        <dd class="mono">{{ tenths(selected.legality.stats.averageCostTenths) }}</dd>
       </dl>
 
       <h3 class="label">Curve</h3>
@@ -92,7 +99,8 @@ function tenths(value: number): string {
       <h3 class="label">By type</h3>
       <dl class="stats">
         <template v-for="(n, type) in selected.legality.stats.byType" :key="type">
-          <dt>{{ type }}</dt><dd class="mono">{{ n }}</dd>
+          <dt>{{ type }}</dt>
+          <dd class="mono">{{ n }}</dd>
         </template>
       </dl>
     </aside>

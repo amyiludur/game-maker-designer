@@ -34,6 +34,12 @@ export const router = createRouter({
       component: () => import('@/views/PlaySetupView.vue'),
       props: true,
     },
-    { path: '/m/:match', name: 'match', component: () => import('@/views/PlayTableView.vue'), props: true },
+    {
+      path: '/m/:match',
+      name: 'match',
+      component: () => import('@/views/PlayTableView.vue'),
+      // Named apart from the store the view holds, which is also called `match`.
+      props: (route) => ({ matchId: route.params.match }),
+    },
   ],
 })

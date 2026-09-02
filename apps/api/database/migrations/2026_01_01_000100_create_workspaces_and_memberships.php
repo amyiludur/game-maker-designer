@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Schema;
  * unscoped queries — because the failure mode of getting this wrong is one team seeing
  * another team's unreleased cards.
  */
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('workspaces', function (Blueprint $table): void {
