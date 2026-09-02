@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../schemas/deck.schema.json",
+  "schemaVersion": "1.0.0",
+  "gameId": "emberfall",
+  "gameVersion": "0.4.0",
+  "name": "Ember Aggro",
+  "archetype": "aggro",
+  "identity": "core-001",
+  "cards": [
+    { "code": "core-010", "count": 3 },
+    { "code": "core-011", "count": 3 },
+    { "code": "core-012", "count": 3 },
+    { "code": "core-013", "count": 2 },
+    { "code": "core-014", "count": 3 },
+    { "code": "core-015", "count": 2 },
+    { "code": "core-016", "count": 3 },
+    { "code": "core-030", "count": 3 },
+    { "code": "core-031", "count": 2 }
+  ],
+  "sideboard": [],
+  "notes": "24 cards, curve topping at 4. Testing whether 2x Warhorn Bearer is one too many for a deck that wants to be empty-handed by round 5."
+}

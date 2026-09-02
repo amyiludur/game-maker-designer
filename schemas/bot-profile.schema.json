@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/bot-profile.schema.json",
+  "title": "Bot Profile",
+  "description": "A named agent strategy and its configuration. Heuristic features use the same expression language as card abilities.",
+  "type": "object",
+  "required": ["schemaVersion", "name", "strategy"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "id": { "type": "string" },
+    "gameId": { "type": ["string", "null"] },
+    "name": { "type": "string" },
+    "strategy": { "enum": ["random", "scripted", "heuristic", "mcts", "human_replay"] },
+    "config": {
+      "type": "object",
+      "properties": {
+        "weights": { "type": "object", "additionalProperties": { "type": "number" } },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "expr"],
+            "properties": {
+              "id": { "type": "string" },
+              "expr": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/expression" },
+              "description": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "lookahead": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "randomTiebreak": { "type": "boolean" },
+        "iterations": { "type": "integer", "minimum": 1 },
+        "milliseconds": { "type": "integer", "minimum": 1 },
+        "determinizations": { "type": "integer", "minimum": 1 },
+        "script": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["actionId"],
+            "properties": {
+              "actionId": { "type": "string" },
+              "params": { "type": "object" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "choicePolicy": { "enum": ["first", "random", "score"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

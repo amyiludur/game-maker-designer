@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/game-state.schema.json",
+  "title": "Game State",
+  "description": "The complete, serialisable state of a match. Derived characteristics (attack, health, cost) are deliberately absent: they are computed from card definitions plus active modifiers.",
+  "type": "object",
+  "required": ["systemVersion", "seed", "rngPosition", "version", "round", "activePlayer", "phase", "step", "players", "zones", "instances"],
+  "properties": {
+    "systemVersion": { "type": "string" },
+    "seed": { "type": "integer" },
+    "rngPosition": { "type": "integer", "minimum": 0, "description": "Values drawn so far; with seed, reconstructs the generator" },
+    "version": { "type": "integer", "minimum": 0, "description": "Optimistic-lock counter, incremented per action" },
+    "round": { "type": "integer", "minimum": 0 },
+    "activePlayer": { "type": "integer", "minimum": 0 },
+    "firstPlayer": { "type": "integer", "minimum": 0 },
+    "phase": { "type": "string" },
+    "step": { "type": "string" },
+    "priority": { "type": ["integer", "null"] },
+    "consecutivePasses": { "type": "integer", "minimum": 0 },
+
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["seat", "resources"],
+        "properties": {
+          "seat": { "type": "integer", "minimum": 0 },
+          "resources": { "type": "object", "additionalProperties": { "type": "integer" } },
+          "flags": { "type": "object" },
+          "identityInstance": { "type": ["string", "null"] },
+          "status": { "enum": ["playing", "won", "lost", "conceded"] }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "zones": {
+      "type": "object",
+      "description": "Keyed by qualified zone id (p0.hand, shared.removed). Value is an ordered array of instance ids.",
+      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    },
+
+    "instances": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["code", "owner", "controller", "zone"],
+        "properties": {
+          "code": { "type": "string" },
+          "owner": { "type": "integer" },
+          "controller": { "type": "integer" },
+          "zone": { "type": "string" },
+          "exhausted": { "type": "boolean", "default": false },
+          "faceDown": { "type": "boolean", "default": false },
+          "counters": { "type": "object", "additionalProperties": { "type": "integer" } },
+          "attachedTo": { "type": ["string", "null"] },
+          "attachments": { "type": "array", "items": { "type": "string" } },
+          "enteredOnRound": { "type": "integer" },
+          "revealedTo": { "type": "array", "items": { "type": "integer" } },
+          "usedLimits": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "modifiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source", "layer", "timestamp", "changes"],
+        "properties": {
+          "id": { "type": "string" },
+          "source": { "type": "string" },
+          "layer": { "type": "integer", "minimum": 0, "maximum": 9 },
+          "timestamp": { "type": "integer" },
+          "query": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/query" },
+          "changes": { "type": "array" },
+          "duration": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "stack": { "type": "array", "items": { "type": "object" } },
+    "triggerQueue": { "type": "array", "items": { "type": "object" } },
+
+    "pendingChoice": {
+      "type": ["object", "null"],
+      "required": ["seat", "kind"],
+      "properties": {
+        "seat": { "type": "integer" },
+        "kind": { "enum": ["choose_cards", "choose_players", "choose_option", "choose_number", "yes_no", "order_items", "distribute"] },
+        "prompt": { "type": "string" },
+        "options": { "type": "object" },
+        "count": {},
+        "optional": { "type": "boolean" },
+        "source": {
+          "type": "object",
+          "properties": {
+            "instance": { "type": "string" },
+            "ability": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "vars": { "type": "object" },
+    "log": { "type": "array", "items": { "type": "object" } },
+
+    "result": {
+      "type": ["object", "null"],
+      "properties": {
+        "winner": { "type": ["integer", "null"] },
+        "reason": { "type": "string" },
+        "rounds": { "type": "integer" },
+        "draw": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,65 @@
+{
+  "$schema": "../../../schemas/bot-profile.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "emberfall-heuristic-aggro",
+  "gameId": "emberfall",
+  "name": "Emberfall Heuristic — Aggro",
+  "strategy": "heuristic",
+  "config": {
+    "lookahead": 1,
+    "randomTiebreak": true,
+    "choicePolicy": "score",
+    "features": [
+      {
+        "id": "boardPresence",
+        "description": "Friendly characters minus enemy characters in play.",
+        "expr": {
+          "op": "sub",
+          "left": { "op": "count", "query": { "zone": "play", "controller": "$you", "types": ["character"] } },
+          "right": { "op": "count", "query": { "zone": "play", "controller": "$opponent", "types": ["character"] } }
+        }
+      },
+      {
+        "id": "boardPower",
+        "description": "Total friendly attack minus total enemy attack.",
+        "expr": {
+          "op": "sub",
+          "left": { "op": "count", "query": { "zone": "play", "controller": "$you", "types": ["character"] } },
+          "right": { "op": "count", "query": { "zone": "play", "controller": "$opponent", "types": ["character"] } }
+        }
+      },
+      {
+        "id": "cardAdvantage",
+        "description": "Hand size difference.",
+        "expr": {
+          "op": "sub",
+          "left": { "op": "zone_size", "zone": "hand", "player": "$you" },
+          "right": { "op": "zone_size", "zone": "hand", "player": "$opponent" }
+        }
+      },
+      {
+        "id": "enemyHeroDamage",
+        "description": "Damage already on the enemy hero. The whole point of the deck.",
+        "expr": { "op": "counter", "of": "$opponent.identity", "counter": "damage" }
+      },
+      {
+        "id": "ownHeroDamage",
+        "description": "Damage on our own hero.",
+        "expr": { "op": "counter", "of": "$you.identity", "counter": "damage" }
+      },
+      {
+        "id": "unspentEmber",
+        "description": "Resources left unspent this round. Aggro hates floating Ember.",
+        "expr": { "op": "resource", "player": "$you", "resource": "ember" }
+      }
+    ],
+    "weights": {
+      "boardPresence": 1.0,
+      "boardPower": 1.4,
+      "cardAdvantage": 0.5,
+      "enemyHeroDamage": 3.0,
+      "ownHeroDamage": -1.0,
+      "unspentEmber": -0.8
+    }
+  }
+}

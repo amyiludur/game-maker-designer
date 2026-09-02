@@ -1,0 +1,457 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/game-system.schema.json",
+  "title": "Game System",
+  "description": "A complete declarative definition of a card game's rules structure.",
+  "type": "object",
+  "required": ["schemaVersion", "id", "version", "name", "players", "zones", "cardTypes", "round", "winConditions", "deckbuilding"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "name": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string" },
+
+    "players": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "integer", "minimum": 1 },
+        "max": { "type": "integer", "minimum": 1 },
+        "mode": { "enum": ["competitive", "cooperative", "solo"], "default": "competitive" },
+        "teams": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+
+    "vocabularies": {
+      "type": "object",
+      "properties": {
+        "traits": { "type": "array", "items": { "type": "string" } },
+        "rarities": { "type": "array", "items": { "type": "string" } },
+        "factions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "color": { "type": "string" },
+              "icon": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": ["string", "object"] }
+      }
+    },
+
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string" },
+          "start": { "type": "integer", "default": 0 },
+          "min": { "type": "integer", "default": 0 },
+          "max": { "type": ["integer", "null"] },
+          "perRound": {
+            "type": "object",
+            "properties": {
+              "gain": { "type": "integer" },
+              "mode": { "enum": ["set", "add"] }
+            },
+            "additionalProperties": false
+          },
+          "carryOver": { "type": "boolean", "default": false },
+          "icon": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "counters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string" },
+          "visual": { "type": "string" },
+          "max": { "type": ["integer", "null"] }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "zones": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "scope", "visibility"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string" },
+          "scope": { "enum": ["player", "shared"] },
+          "visibility": { "enum": ["none", "owner", "controller", "public"] },
+          "ordered": { "type": "boolean", "default": false },
+          "faceDown": { "type": "boolean", "default": false },
+          "supportsAttachments": { "type": "boolean", "default": false },
+          "maxSize": { "type": ["integer", "null"] }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "cardTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "attributes"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string" },
+          "playableTo": { "type": "array", "items": { "type": "string" } },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "type"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+                "name": { "type": "string" },
+                "type": { "enum": ["integer", "decimal", "string", "text", "boolean", "enum", "tagList", "reference"] },
+                "required": { "type": "boolean", "default": false },
+                "default": {},
+                "min": { "type": "number" },
+                "max": { "type": "number" },
+                "options": { "type": "array", "items": { "type": "string" } },
+                "vocabulary": { "type": "string" },
+                "showOnCard": { "type": ["string", "boolean"] },
+                "help": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "modifiableAttributes": { "type": "array", "items": { "type": "string" } },
+          "abilitySlots": {
+            "type": "object",
+            "properties": { "max": { "type": "integer", "minimum": 0 } },
+            "additionalProperties": false
+          },
+          "unique": { "type": "boolean", "default": false },
+          "isIdentity": { "type": "boolean", "default": false }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string" },
+          "reminder": { "type": "string" },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "type"],
+              "properties": {
+                "id": { "type": "string" },
+                "type": { "enum": ["integer", "string", "enum"] },
+                "required": { "type": "boolean", "default": true },
+                "options": { "type": "array", "items": { "type": "string" } }
+              },
+              "additionalProperties": false
+            }
+          },
+          "grants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind"],
+              "properties": {
+                "kind": { "enum": ["ability", "permission", "restriction"] },
+                "ability": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/ability" },
+                "permission": { "type": "string" },
+                "restriction": { "type": "string" },
+                "value": {}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "setup": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/effect" },
+
+    "mulligan": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "mode": { "enum": ["full_redraw", "partial", "london"] },
+        "times": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+
+    "round": {
+      "type": "object",
+      "required": ["phases"],
+      "properties": {
+        "structure": { "enum": ["phased", "turn_based"], "default": "phased" },
+        "firstPlayer": {
+          "type": "object",
+          "properties": {
+            "rule": { "enum": ["alternate", "fixed", "random", "winner_chooses"] }
+          },
+          "additionalProperties": false
+        },
+        "triggerOrdering": { "enum": ["apnap", "declaration"], "default": "apnap" },
+        "phases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "steps"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "name": { "type": "string" },
+              "steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id"],
+                  "properties": {
+                    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+                    "name": { "type": "string" },
+                    "auto": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/effect" },
+                    "window": {
+                      "type": "object",
+                      "required": ["type"],
+                      "properties": {
+                        "type": { "enum": ["active_player", "alternating", "simultaneous", "defending_player"] },
+                        "endOn": { "enum": ["consecutive_passes", "single_action", "all_submitted"] },
+                        "actions": { "type": "array", "items": { "type": "string" } },
+                        "skipIfNoActions": { "type": "boolean", "default": true }
+                      },
+                      "additionalProperties": false
+                    },
+                    "repeatPerPlayer": { "type": "boolean", "default": false }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "windows"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string" },
+          "windows": { "type": "array", "items": { "type": "string" }, "description": "Qualified step ids, e.g. action.main" },
+          "targets": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/targets" },
+          "cost": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/effect" },
+          "requirements": { "type": "array", "items": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/expression" } },
+          "effect": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/effect" },
+          "emits": { "type": "array", "items": { "type": "string" }, "description": "Extra events emitted by taking this action, e.g. card.played" },
+          "limit": {
+            "type": "object",
+            "properties": {
+              "perStep": { "type": "integer" },
+              "perPhase": { "type": "integer" },
+              "perRound": { "type": "integer" }
+            },
+            "additionalProperties": false
+          },
+          "text": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "stateChecks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "when", "then"],
+        "properties": {
+          "id": { "type": "string" },
+          "when": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/expression" },
+          "scope": {
+            "type": "object",
+            "properties": {
+              "zone": { "type": "string" },
+              "types": { "type": "array", "items": { "type": "string" } },
+              "players": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "phase": { "type": "string" },
+          "step": { "type": "string" },
+          "then": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/effect" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "winConditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "check", "outcome"],
+        "properties": {
+          "id": { "type": "string" },
+          "check": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/expression" },
+          "scope": {
+            "type": "object",
+            "properties": { "players": { "type": "string" } },
+            "additionalProperties": false
+          },
+          "trigger": { "type": "string" },
+          "outcome": {
+            "type": "object",
+            "properties": {
+              "winner": { "type": "string" },
+              "loser": { "type": "string" },
+              "draw": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          },
+          "text": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "deckbuilding": {
+      "type": "object",
+      "required": ["deckSize"],
+      "properties": {
+        "deckSize": {
+          "type": "object",
+          "required": ["min"],
+          "properties": {
+            "min": { "type": "integer", "minimum": 1 },
+            "max": { "type": ["integer", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "maxCopies": { "type": "integer", "minimum": 1 },
+        "identity": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string" },
+            "count": { "type": "integer" },
+            "zone": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "sideboard": {
+          "type": ["object", "null"],
+          "properties": {
+            "min": { "type": "integer" },
+            "max": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "rule", "message"],
+            "properties": {
+              "id": { "type": "string" },
+              "rule": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/expression" },
+              "message": { "type": "string" },
+              "severity": { "enum": ["error", "warning"], "default": "error" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ui": {
+      "type": "object",
+      "properties": {
+        "board": {
+          "type": "object",
+          "properties": {
+            "layout": { "type": "string" },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "zone"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "zone": { "type": "string" },
+                  "player": { "type": "string" },
+                  "collapsed": { "type": "boolean" },
+                  "label": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "docks": { "type": "object", "additionalProperties": { "type": "string" } }
+          },
+          "additionalProperties": false
+        },
+        "cardTemplate": { "type": "string" },
+        "theme": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+
+    "rulesText": {
+      "type": "object",
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "body"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "body": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "generate": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

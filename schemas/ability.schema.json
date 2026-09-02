@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/ability.schema.json",
+  "title": "Ability & Effect DSL",
+  "description": "Shared building blocks for the effect DSL: selectors, queries, expressions, effects and abilities. Referenced by game-system.schema.json and card.schema.json.",
+  "$ref": "#/$defs/ability",
+
+  "$defs": {
+    "selector": {
+      "type": "string",
+      "pattern": "^\\$[a-zA-Z][a-zA-Z0-9_.]*$",
+      "description": "A reference such as $self, $you, $opponent, $target.victim, $event.card, $each, $card, $player, $param.n"
+    },
+
+    "literal": {
+      "type": ["string", "number", "boolean", "null"]
+    },
+
+    "expression": {
+      "description": "A value or predicate. Either a literal, a selector, or an {op: ...} node.",
+      "anyOf": [
+        { "$ref": "#/$defs/literal" },
+        { "$ref": "#/$defs/selector" },
+        { "$ref": "#/$defs/expressionNode" },
+        { "type": "array", "items": { "$ref": "#/$defs/expression" } }
+      ]
+    },
+
+    "expressionNode": {
+      "type": "object",
+      "required": ["op"],
+      "properties": {
+        "op": {
+          "type": "string",
+          "enum": [
+            "attr", "baseAttr", "counter", "resource", "count", "zone_size",
+            "round", "phase", "step", "var", "param", "random_int", "constant",
+            "add", "sub", "mul", "div", "mod", "min", "max", "abs", "clamp",
+            "if",
+            "eq", "ne", "lt", "lte", "gt", "gte",
+            "and", "or", "not",
+            "has_trait", "has_keyword", "is_type", "in_zone",
+            "controlled_by", "owned_by",
+            "is_exhausted", "is_face_down", "is_attached", "entered_this_round",
+            "has_permission", "has_restriction",
+            "exists", "all", "any", "none", "can_pay", "matches"
+          ]
+        },
+        "of": {},
+        "left": { "$ref": "#/$defs/expression" },
+        "right": { "$ref": "#/$defs/expression" },
+        "cond": { "$ref": "#/$defs/expression" },
+        "then": { "$ref": "#/$defs/expression" },
+        "else": { "$ref": "#/$defs/expression" },
+        "query": { "$ref": "#/$defs/query" },
+        "match": { "$ref": "#/$defs/expression" },
+        "attr": { "type": "string" },
+        "counter": { "type": "string" },
+        "resource": { "type": "string" },
+        "zone": { "type": "string" },
+        "player": { "$ref": "#/$defs/expression" },
+        "card": { "$ref": "#/$defs/expression" },
+        "trait": { "type": "string" },
+        "keyword": { "type": "string" },
+        "type": { "type": "string" },
+        "id": { "type": "string" },
+        "value": { "$ref": "#/$defs/expression" },
+        "min": { "$ref": "#/$defs/expression" },
+        "max": { "$ref": "#/$defs/expression" }
+      },
+      "additionalProperties": true
+    },
+
+    "query": {
+      "type": "object",
+      "description": "Declarative selection of card instances or players.",
+      "properties": {
+        "zone": { "type": ["string", "array"], "items": { "type": "string" } },
+        "controller": { "type": "string" },
+        "owner": { "type": "string" },
+        "types": { "type": "array", "items": { "type": "string" } },
+        "traits": { "$ref": "#/$defs/tagFilter" },
+        "keywords": { "$ref": "#/$defs/tagFilter" },
+        "where": { "$ref": "#/$defs/expression" },
+        "exclude": { "type": "array", "items": { "$ref": "#/$defs/selector" } },
+        "order": {
+          "type": "object",
+          "properties": {
+            "by": { "$ref": "#/$defs/expression" },
+            "dir": { "enum": ["asc", "desc"] }
+          },
+          "additionalProperties": false
+        },
+        "limit": { "$ref": "#/$defs/expression" },
+        "players": { "type": "string", "enum": ["all", "opponents", "you", "active"] }
+      },
+      "additionalProperties": false
+    },
+
+    "tagFilter": {
+      "anyOf": [
+        { "type": "array", "items": { "type": "string" } },
+        {
+          "type": "object",
+          "properties": {
+            "any": { "type": "array", "items": { "type": "string" } },
+            "all": { "type": "array", "items": { "type": "string" } },
+            "none": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+
+    "effect": {
+      "type": "array",
+      "description": "An ordered list of ops.",
+      "items": { "$ref": "#/$defs/op" }
+    },
+
+    "op": {
+      "type": "object",
+      "required": ["op"],
+      "properties": {
+        "op": {
+          "type": "string",
+          "enum": [
+            "draw", "move_card", "move_cards", "discard", "choose_and_discard",
+            "destroy", "put_into_play", "create_token", "shuffle", "search",
+            "reveal", "look_at", "attach", "detach",
+            "exhaust", "ready", "ready_all", "exhaust_all",
+            "add_counter", "remove_counter", "deal_damage", "heal",
+            "gain_resource", "pay_resource", "gain_control",
+            "modify", "modify_event", "grant_ability", "set_flag",
+            "expire_modifiers", "enforce_hand_size",
+            "sequence", "if", "for_each", "for_each_player", "repeat",
+            "choose_one", "choose_cards", "choose_number", "prompt_yes_no",
+            "set_var",
+            "set_first_player", "resolve_combat", "declare_attack", "declare_block",
+            "end_step", "end_phase", "extra_turn",
+            "win_game", "lose_game", "draw_game",
+            "custom"
+          ]
+        },
+        "do": { "$ref": "#/$defs/effect" },
+        "then": { "$ref": "#/$defs/effect" },
+        "else": { "$ref": "#/$defs/effect" },
+        "cond": { "$ref": "#/$defs/expression" },
+        "query": { "$ref": "#/$defs/query" },
+        "targets": { "$ref": "#/$defs/targets" },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["text", "effect"],
+            "properties": {
+              "text": { "type": "string" },
+              "targets": { "$ref": "#/$defs/targets" },
+              "effect": { "$ref": "#/$defs/effect" },
+              "requirements": { "type": "array", "items": { "$ref": "#/$defs/expression" } }
+            },
+            "additionalProperties": false
+          }
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["attr", "mode", "value"],
+            "properties": {
+              "attr": { "type": "string" },
+              "mode": { "enum": ["set", "add", "multiply"] },
+              "value": { "$ref": "#/$defs/expression" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "duration": {
+          "enum": ["instant", "step", "phase", "turn", "round", "while_source_in_play", "permanent"]
+        },
+        "handler": { "type": "string" },
+        "params": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "query"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "query": { "$ref": "#/$defs/query" },
+          "count": {
+            "anyOf": [
+              { "$ref": "#/$defs/expression" },
+              {
+                "type": "object",
+                "properties": {
+                  "min": { "$ref": "#/$defs/expression" },
+                  "max": { "$ref": "#/$defs/expression" }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "optional": { "type": "boolean", "default": false },
+          "chooser": { "$ref": "#/$defs/selector" },
+          "prompt": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "trigger": {
+      "type": "object",
+      "required": ["event"],
+      "properties": {
+        "event": { "type": "string" },
+        "filter": { "$ref": "#/$defs/expression" },
+        "window": { "enum": ["before", "after", "instead"], "default": "after" }
+      },
+      "additionalProperties": false
+    },
+
+    "ability": {
+      "type": "object",
+      "required": ["id", "kind"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "kind": { "enum": ["triggered", "activated", "static", "replacement", "constant"] },
+        "speed": { "enum": ["action", "reaction", "forced", "passive"] },
+        "trigger": { "$ref": "#/$defs/trigger" },
+        "activeWhile": { "$ref": "#/$defs/expression" },
+        "cost": { "$ref": "#/$defs/effect" },
+        "requirements": { "type": "array", "items": { "$ref": "#/$defs/expression" } },
+        "targets": { "$ref": "#/$defs/targets" },
+        "effect": { "$ref": "#/$defs/effect" },
+        "limit": {
+          "type": "object",
+          "properties": {
+            "perStep": { "type": "integer", "minimum": 1 },
+            "perPhase": { "type": "integer", "minimum": 1 },
+            "perTurn": { "type": "integer", "minimum": 1 },
+            "perRound": { "type": "integer", "minimum": 1 },
+            "perGame": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "text": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "enum": ["triggered", "replacement"] } }, "required": ["kind"] },
+          "then": { "required": ["trigger"] }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

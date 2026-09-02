@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../schemas/deck.schema.json",
+  "schemaVersion": "1.0.0",
+  "gameId": "emberfall",
+  "gameVersion": "0.4.0",
+  "name": "Ash Control",
+  "archetype": "control",
+  "identity": "core-002",
+  "cards": [
+    { "code": "core-020", "count": 3 },
+    { "code": "core-021", "count": 3 },
+    { "code": "core-022", "count": 3 },
+    { "code": "core-023", "count": 2 },
+    { "code": "core-024", "count": 3 },
+    { "code": "core-025", "count": 2 },
+    { "code": "core-026", "count": 2 },
+    { "code": "core-030", "count": 3 },
+    { "code": "core-031", "count": 3 }
+  ],
+  "sideboard": [],
+  "notes": "24 cards. Wants to survive to round 6 and win on Vess card advantage. Grey Tide count is the main balance dial for the aggro matchup."
+}

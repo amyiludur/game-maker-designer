@@ -1,0 +1,162 @@
+# 11 — Frontend Architecture
+
+Vue 3 (`<script setup>`, Composition API) + TypeScript + Vite. Pinia for state, Vue Router
+for navigation, Tailwind for styling over a token layer.
+
+## Directory layout
+
+```
+resources/js/
+  main.ts
+  router/                 route definitions, guards
+  stores/                 Pinia stores (one per domain)
+    workspace.ts  game.ts  cards.ts  decks.ts  match.ts  simulation.ts  ui.ts
+  api/                    typed HTTP client, generated types
+    client.ts  types.gen.ts  endpoints/
+  composables/
+    useLegalActions.ts  useCardSchema.ts  useDiff.ts  useHotkeys.ts  useReplay.ts
+  components/
+    primitives/           Button, Input, Select, Dialog, Popover, Tooltip, Toast…
+    card/                 CardFace, CardThumb, CardGrid, CardTable, CardInspector
+    editor/               AttributeForm, AbilityBuilder, AbilityNode, JsonEditor, TextPreview
+    system/               ZoneEditor, PhaseEditor, ResourceEditor, KeywordEditor, CardTypeEditor
+    deck/                 DeckList, CurveChart, LegalityPanel, PoolBrowser
+    table/                GameBoard, ZoneRow, HandDock, CardInPlay, ActionBar, PhaseRail,
+                          EventLog, ChoicePrompt, ResourceTray, ReplayScrubber
+    sim/                  BatchForm, ProgressPanel, MetricsGrid, FindingCard, WinRateMatrix
+  views/                  one per route
+  design/                 tokens.css, theme.ts
+```
+
+## Type generation
+
+PHP DTOs and the JSON Schemas are the source of truth for types; `types.gen.ts` is
+generated (`json-schema-to-typescript` for documents, a small Laravel command for API
+envelopes) and committed. Hand-editing it fails CI. This is what stops the frontend from
+quietly drifting from the API.
+
+## Stores
+
+| Store | Holds | Notes |
+|---|---|---|
+| `workspace` | current workspace, membership, permissions | |
+| `game` | current game, version, **compiled** schemas + form descriptors | The compiled bundle is the key object — it's what makes forms self-building |
+| `cards` | paginated card index, filters, selection, draft edits | Normalised by id; list views hold ids only |
+| `decks` | decks, current deck version, live legality | |
+| `match` | current view, legal actions, pending choice, event queue, animation state | Never contains rules logic |
+| `simulation` | batches, progress, metrics | |
+| `ui` | theme, panel layout, recent items, hotkey scope | Persisted to localStorage |
+
+`match` is deliberately a thin mirror of the server: `view`, `legalActions`,
+`pendingChoice`, `version`, plus an `eventQueue` the animation layer drains. Any temptation
+to compute "can I play this card?" locally is a bug.
+
+## Schema-driven forms
+
+The single most important frontend mechanism. The card editor does not know what a card
+looks like:
+
+```ts
+const { formDescriptor, jsonSchema } = useCardSchema(gameVersionId, cardType)
+// formDescriptor: ordered fields with widget hints, options, validation
+// jsonSchema:     for ajv, instant client-side validation
+```
+
+`<AttributeForm :descriptor="formDescriptor" v-model="card.attributes" />` renders integer
+steppers, tag pickers bound to vocabularies, enum selects — all from data. A new game with
+totally different card attributes needs **zero** frontend changes.
+
+## The ability builder
+
+`AbilityBuilder` renders an ability tree as nested `AbilityNode` components. Each node:
+
+* knows its op from the compiled op catalogue (label, params, param types, help text)
+* renders one row per param with the right control (expression editor, card query builder,
+  selector picker)
+* supports drag-to-reorder within a `sequence`, and collapse
+* shows inline validation from ajv against `ability.schema.json`
+
+A `JsonEditor` tab (CodeMirror 6 + JSON Schema autocomplete) edits the same object.
+Switching tabs is lossless in both directions; that round-trip is covered by a unit test,
+because the moment it isn't lossless, power users stop trusting the form.
+
+Below both, `TextPreview` renders the generated card text live.
+
+## Rendering cards
+
+`CardFace` renders a card from `(card document, template document, asset)` as positioned
+absolutely-laid-out HTML — the same layout data the server-side SVG renderer uses. One
+layout definition drives screen and print, so proofs match what designers saw.
+
+Three sizes: `thumb` (grid), `standard` (table/hand), `full` (inspector). Art lazy-loads
+with a blurhash placeholder.
+
+## The play table
+
+```
+GameBoard
+ ├ PhaseRail          generated from the system's round structure
+ ├ ZoneRow × n        from ui.board.rows
+ │   └ CardInPlay     exhaust rotation, counters, attachments, targeting highlight
+ ├ ResourceTray × 2
+ ├ HandDock           fan layout, playable/unplayable from legalActions
+ ├ ActionBar          contextual actions, pass, undo
+ ├ ChoicePrompt       one component per pendingChoice.kind
+ ├ EventLog           generated prose + card links, click to scrub
+ └ CardInspector      modified values with a modifier breakdown
+```
+
+**Animation.** The server returns an ordered `events[]` with each action. The animation
+layer drains it as a queue, mapping each event to a transition (`card.entered_zone` → FLIP
+move; `damage.dealt` → hit flash + counter tick). The board state commits only after the
+queue drains, so what you see always matches what happened, in the order it happened. Users
+can set animation speed, including "off" for fast iteration.
+
+**Targeting.** Selecting an action that needs targets enters targeting mode: legal targets
+(from `legalActions` or a lazy `legal-targets` fetch) get a highlight ring; everything else
+dims. Escape cancels. There is no client-side legality guessing at any point.
+
+## Routing
+
+```
+/                                     Dashboard
+/g/:game                              Game overview
+/g/:game/system                       System editor (tabs: zones, phases, resources,
+                                        card types, keywords, win conditions, deckbuilding)
+/g/:game/cards                        Card browser
+/g/:game/cards/:card                  Card editor
+/g/:game/sets                         Set manager
+/g/:game/decks                        Deck list
+/g/:game/decks/:deck                  Deck builder
+/g/:game/play                         New playtest setup
+/g/:game/sim                          Simulation lab
+/g/:game/sim/:batch                   Batch report
+/g/:game/versions                     Version history & diff
+/m/:match                             Play table
+/m/:match/replay                      Replay viewer
+```
+
+Guards: workspace membership, and role checks (`playtester` cannot reach editor routes).
+
+## Performance
+
+* Card browser virtualises rows/tiles (`vue-virtual-scroller`); 5,000 cards scroll smoothly.
+* Card images served as WebP at three sizes via a signed image route.
+* Route-level code splitting; the play table and the simulation lab are separate chunks.
+* The compiled schema bundle is cached per game version in the store and in `localStorage`,
+  keyed by version id — it only refetches when the version actually changes.
+* Optimistic UI is limited to *animation*, never to state: the board never shows a result
+  the server hasn't confirmed.
+
+## Accessibility
+
+* Full keyboard play: `Tab`/arrows to traverse zones, `Enter` to act, `Esc` to cancel,
+  number keys for the action bar, `?` for the hotkey sheet.
+* Every card is a focusable element with an accessible name including its current modified
+  stats, not just its printed ones.
+* Exhausted/ready is conveyed by rotation **and** a state badge — never by rotation alone.
+* Factions carry an icon as well as a colour; the palette is checked for deuteranopia and
+  protanopia contrast.
+* Animations respect `prefers-reduced-motion` (transitions become instant state changes,
+  with the event log still narrating them).
+* Targets: WCAG 2.2 AA contrast, ≥44px touch targets on the table.

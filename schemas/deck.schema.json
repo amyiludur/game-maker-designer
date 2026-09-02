@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/deck.schema.json",
+  "title": "Deck",
+  "type": "object",
+  "required": ["schemaVersion", "gameId", "gameVersion", "name", "cards"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "gameId": { "type": "string" },
+    "gameVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "name": { "type": "string" },
+    "identity": { "type": ["string", "null"], "description": "Card code of the hero/identity card" },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "count"],
+        "properties": {
+          "code": { "type": "string" },
+          "count": { "type": "integer", "minimum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sideboard": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "count"],
+        "properties": {
+          "code": { "type": "string" },
+          "count": { "type": "integer", "minimum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "archetype": { "type": "string" },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/replay.schema.json",
+  "title": "Replay",
+  "description": "A match as (initial state, seed, actions). Replaying must reproduce every checkpoint hash exactly. Used for bug reports, regression tests, undo and cross-implementation conformance.",
+  "type": "object",
+  "required": ["schemaVersion", "gameId", "gameVersion", "seed", "actions"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "gameId": { "type": "string" },
+    "gameVersion": { "type": "string" },
+    "matchId": { "type": ["string", "null"] },
+    "mode": { "enum": ["solo", "hotseat", "online", "sandbox", "simulation"] },
+    "seed": { "type": "integer" },
+    "config": { "type": "object" },
+
+    "seats": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["seat", "deck"],
+        "properties": {
+          "seat": { "type": "integer" },
+          "deck": { "type": "string", "description": "Deck version id, or a path for fixtures" },
+          "agent": { "type": ["string", "null"], "description": "Bot profile id, or null for a human" },
+          "label": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "initialState": { "$ref": "https://game-maker-designer.dev/schemas/game-state.schema.json" },
+
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["seq", "seat", "actionId"],
+        "properties": {
+          "seq": { "type": "integer", "minimum": 1 },
+          "seat": { "type": "integer" },
+          "actionId": { "type": "string" },
+          "params": { "type": "object" },
+          "choice": { "type": "object", "description": "Present when this entry answers a pendingChoice" },
+          "note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "expected": {
+      "type": "object",
+      "properties": {
+        "finalStateHash": { "type": "string" },
+        "result": {
+          "type": "object",
+          "properties": {
+            "winner": { "type": ["integer", "null"] },
+            "reason": { "type": "string" },
+            "rounds": { "type": "integer" },
+            "draw": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["seq", "stateHash"],
+            "properties": {
+              "seq": { "type": "integer" },
+              "stateHash": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "recordedAt": { "type": "string", "format": "date-time" },
+        "recordedBy": { "type": "string" },
+        "reason": { "type": "string", "description": "Why this replay was kept (bug id, regression, conformance)" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

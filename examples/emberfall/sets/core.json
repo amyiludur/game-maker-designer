@@ -1,0 +1,552 @@
+{
+  "$schema": "../../../schemas/set.schema.json",
+  "schemaVersion": "1.0.0",
+  "code": "core",
+  "gameId": "emberfall",
+  "name": "Emberfall Core Set",
+  "releaseOrder": 1,
+  "status": "draft",
+  "summary": "The two founding houses, the basic tempo of the duel, and one combo seed per faction.",
+  "design": {
+    "goals": [
+      "Teach ready/exhaust and the Ember curve",
+      "Give Ember a clear tempo identity and Ash a clear attrition identity",
+      "Keep every card readable in one sentence"
+    ],
+    "budget": { "hero": 2, "character": 11, "event": 5, "attachment": 2 },
+    "notes": "Deliberately small. The point is to prove the format end to end, not to ship a game."
+  },
+
+  "cards": [
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-001",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 1,
+      "name": "Ignis, the First Flame",
+      "type": "hero",
+      "faction": "ember",
+      "rarity": "rare",
+      "quantity": 1,
+      "attributes": { "health": 20, "faction": "ember" },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "activated",
+          "speed": "action",
+          "cost": [
+            { "op": "exhaust", "card": "$self" },
+            { "op": "pay_resource", "player": "$you", "resource": "ember", "amount": 2 }
+          ],
+          "targets": [
+            { "id": "victim", "query": { "zone": "play", "types": ["character"] }, "count": 1, "chooser": "$you", "prompt": "Choose a character" }
+          ],
+          "effect": [
+            { "op": "deal_damage", "target": "$target.victim", "amount": 2, "source": "$self" }
+          ],
+          "limit": { "perRound": 1 },
+          "text": "Exhaust, pay 2 Ember: Deal 2 damage to a character. Limit once per round."
+        }
+      ],
+      "text": null,
+      "flavor": "The first fire never asked permission to burn.",
+      "art": { "assetId": null, "artist": null, "focus": "center" },
+      "design": { "status": "approved", "intendedRole": "Reach and removal for the aggro side.", "tags": ["hero"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-002",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 2,
+      "name": "Vess of the Grey Ash",
+      "type": "hero",
+      "faction": "ash",
+      "rarity": "rare",
+      "quantity": 1,
+      "attributes": { "health": 20, "faction": "ash" },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "activated",
+          "speed": "action",
+          "cost": [
+            { "op": "exhaust", "card": "$self" },
+            { "op": "pay_resource", "player": "$you", "resource": "ember", "amount": 1 }
+          ],
+          "effect": [{ "op": "draw", "player": "$you", "count": 1 }],
+          "limit": { "perRound": 1 },
+          "text": "Exhaust, pay 1 Ember: Draw a card. Limit once per round."
+        }
+      ],
+      "text": null,
+      "flavor": "What burns, teaches.",
+      "art": { "assetId": null, "artist": null, "focus": "center" },
+      "design": { "status": "approved", "intendedRole": "Card advantage engine for the control side.", "tags": ["hero"] }
+    },
+
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-010",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 10,
+      "name": "Cinder Scout",
+      "type": "character",
+      "faction": "ember",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 1, "attack": 2, "health": 1, "traits": ["Scout"] },
+      "keywords": [{ "id": "swift" }],
+      "text": null,
+      "flavor": "Gone before the smoke settles.",
+      "design": { "status": "approved", "intendedRole": "Round-one pressure. Trades down on purpose.", "tags": ["archetype:aggro"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-011",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 11,
+      "name": "Emberkin Brawler",
+      "type": "character",
+      "faction": "ember",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2, "attack": 3, "health": 1, "traits": ["Soldier"] },
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Glass cannon two-drop; the benchmark for Ember aggression.", "tags": ["benchmark"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-012",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 12,
+      "name": "Flamecaller Adept",
+      "type": "character",
+      "faction": "ember",
+      "rarity": "uncommon",
+      "quantity": 3,
+      "attributes": { "cost": 3, "attack": 2, "health": 2, "traits": ["Mystic"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": {
+            "event": "card.entered_zone",
+            "window": "after",
+            "filter": {
+              "op": "and",
+              "of": [
+                { "op": "eq", "left": "$event.card", "right": "$self" },
+                { "op": "eq", "left": "$event.to", "right": "play" }
+              ]
+            }
+          },
+          "targets": [
+            { "id": "victim", "query": { "zone": "play", "types": ["character"] }, "count": 1, "chooser": "$you", "prompt": "Choose a character" }
+          ],
+          "effect": [{ "op": "deal_damage", "target": "$target.victim", "amount": 1, "source": "$self" }],
+          "text": "When this enters play, deal 1 damage to a character."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Tempo three-drop that clears one-health blockers.", "tags": ["archetype:tempo"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-013",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 13,
+      "name": "Warhorn Bearer",
+      "type": "character",
+      "faction": "ember",
+      "rarity": "rare",
+      "quantity": 3,
+      "attributes": { "cost": 4, "attack": 2, "health": 3, "traits": ["Soldier"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "static",
+          "speed": "passive",
+          "activeWhile": { "op": "in_zone", "card": "$self", "zone": "play" },
+          "effect": [
+            {
+              "op": "modify",
+              "query": { "zone": "play", "controller": "$you", "traits": { "any": ["Soldier"] }, "exclude": ["$self"] },
+              "changes": [{ "attr": "attack", "mode": "add", "value": 1 }],
+              "duration": "while_source_in_play"
+            }
+          ],
+          "text": "Other friendly Soldiers get +1 attack."
+        }
+      ],
+      "text": null,
+      "flavor": "One note, and the line moves.",
+      "design": { "status": "approved", "intendedRole": "Payoff for the Soldier density in the aggro shell.", "tags": ["archetype:aggro", "lord"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-014",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 14,
+      "name": "Scorch",
+      "type": "event",
+      "faction": "ember",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": {
+            "event": "card.played",
+            "window": "after",
+            "filter": { "op": "eq", "left": "$event.card", "right": "$self" }
+          },
+          "targets": [
+            { "id": "victim", "query": { "zone": "play", "types": ["character"] }, "count": 1, "chooser": "$you", "prompt": "Choose a character" }
+          ],
+          "effect": [{ "op": "deal_damage", "target": "$target.victim", "amount": 3, "source": "$self" }],
+          "text": "Deal 3 damage to a character."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Efficient removal; the reason 3-health bodies are not safe.", "tags": ["removal"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-015",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 15,
+      "name": "Second Wind",
+      "type": "event",
+      "faction": "ember",
+      "rarity": "uncommon",
+      "quantity": 3,
+      "attributes": { "cost": 1 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": {
+            "event": "card.played",
+            "window": "after",
+            "filter": { "op": "eq", "left": "$event.card", "right": "$self" }
+          },
+          "targets": [
+            {
+              "id": "ally",
+              "query": { "zone": "play", "controller": "$you", "types": ["character"] },
+              "count": 1,
+              "chooser": "$you",
+              "prompt": "Choose a friendly character"
+            }
+          ],
+          "effect": [
+            { "op": "ready", "card": "$target.ally" },
+            {
+              "op": "modify",
+              "target": "$target.ally",
+              "changes": [{ "attr": "attack", "mode": "add", "value": 1 }],
+              "duration": "round"
+            }
+          ],
+          "text": "Ready a friendly character. It gets +1 attack this round."
+        }
+      ],
+      "text": null,
+      "design": { "status": "review", "intendedRole": "Pseudo-reach; watch for double-attack blowouts with Warhorn Bearer.", "tags": ["combo:warhorn"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-016",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 16,
+      "name": "Ember Brand",
+      "type": "attachment",
+      "faction": "ember",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 1, "traits": ["Relic"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "static",
+          "speed": "passive",
+          "activeWhile": { "op": "is_attached", "card": "$self" },
+          "effect": [
+            {
+              "op": "modify",
+              "target": "$host",
+              "changes": [{ "attr": "attack", "mode": "add", "value": 2 }],
+              "duration": "while_source_in_play"
+            }
+          ],
+          "text": "Attached character gets +2 attack."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Cheap damage multiplier; card disadvantage is the cost.", "tags": ["archetype:aggro"] }
+    },
+
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-020",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 20,
+      "name": "Cinderpriest",
+      "type": "character",
+      "faction": "ash",
+      "rarity": "uncommon",
+      "quantity": 3,
+      "attributes": { "cost": 3, "attack": 1, "health": 3, "traits": ["Mystic"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": {
+            "event": "card.entered_zone",
+            "window": "after",
+            "filter": {
+              "op": "and",
+              "of": [
+                { "op": "eq", "left": "$event.card", "right": "$self" },
+                { "op": "eq", "left": "$event.to", "right": "play" }
+              ]
+            }
+          },
+          "effect": [{ "op": "draw", "player": "$you", "count": 1 }],
+          "text": "When this enters play, draw a card."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Value body; the reason Ash can afford to trade.", "tags": ["archetype:control"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-021",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 21,
+      "name": "Ashen Vanguard",
+      "type": "character",
+      "faction": "ash",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 3, "attack": 2, "health": 3, "traits": ["Soldier"] },
+      "keywords": [{ "id": "guard" }],
+      "text": null,
+      "flavor": "The last line holds, or nothing does.",
+      "design": { "status": "approved", "intendedRole": "The floor for 3-drops. Do not buff without re-simming aggro.", "tags": ["benchmark", "archetype:control"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-022",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 22,
+      "name": "Gravewatch Sentinel",
+      "type": "character",
+      "faction": "ash",
+      "rarity": "uncommon",
+      "quantity": 3,
+      "attributes": { "cost": 4, "attack": 2, "health": 5, "traits": ["Soldier"] },
+      "keywords": [{ "id": "guard" }],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "The wall aggro must answer or lose to.", "tags": ["archetype:control"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-023",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 23,
+      "name": "Dust Weaver",
+      "type": "character",
+      "faction": "ash",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2, "attack": 1, "health": 2, "traits": ["Mystic"] },
+      "keywords": [{ "id": "bolster", "params": { "n": 1 } }],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Demonstrates a parameterised keyword.", "tags": ["keyword-demo"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-024",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 24,
+      "name": "Smother",
+      "type": "event",
+      "faction": "ash",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 3 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": {
+            "event": "card.played",
+            "window": "after",
+            "filter": { "op": "eq", "left": "$event.card", "right": "$self" }
+          },
+          "targets": [
+            {
+              "id": "victim",
+              "query": {
+                "zone": "play",
+                "types": ["character"],
+                "where": { "op": "lte", "left": { "op": "attr", "of": "$card", "attr": "attack" }, "right": 2 }
+              },
+              "count": 1,
+              "chooser": "$you",
+              "prompt": "Choose a character with 2 or less attack"
+            }
+          ],
+          "effect": [{ "op": "destroy", "card": "$target.victim" }],
+          "text": "Destroy a character with 2 or less attack."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Conditional removal; the condition is what keeps Ember's big bodies relevant.", "tags": ["removal"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-025",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 25,
+      "name": "Grey Tide",
+      "type": "event",
+      "faction": "ash",
+      "rarity": "rare",
+      "quantity": 3,
+      "attributes": { "cost": 4 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": {
+            "event": "card.played",
+            "window": "after",
+            "filter": { "op": "eq", "left": "$event.card", "right": "$self" }
+          },
+          "effect": [
+            {
+              "op": "for_each",
+              "query": { "zone": "play", "controller": "$opponent", "types": ["character"] },
+              "do": [{ "op": "deal_damage", "target": "$each", "amount": 1, "source": "$self" }]
+            }
+          ],
+          "text": "Deal 1 damage to each enemy character."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "The aggro answer. If Ash wins too hard, this is the first dial.", "tags": ["sweeper", "balance-dial"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-026",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 26,
+      "name": "Warding Cloak",
+      "type": "attachment",
+      "faction": "ash",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2, "traits": ["Relic"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "static",
+          "speed": "passive",
+          "activeWhile": { "op": "is_attached", "card": "$self" },
+          "effect": [
+            {
+              "op": "modify",
+              "target": "$host",
+              "changes": [{ "attr": "health", "mode": "add", "value": 2 }],
+              "duration": "while_source_in_play"
+            }
+          ],
+          "text": "Attached character gets +2 health."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Tests that health modifiers interact correctly with existing damage.", "tags": ["engine-test"] }
+    },
+
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-030",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 30,
+      "name": "Wandering Emberkin",
+      "type": "character",
+      "faction": "neutral",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2, "attack": 2, "health": 2, "traits": ["Beast"] },
+      "text": null,
+      "flavor": "It follows the warmth, and nothing else.",
+      "design": { "status": "approved", "intendedRole": "The vanilla baseline every other two-drop is priced against.", "tags": ["benchmark", "vanilla"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "core-031",
+      "gameId": "emberfall",
+      "setId": "core",
+      "number": 31,
+      "name": "Salvage",
+      "type": "event",
+      "faction": "neutral",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": {
+            "event": "card.played",
+            "window": "after",
+            "filter": { "op": "eq", "left": "$event.card", "right": "$self" }
+          },
+          "effect": [
+            {
+              "op": "choose_cards",
+              "chooser": "$you",
+              "query": { "zone": "discard", "controller": "$you", "exclude": ["$self"] },
+              "count": 1,
+              "optional": false,
+              "then": [{ "op": "move_card", "card": "$each", "to": "hand", "controller": "$you" }]
+            }
+          ],
+          "text": "Return a card from your discard pile to your hand."
+        }
+      ],
+      "text": null,
+      "design": { "status": "review", "intendedRole": "Recursion; watch for Scorch loops in long games.", "tags": ["recursion", "watchlist"] }
+    }
+  ]
+}

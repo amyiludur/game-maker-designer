@@ -1,0 +1,143 @@
+{
+  "$schema": "../../../schemas/replay.schema.json",
+  "schemaVersion": "1.0.0",
+  "gameId": "emberfall",
+  "gameVersion": "0.4.0",
+  "matchId": null,
+  "mode": "simulation",
+  "seed": 8412773901,
+  "config": {
+    "mulligan": false,
+    "roundCap": 25
+  },
+  "seats": [
+    {
+      "seat": 0,
+      "deck": "examples/emberfall/decks/ember-aggro.json",
+      "agent": "emberfall-heuristic-aggro",
+      "label": "Ember"
+    },
+    {
+      "seat": 1,
+      "deck": "examples/emberfall/decks/ash-control.json",
+      "agent": "emberfall-heuristic-aggro",
+      "label": "Ash"
+    }
+  ],
+  "actions": [
+    {
+      "seq": 1,
+      "seat": 0,
+      "actionId": "play_character",
+      "params": {
+        "card": "i-0-27"
+      },
+      "note": "Round 1 income is min(round+1,6)=2. Cinder Scout for 1."
+    },
+    {
+      "seq": 2,
+      "seat": 1,
+      "actionId": "play_character",
+      "params": {
+        "card": "i-1-31"
+      },
+      "note": "Dust Weaver for 2. Its Bolster trigger finds no other friendly character; the target is optional, so it resolves silently with no choice raised."
+    },
+    {
+      "seq": 3,
+      "seat": 0,
+      "actionId": "play_attachment",
+      "params": {
+        "card": "i-0-29",
+        "host": "i-0-27"
+      },
+      "note": "Ember Brand on the Scout. Attack becomes 4 (2 base at layer 0, +2 at layer 6)."
+    },
+    {
+      "seq": 4,
+      "seat": 1,
+      "actionId": "pass"
+    },
+    {
+      "seq": 5,
+      "seat": 0,
+      "actionId": "pass",
+      "note": "Two consecutive passes end action.main."
+    },
+    {
+      "seq": 6,
+      "seat": 0,
+      "actionId": "declare_attack",
+      "params": {
+        "attacker": "i-0-27"
+      },
+      "note": "Legal on the round it entered play only because Swift grants attack_while_summoning_sick."
+    },
+    {
+      "seq": 7,
+      "seat": 1,
+      "actionId": "pass",
+      "note": "Declining to block: trading a 1/2 into a 4-attack body is worse than taking 4. Enemy hero damage 4."
+    },
+    {
+      "seq": 8,
+      "seat": 1,
+      "actionId": "pass",
+      "note": "Round 2. First player alternates, so Ash acts first. It holds Smother and passes on 3 Ember."
+    },
+    {
+      "seq": 9,
+      "seat": 0,
+      "actionId": "play_character",
+      "params": {
+        "card": "i-0-15"
+      },
+      "note": "Wandering Emberkin, 2/2, for 2."
+    },
+    {
+      "seq": 10,
+      "seat": 1,
+      "actionId": "play_event",
+      "params": {
+        "card": "i-1-44"
+      },
+      "choice": {
+        "victim": "i-0-15"
+      },
+      "note": "Smother destroys the Emberkin. The branded Cinder Scout is NOT a legal target: Smother's query reads current attack (4), not printed attack (2). Pinning this is the point of the fixture."
+    },
+    {
+      "seq": 11,
+      "seat": 0,
+      "actionId": "pass"
+    },
+    {
+      "seq": 12,
+      "seat": 1,
+      "actionId": "pass"
+    },
+    {
+      "seq": 13,
+      "seat": 1,
+      "actionId": "declare_attack",
+      "params": {
+        "attacker": "i-1-31"
+      },
+      "note": "Dust Weaver attacks; it entered play last round, so no permission is needed."
+    },
+    {
+      "seq": 14,
+      "seat": 0,
+      "actionId": "declare_block",
+      "params": {
+        "blocker": "i-0-27",
+        "attacker": "i-1-31"
+      },
+      "note": "Scout blocks: 4 attack kills the 1/2 outright, and the Scout survives on 1 health with 1 damage. Simultaneous strike, so the lethal_damage state check fires once for the Weaver."
+    }
+  ],
+  "provenance": {
+    "recordedBy": "spec-example",
+    "reason": "Illustrates the replay format and several engine behaviours worth pinning as a conformance fixture: Swift bypassing summoning sickness, an optional target with no legal choices resolving silently, and a modifier-vs-constraint interaction."
+  }
+}

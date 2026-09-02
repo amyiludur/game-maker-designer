@@ -1,0 +1,14 @@
+{
+  "name": "game-maker-designer-specs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Design specifications, JSON Schemas and worked example for the Game Maker Designer LCG platform.",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-examples.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

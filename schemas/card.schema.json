@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/card.schema.json",
+  "title": "Card",
+  "description": "One card's design document. Attribute contents are additionally validated against the compiled schema for its card type.",
+  "type": "object",
+  "required": ["schemaVersion", "code", "gameId", "name", "type"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "code": { "type": "string", "pattern": "^[a-z0-9]+-[0-9]+$" },
+    "gameId": { "type": "string" },
+    "setId": { "type": "string" },
+    "number": { "type": "integer", "minimum": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "type": { "type": "string" },
+    "faction": { "type": ["string", "null"] },
+    "rarity": { "type": ["string", "null"] },
+    "quantity": { "type": "integer", "minimum": 1, "default": 1, "description": "Copies included in the physical product" },
+
+    "attributes": { "type": "object" },
+
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "params": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "abilities": {
+      "type": "array",
+      "items": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/ability" }
+    },
+
+    "text": { "type": ["string", "null"], "description": "null = generate from keywords and abilities" },
+    "textOverride": { "type": ["string", "null"] },
+    "flavor": { "type": ["string", "null"] },
+
+    "art": {
+      "type": "object",
+      "properties": {
+        "assetId": { "type": ["string", "null"] },
+        "artist": { "type": ["string", "null"] },
+        "focus": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "template": { "type": "string" },
+
+    "design": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["draft", "review", "approved", "retired"] },
+        "notes": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "intendedRole": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
