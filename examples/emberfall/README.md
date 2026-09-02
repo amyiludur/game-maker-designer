@@ -9,7 +9,7 @@ first conformance target.
 ```
 game-system.json              The whole game: zones, phases, resources, card types,
                               keywords, actions, state checks, win conditions, deckbuilding
-sets/core.json                20 cards (2 heroes, 11 characters, 5 events, 2 attachments)
+sets/core.json                18 cards (2 heroes, 9 characters, 5 events, 2 attachments)
 decks/ember-aggro.json        24-card aggro deck
 decks/ash-control.json        24-card control deck
 bots/heuristic-aggro.json     A heuristic agent, tuned in JSON

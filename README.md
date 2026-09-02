@@ -54,6 +54,7 @@ schemas/                  JSON Schema (draft 2020-12) — the machine-readable c
 examples/emberfall/       Worked example 1 — a competitive two-player duel
 examples/wardens-hollow/  Worked example 2 — 1-4 player co-op vs. an automated adversary
 scripts/                  validate-examples.mjs — schema + cross-document integrity checks
+design/                   High-fidelity screen designs + handoff (six screens, dark theme)
 ```
 
 ## The worked examples
@@ -86,8 +87,16 @@ npm run validate
 This runs in CI on every push. The example game is a fixture, not decoration: if it stops
 validating, either the schemas or the example is wrong.
 
+## Design
+
+[`design/`](design/) holds six high-fidelity screens — card editor, play table, system
+editor, card browser, deck builder, simulation report — drawn against the Emberfall data,
+with a full token set and per-screen specs in [`design/HANDOFF.md`](design/HANDOFF.md).
+They cover the competitive duel shape; the cooperative play table is not yet designed.
+
 ## Next steps
 
-1. Build the UI from [docs/12-ui-design-brief.md](docs/12-ui-design-brief.md).
-2. Scaffold the Laravel + Vue application per [docs/14-roadmap.md](docs/14-roadmap.md) M0–M1.
+1. Scaffold the Laravel + Vue application per [docs/14-roadmap.md](docs/14-roadmap.md) M0–M1.
+2. Build the designer UI from [`design/`](design/) and
+   [docs/11-frontend-architecture.md](docs/11-frontend-architecture.md).
 3. Implement the rules kernel against the Emberfall conformance replay.

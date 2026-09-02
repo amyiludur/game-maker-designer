@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Bitter:wght@500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"><style>body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}a{color:#2a78d6}a:hover{color:#1b5fae}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}</style></helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Card editor &middot; three visual treatments &middot; 1280&times;880, dark, comfortable</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Instrument &mdash; cool blue-grey, monospace field labels, hairline panels, depth badges on the ability tree</div><div class="dv-card">
+<div style="width:1280px;height:880px;display:flex;flex-direction:column;background:#0e1216;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:13px;overflow:hidden;font-feature-settings:'tnum' 1">
+
+  <div style="height:44px;flex:none;display:flex;align-items:center;gap:14px;padding:0 14px;background:#141a20;border-bottom:1px solid #26313b">
+    <div style="display:flex;align-items:center;gap:8px"><div style="width:16px;height:16px;border-radius:3px;background:#c0392b"></div><span style="font-weight:600;font-size:13.5px">Emberfall</span></div>
+    <button style="display:flex;align-items:center;gap:6px;height:24px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#e2e8ee;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#6c7c8a"><span style="width:6px;height:6px;border-radius:50%;background:#d1913c"></span>v0.4.0<span style="color:#7c8b98">draft</span><span style="color:#7c8b98">&#9662;</span></button>
+    <div style="width:1px;height:20px;background:#26313b"></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#98a6b3">Cards<span style="color:#7d8d9a">&nbsp;/&nbsp;</span><span style="color:#e2e8ee">core-012</span></div>
+    <div style="flex:1"></div>
+    <button style="display:flex;align-items:center;gap:10px;width:200px;height:26px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#7c8b98;font-family:Archivo,sans-serif;font-size:12px;text-align:left;cursor:pointer" style-hover="border-color:#6c7c8a;color:#98a6b3"><span style="flex:1">Search cards, actions&hellip;</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px">&#8984;K</span></button>
+    <button style="display:flex;align-items:center;gap:7px;height:26px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#e2e8ee;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#6c7c8a"><span style="color:#d05c4c">&#9670; 3</span><span style="color:#d1913c">&#9650; 12</span></button>
+    <div style="width:24px;height:24px;border-radius:3px;background:#212b34;border:1px solid #2f3b45;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#98a6b3">AI</div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0">
+
+    <div style="width:56px;flex:none;background:#11171c;border-right:1px solid #26313b;display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px">
+      <div title="Overview" style="width:38px;height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#98a6b3"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">OV</span></div>
+      <div title="System" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#98a6b3"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">SY</span></div>
+      <div title="Cards" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;background:#212b34;color:#e2e8ee;box-shadow:inset 2px 0 0 #c0392b;cursor:pointer"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">CA</span></div>
+      <div title="Sets" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#98a6b3"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">SE</span></div>
+      <div title="Decks" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#98a6b3"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">DE</span></div>
+      <div title="Playtest" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#98a6b3"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">PL</span></div>
+      <div title="Simulate" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#98a6b3"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">SI</span></div>
+      <div title="Versions" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#98a6b3"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">VE</span></div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0">
+
+      <div style="height:40px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid #1e262e;background:#101519">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98;letter-spacing:.09em;text-transform:uppercase">Card 12 / 20</span>
+        <div style="display:flex;gap:3px">
+          <button style="width:22px;height:22px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#98a6b3;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#6c7c8a;color:#e2e8ee">[</button>
+          <button style="width:22px;height:22px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#98a6b3;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#6c7c8a;color:#e2e8ee">]</button>
+        </div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a">in filter: set:core type:character</span>
+        <div style="flex:1"></div>
+        <span style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#6f9e7c"><span style="width:5px;height:5px;border-radius:50%;background:#6f9e7c"></span>Saved 2s ago &middot; rev 14</span>
+        <button style="height:24px;padding:0 10px;background:#c0392b;border:none;border-radius:3px;color:#fff;font-family:Archivo,sans-serif;font-size:11.5px;font-weight:600;cursor:pointer" style-hover="background:#d2432f">Playtest this card</button>
+      </div>
+
+      <div style="flex:1;display:flex;min-height:0">
+
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid #1e262e">
+          <div style="flex:1;overflow-y:auto;padding:14px 16px 24px">
+
+            <input value="Flamecaller Adept" style="width:100%;box-sizing:border-box;background:transparent;border:none;border-bottom:1px solid transparent;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:21px;font-weight:600;padding:0 0 6px;outline:none" style-hover="border-bottom-color:#26313b" style-focus="border-bottom-color:#5b8cae" />
+            <div style="display:flex;align-items:center;gap:8px;margin:2px 0 18px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7c8b98"><span>core-012</span><span style="color:#2f3b45">|</span><span>Emberfall Core Set</span><span style="color:#2f3b45">|</span><span style="color:#6f9e7c">approved</span></div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#98a6b3">Identity</span><div style="flex:1;height:1px;background:#1e262e"></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 12px;margin-bottom:20px">
+              <div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:4px">Type</div><div style="display:flex;align-items:center;height:26px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;font-size:12.5px;cursor:pointer" style-hover="border-color:#6c7c8a">Character<span style="flex:1"></span><span style="color:#7c8b98">&#9662;</span></div></div>
+              <div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:4px">Faction</div><div style="display:flex;align-items:center;gap:7px;height:26px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;font-size:12.5px;cursor:pointer" style-hover="border-color:#6c7c8a"><span style="width:9px;height:9px;border-radius:2px;background:#c0392b"></span>Ember<span style="flex:1"></span><span style="color:#7c8b98">&#9662;</span></div></div>
+              <div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:4px">Rarity</div><div style="display:flex;align-items:center;height:26px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;font-size:12.5px;cursor:pointer" style-hover="border-color:#6c7c8a">Uncommon<span style="flex:1"></span><span style="color:#7c8b98">&#9662;</span></div></div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin:0 0 4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#98a6b3">Attributes</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7d8d9a">from cardTypes.character</span><div style="flex:1;height:1px;background:#1e262e"></div></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px 12px;margin:10px 0 12px">
+              <div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:4px">Cost<span style="color:#6c7c8a">&nbsp;int 0&ndash;10</span></div><div style="display:flex;height:26px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;overflow:hidden"><div style="flex:1;display:flex;align-items:center;padding:0 8px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500">3</div><button style="width:20px;background:#141a20;border:none;border-left:1px solid #26313b;color:#98a6b3;cursor:pointer;font-size:10px" style-hover="background:#212b34;color:#e2e8ee">&#9662;</button><button style="width:20px;background:#141a20;border:none;border-left:1px solid #26313b;color:#98a6b3;cursor:pointer;font-size:10px" style-hover="background:#212b34;color:#e2e8ee">&#9652;</button></div></div>
+              <div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:4px">Attack<span style="color:#6c7c8a">&nbsp;int &ge;0</span></div><div style="display:flex;height:26px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;overflow:hidden"><div style="flex:1;display:flex;align-items:center;padding:0 8px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500">2</div><button style="width:20px;background:#141a20;border:none;border-left:1px solid #26313b;color:#98a6b3;cursor:pointer;font-size:10px" style-hover="background:#212b34;color:#e2e8ee">&#9662;</button><button style="width:20px;background:#141a20;border:none;border-left:1px solid #26313b;color:#98a6b3;cursor:pointer;font-size:10px" style-hover="background:#212b34;color:#e2e8ee">&#9652;</button></div></div>
+              <div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:4px">Health<span style="color:#6c7c8a">&nbsp;int &ge;1</span></div><div style="display:flex;height:26px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;overflow:hidden"><div style="flex:1;display:flex;align-items:center;padding:0 8px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500">2</div><button style="width:20px;background:#141a20;border:none;border-left:1px solid #26313b;color:#98a6b3;cursor:pointer;font-size:10px" style-hover="background:#212b34;color:#e2e8ee">&#9662;</button><button style="width:20px;background:#141a20;border:none;border-left:1px solid #26313b;color:#98a6b3;cursor:pointer;font-size:10px" style-hover="background:#212b34;color:#e2e8ee">&#9652;</button></div></div>
+            </div>
+            <div style="margin-bottom:20px"><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:4px">Traits<span style="color:#6c7c8a">&nbsp;tagList &middot; vocab traits</span></div><div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-height:26px;padding:4px 6px;background:#0b0f13;border:1px solid #26313b;border-radius:3px"><span style="display:flex;align-items:center;gap:5px;height:18px;padding:0 6px;background:#212b34;border-radius:2px;font-size:11.5px">Mystic<span style="color:#7c8b98;cursor:pointer" style-hover="color:#d05c4c">&times;</span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">+ Soldier &middot; Scout &middot; Beast &middot; Relic</span></div></div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#98a6b3">Keywords</span><div style="flex:1;height:1px;background:#1e262e"></div></div>
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:20px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7d8d9a">none</span><button style="height:22px;padding:0 8px;background:#0b0f13;border:1px dashed #2f3b45;border-radius:3px;color:#98a6b3;font-family:Archivo,sans-serif;font-size:11.5px;cursor:pointer" style-hover="border-color:#5b8cae;color:#e2e8ee">+ Swift &middot; Guard &middot; Bolster N</button></div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#98a6b3">Abilities</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7d8d9a">1 of 3 slots</span><div style="flex:1;height:1px;background:#1e262e"></div></div>
+
+            <div style="border:1px solid #26313b;border-radius:4px;background:#11171c;overflow:hidden;margin-bottom:8px">
+              <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;background:#1a222a;border-bottom:1px solid #26313b">
+                <button onClick="{{ toggleA }}" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:#98a6b3;cursor:pointer;font-size:9px" style-hover="color:#e2e8ee">&#9662;</button>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;padding:1px 5px">a1</span>
+                <span style="font-size:11.5px;color:#98a6b3">triggered</span><span style="color:#2f3b45">&middot;</span><span style="font-size:11.5px;color:#98a6b3">forced</span>
+                <div style="flex:1"></div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a">valid &#10003;</span>
+                <span style="color:#7c8b98;cursor:pointer;font-size:13px" style-hover="color:#e2e8ee">&#8943;</span>
+              </div>
+              <sc-if value="{{ openA }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:8px">
+
+                <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:5px">
+                  <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="flex:none;width:18px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;padding-top:7px">L1</span></sc-if>
+                  <span style="flex:none;width:56px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#c0392b;padding-top:7px">WHEN</span>
+                  <div style="flex:1;display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:4px 6px;background:#141a20;border:1px solid #212b34;border-radius:3px" style-hover="border-color:#2f3b45">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">event</span><span style="display:flex;align-items:center;gap:5px;height:20px;padding:0 6px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b8cae">card.entered_zone<span style="color:#7c8b98">&#9662;</span></span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;margin-left:4px">window</span><span style="display:flex;align-items:center;gap:5px;height:20px;padding:0 6px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b8cae">after<span style="color:#7c8b98">&#9662;</span></span>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:5px">
+                  <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="flex:none;width:18px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;padding-top:7px">L1</span></sc-if>
+                  <span style="flex:none;width:56px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#c0392b;padding-top:7px">IF</span>
+                  <div style="flex:1;padding:4px 6px;background:#141a20;border:1px solid #212b34;border-radius:3px">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="display:flex;align-items:center;gap:5px;height:20px;padding:0 6px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a6b6ce;cursor:pointer" style-hover="border-color:#5b8cae">and<span style="color:#7c8b98">&#9662;</span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7d8d9a">all of 2 must hold</span></div>
+                    <div style="display:flex;align-items:flex-start;gap:8px;padding-left:6px;border-left:2px solid #2a3742">
+                      <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="flex:none;width:18px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;padding-top:5px">L2</span></sc-if>
+                      <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:3px 5px;background:#0f1418;border:1px solid #1e262e;border-radius:3px" style-hover="border-color:#2f3b45">
+                          <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;margin-right:2px">L3</span></sc-if>
+                          <span style="height:18px;display:flex;align-items:center;padding:0 5px;background:#1a222a;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#a6b6ce">eq</span>
+                          <span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#5b8cae"><span style="color:#c98a3c">$event.card</span><span style="color:#7c8b98">&#9662;</span></span>
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7c8b98">=</span>
+                          <span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#5b8cae"><span style="color:#c98a3c">$self</span><span style="color:#7c8b98">&#9662;</span></span>
+                          <div style="flex:1"></div><span style="color:#7d8d9a;cursor:pointer;font-size:12px" style-hover="color:#d05c4c">&times;</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:3px 5px;background:#0f1418;border:1px solid #1e262e;border-radius:3px" style-hover="border-color:#2f3b45">
+                          <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;margin-right:2px">L3</span></sc-if>
+                          <span style="height:18px;display:flex;align-items:center;padding:0 5px;background:#1a222a;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#a6b6ce">eq</span>
+                          <span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#5b8cae"><span style="color:#c98a3c">$event.to</span><span style="color:#7c8b98">&#9662;</span></span>
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7c8b98">=</span>
+                          <span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#5b8cae">play<span style="color:#7c8b98">&#9662;</span></span>
+                          <div style="flex:1"></div><span style="color:#7d8d9a;cursor:pointer;font-size:12px" style-hover="color:#d05c4c">&times;</span>
+                        </div>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer;padding:1px 0" style-hover="color:#98a6b3">+ condition</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:5px">
+                  <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="flex:none;width:18px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;padding-top:7px">L1</span></sc-if>
+                  <span style="flex:none;width:56px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#c0392b;padding-top:7px">CHOOSE</span>
+                  <div style="flex:1;padding:4px 6px;background:#141a20;border:1px solid #212b34;border-radius:3px">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">id</span><span style="height:20px;display:flex;align-items:center;padding:0 6px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c98a3c">victim</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">count</span><span style="height:20px;display:flex;align-items:center;padding:0 6px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:11px">1</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">chooser</span><span style="height:20px;display:flex;align-items:center;gap:4px;padding:0 6px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b8cae"><span style="color:#c98a3c">$you</span><span style="color:#7c8b98">&#9662;</span></span>
+                      <span style="display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98;cursor:pointer"><span style="width:11px;height:11px;border:1px solid #6c7c8a;border-radius:2px"></span>optional</span>
+                    </div>
+                    <div style="display:flex;align-items:flex-start;gap:8px;padding-left:6px;border-left:2px solid #2a3742">
+                      <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="flex:none;width:18px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;padding-top:5px">L2</span></sc-if>
+                      <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:3px 5px;background:#0f1418;border:1px solid #1e262e;border-radius:3px">
+                          <span style="height:18px;display:flex;align-items:center;padding:0 5px;background:#1a222a;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#a6b6ce">query</span>
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">zone</span><span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#5b8cae">play<span style="color:#7c8b98">&#9662;</span></span>
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">types</span><span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#5b8cae">character<span style="color:#7c8b98">&#9662;</span></span>
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">controller</span><span style="height:18px;display:flex;align-items:center;padding:0 5px;background:#0b0f13;border:1px dashed #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7d8d9a;cursor:pointer" style-hover="border-color:#d1913c;color:#d1913c">any</span>
+                          <div style="flex:1"></div><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6f9e7c">4 legal now</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:5px;padding:3px 5px;background:#0f1418;border:1px solid #1e262e;border-radius:3px">
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">prompt</span><input value="Choose a character" style="flex:1;background:transparent;border:none;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:11.5px;outline:none" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:flex-start;gap:8px">
+                  <sc-if value="{{ badges }}" hint-placeholder-val="{{ true }}"><span style="flex:none;width:18px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#6c7c8a;padding-top:7px">L1</span></sc-if>
+                  <span style="flex:none;width:56px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#c0392b;padding-top:7px">THEN</span>
+                  <div style="flex:1;padding:4px 6px;background:#141a20;border:1px solid #212b34;border-radius:3px">
+                    <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:3px 5px;background:#0f1418;border:1px solid #1e262e;border-radius:3px" style-hover="border-color:#2f3b45">
+                      <span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#1a222a;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#a6b6ce;cursor:pointer">deal_damage<span style="color:#7c8b98">&#9662;</span></span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">target</span><span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#5b8cae"><span style="color:#c98a3c">$target.victim</span><span style="color:#7c8b98">&#9662;</span></span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">amount</span><span style="height:18px;display:flex;align-items:center;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px">1</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">source</span><span style="height:18px;display:flex;align-items:center;gap:4px;padding:0 5px;background:#0b0f13;border:1px solid #2f3b45;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10.5px"><span style="color:#c98a3c">$self</span></span>
+                      <div style="flex:1"></div><span style="color:#7d8d9a;cursor:pointer;font-size:12px" style-hover="color:#d05c4c">&times;</span>
+                    </div>
+                    <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer;margin-top:4px" style-hover="color:#98a6b3">+ effect</span>
+                  </div>
+                </div>
+
+              </div>
+              </sc-if>
+            </div>
+            <button style="width:100%;height:26px;background:transparent;border:1px dashed #2a3742;border-radius:3px;color:#7c8b98;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer;margin-bottom:20px" style-hover="border-color:#5b8cae;color:#98a6b3">+ Add ability &middot; 2 slots free</button>
+
+            <div style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#98a6b3">Generated text</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7d8d9a">read-only &middot; from a1</span><div style="flex:1;height:1px;background:#1e262e"></div></div>
+            <div style="padding:10px 12px;background:#0b0f13;border:1px solid #212b34;border-left:2px solid #c0392b;border-radius:3px;font-family:Bitter,serif;font-size:13.5px;line-height:1.5;color:#dfe6ec">When this enters play, deal 1 damage to a character.</div>
+
+          </div>
+          <div style="height:30px;flex:none;display:flex;align-items:stretch;border-top:1px solid #1e262e;background:#101519">
+            <div style="display:flex;align-items:center;padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#e2e8ee;border-right:1px solid #1e262e;box-shadow:inset 0 -2px 0 #c0392b;cursor:pointer">Form</div>
+            <div style="display:flex;align-items:center;padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7c8b98;border-right:1px solid #1e262e;cursor:pointer" style-hover="color:#e2e8ee">JSON</div>
+            <div style="display:flex;align-items:center;padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7c8b98;border-right:1px solid #1e262e;cursor:pointer" style-hover="color:#e2e8ee">Text</div>
+            <div style="flex:1"></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a"><span>&#8984;S save</span><span>&#8984;K palette</span><span>[ ] prev/next</span></div>
+          </div>
+        </div>
+
+        <div style="width:296px;flex:none;display:flex;flex-direction:column;background:#0b0f13;border-right:1px solid #1e262e">
+          <div style="height:30px;flex:none;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid #1e262e"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#98a6b3">Card face</span><div style="flex:1"></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a;cursor:pointer" style-hover="color:#98a6b3">thumb</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a;cursor:pointer" style-hover="color:#98a6b3">std</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee">full</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:16px 12px;gap:14px;overflow-y:auto">
+
+            <div style="width:236px;flex:none;background:#191512;border:1px solid #3a2a24;border-radius:8px;overflow:hidden;box-shadow:0 12px 34px -10px rgba(0,0,0,.9)">
+              <div style="position:relative;height:150px;background:repeating-linear-gradient(135deg,#241c18 0 6px,#1e1714 6px 12px);display:flex;align-items:center;justify-content:center">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:#93806f">card art &middot; 4:3</span>
+                <div style="position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;background:#c0392b;border:1.5px solid #e07a52;display:flex;align-items:center;justify-content:center;font-family:Bitter,serif;font-size:15px;font-weight:700;color:#fff">3</div>
+              </div>
+              <div style="padding:8px 10px 10px;background:linear-gradient(#1f1815,#191512)">
+                <div style="font-family:Bitter,serif;font-size:15px;font-weight:600;color:#f3e7dd;line-height:1.15">Flamecaller Adept</div>
+                <div style="display:flex;align-items:center;gap:6px;margin:3px 0 8px;padding-bottom:6px;border-bottom:1px solid #3a2a24"><span style="font-family:Bitter,serif;font-size:10.5px;color:#b09287;letter-spacing:.02em">Character &mdash; Mystic</span><div style="flex:1"></div><span style="width:8px;height:8px;border-radius:2px;background:#c0392b"></span></div>
+                <div style="min-height:52px;font-family:Bitter,serif;font-size:11.5px;line-height:1.45;color:#e6d8ce">When this enters play, deal 1 damage to a character.</div>
+                <div style="font-family:Bitter,serif;font-style:italic;font-size:10px;color:#8a736a;margin-top:6px">&mdash;</div>
+              </div>
+              <div style="display:flex;align-items:center;padding:0 10px 9px">
+                <span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:4px;background:#3a1f18;border:1px solid #6b3327;font-family:Bitter,serif;font-size:14px;font-weight:700;color:#f0b4a0">2</span>
+                <div style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#93806f">core-012 &middot; uncommon</div>
+                <span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:4px;background:#1f2a22;border:1px solid #35543c;font-family:Bitter,serif;font-size:14px;font-weight:700;color:#a8d4b0">2</span>
+              </div>
+            </div>
+
+            <div style="width:100%;display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98"><span style="width:5px;height:5px;border-radius:50%;background:#6f9e7c"></span>legal in Ember &amp; Neutral decks</div>
+              <div style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98"><span style="width:5px;height:5px;border-radius:50%;background:#d1913c"></span>art asset not assigned</div>
+              <div style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">template <span style="color:#98a6b3">standard-portrait</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:296px;flex:none;display:flex;flex-direction:column;background:#11171c">
+          <div style="height:30px;flex:none;display:flex;align-items:stretch;border-bottom:1px solid #1e262e">
+            <div onClick="{{ setLint }}" style="position:relative;display:flex;align-items:center;gap:5px;padding:0 9px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;cursor:pointer">Lint<span style="color:#d1913c">2</span><sc-if value="{{ isLint }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+            <div onClick="{{ setSim }}" style="position:relative;display:flex;align-items:center;padding:0 9px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98;cursor:pointer" style-hover="color:#e2e8ee">Similar<sc-if value="{{ isSim }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+            <div onClick="{{ setRev }}" style="position:relative;display:flex;align-items:center;padding:0 9px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98;cursor:pointer" style-hover="color:#e2e8ee">Revisions<sc-if value="{{ isRev }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+            <div onClick="{{ setNotes }}" style="position:relative;display:flex;align-items:center;padding:0 9px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98;cursor:pointer" style-hover="color:#e2e8ee">Notes<sc-if value="{{ isNotes }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+            <div style="flex:1"></div>
+            <div style="display:flex;align-items:center;padding:0 9px;color:#7d8d9a;cursor:pointer;font-size:11px" style-hover="color:#98a6b3">&#8594;|</div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:10px">
+
+            <sc-if value="{{ isLint }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="padding:8px 9px;background:#1a1611;border:1px solid #40331c;border-left:2px solid #d1913c;border-radius:3px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#d1913c">warning</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7d8d9a">art.assetId</span></div>
+                <div style="font-size:12px;line-height:1.45;color:#dfe6ec">No art asset assigned, so proofs and print-and-play will render the placeholder frame.</div>
+                <div style="margin-top:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#98a6b3;cursor:pointer;text-decoration:underline" style-hover="color:#e2e8ee">Assign art</span></div>
+              </div>
+              <div style="padding:8px 9px;background:#1a1611;border:1px solid #40331c;border-left:2px solid #d1913c;border-radius:3px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#d1913c">warning</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7d8d9a">a1.targets.victim.query</span></div>
+                <div style="font-size:12px;line-height:1.45;color:#dfe6ec">The query has no <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c98a3c">controller</span>, so this can be forced onto your own characters. Intended?</div>
+                <div style="display:flex;gap:10px;margin-top:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#98a6b3;cursor:pointer;text-decoration:underline" style-hover="color:#e2e8ee">Add controller</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98;cursor:pointer;text-decoration:underline" style-hover="color:#98a6b3">Mute rule</span></div>
+              </div>
+              <div style="padding:8px 9px;background:#101614;border:1px solid #21372a;border-left:2px solid #6f9e7c;border-radius:3px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#6f9e7c">valid</span></div>
+                <div style="font-size:12px;line-height:1.45;color:#a8bfb0">Card and ability both validate against <span style="font-family:'IBM Plex Mono',monospace;font-size:11px">card.schema.json</span> and <span style="font-family:'IBM Plex Mono',monospace;font-size:11px">ability.schema.json</span>.</div>
+              </div>
+              <div style="margin-top:8px;padding-top:8px;border-top:1px solid #1e262e">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:6px">Balance context</div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#98a6b3">Cost 3 characters</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">4</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#98a6b3">Median stat total at 3</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">4.5</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#98a6b3">This card</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">4</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#98a6b3">Play rate, last batch</span><span style="font-family:'IBM Plex Mono',monospace;color:#7d8d9a">no data</span></div>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isSim }}">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98;margin-bottom:2px">Shares deal_damage &middot; 3</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:6px;background:#141a20;border:1px solid #212b34;border-radius:3px;cursor:pointer" style-hover="border-color:#6c7c8a"><div style="width:24px;height:34px;border-radius:2px;background:repeating-linear-gradient(135deg,#241c18 0 4px,#1e1714 4px 8px);border:1px solid #3a2a24"></div><div style="flex:1;min-width:0"><div style="font-size:12.5px">Scorch</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">core-014 &middot; event &middot; cost 2 &middot; 3 dmg</div></div></div>
+              <div style="display:flex;align-items:center;gap:9px;padding:6px;background:#141a20;border:1px solid #212b34;border-radius:3px;cursor:pointer" style-hover="border-color:#6c7c8a"><div style="width:24px;height:34px;border-radius:2px;background:repeating-linear-gradient(135deg,#241c18 0 4px,#1e1714 4px 8px);border:1px solid #3a2a24"></div><div style="flex:1;min-width:0"><div style="font-size:12.5px">Ignis, the First Flame</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">core-001 &middot; hero &middot; 2 dmg, 1/round</div></div></div>
+              <div style="display:flex;align-items:center;gap:9px;padding:6px;background:#141a20;border:1px solid #212b34;border-radius:3px;cursor:pointer" style-hover="border-color:#6c7c8a"><div style="width:24px;height:34px;border-radius:2px;background:repeating-linear-gradient(135deg,#241c18 0 4px,#1e1714 4px 8px);border:1px solid #3a2a24"></div><div style="flex:1;min-width:0"><div style="font-size:12.5px">Grey Tide</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">core-025 &middot; event &middot; cost 4 &middot; 1 dmg each</div></div></div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isRev }}">
+            <div style="display:flex;flex-direction:column">
+              <div style="display:flex;gap:9px;padding:7px 0;border-bottom:1px solid #1e262e"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a;width:34px;flex:none">rev 14</span><div style="flex:1"><div style="font-size:12px;color:#dfe6ec">Damage 2 &rarr; 1 after aggro simming too hot</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">AI &middot; 2 minutes ago</div></div></div>
+              <div style="display:flex;gap:9px;padding:7px 0;border-bottom:1px solid #1e262e"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a;width:34px;flex:none">rev 13</span><div style="flex:1"><div style="font-size:12px;color:#dfe6ec">Added enters-play trigger</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">AI &middot; yesterday</div></div></div>
+              <div style="display:flex;gap:9px;padding:7px 0;border-bottom:1px solid #1e262e"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7d8d9a;width:34px;flex:none">rev 12</span><div style="flex:1"><div style="font-size:12px;color:#dfe6ec">Health 1 &rarr; 2</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">AI &middot; yesterday</div></div></div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isNotes }}">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="padding:8px 9px;background:#141a20;border:1px solid #212b34;border-radius:3px"><div style="font-size:12px;line-height:1.45;color:#dfe6ec">Killed my own Dust Weaver by accident &mdash; the prompt didn't say the target could be friendly.</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98;margin-top:5px">playtest m-3391 &middot; round 4 &middot; open</div></div>
+              <div style="padding:8px 9px;background:#141a20;border:1px solid #212b34;border-radius:3px"><div style="font-size:12px;line-height:1.45;color:#dfe6ec">Feels like the fair version of Scorch. Keep at 1 damage.</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98;margin-top:5px">playtest m-3388 &middot; round 7 &middot; resolved</div></div>
+            </div>
+            </sc-if>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div></div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Studio &mdash; warm near-black, recessed field wells, sentence-case labels, letterpress card face</div><div class="dv-card">
+<div style="width:1280px;height:880px;display:flex;flex-direction:column;background:#12100e;color:#ede8e1;font-family:'IBM Plex Sans',sans-serif;font-size:13px;overflow:hidden;font-feature-settings:'tnum' 1">
+
+  <div style="height:46px;flex:none;display:flex;align-items:center;gap:14px;padding:0 16px;background:#1a1714;border-bottom:1px solid #332d26">
+    <div style="display:flex;align-items:center;gap:9px"><div style="width:17px;height:17px;border-radius:50%;background:#c0392b"></div><span style="font-weight:600;font-size:14px">Emberfall</span></div>
+    <button style="display:flex;align-items:center;gap:7px;height:27px;padding:0 10px;background:#221e1a;border:1px solid #3b342c;border-radius:14px;color:#ede8e1;font-family:'IBM Plex Sans',sans-serif;font-size:12px;cursor:pointer" style-hover="background:#2b2621"><span style="width:6px;height:6px;border-radius:50%;background:#d1913c"></span>v0.4.0 draft<span style="color:#8b8175">&#9662;</span></button>
+    <div style="font-size:12px;color:#a79d92">Cards<span style="color:#8b8175">&nbsp;/&nbsp;</span><span style="color:#ede8e1">Flamecaller Adept</span></div>
+    <div style="flex:1"></div>
+    <button style="display:flex;align-items:center;gap:10px;width:220px;height:29px;padding:0 11px;background:#0d0b09;border:1px solid #2a251f;border-radius:15px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);color:#8b8175;font-family:'IBM Plex Sans',sans-serif;font-size:12px;text-align:left;cursor:pointer" style-hover="color:#a79d92"><span style="flex:1">Search&hellip;</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px">&#8984;K</span></button>
+    <button style="display:flex;align-items:center;gap:8px;height:27px;padding:0 10px;background:#221e1a;border:1px solid #3b342c;border-radius:14px;color:#ede8e1;font-size:11.5px;cursor:pointer" style-hover="background:#2b2621"><span style="color:#d05c4c">3 errors</span><span style="color:#8b8175">&middot;</span><span style="color:#d1913c">12 warnings</span></button>
+    <div style="width:27px;height:27px;border-radius:50%;background:#2b2621;border:1px solid #3b342c;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#a79d92">AI</div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0">
+    <div style="width:56px;flex:none;background:#161311;border-right:1px solid #332d26;display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:3px">
+      <div title="Overview" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#8b8175;cursor:pointer;font-size:12px;font-weight:500" style-hover="background:#221e1a;color:#a79d92">Ov</div>
+      <div title="System" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#8b8175;cursor:pointer;font-size:12px;font-weight:500" style-hover="background:#221e1a;color:#a79d92">Sy</div>
+      <div title="Cards" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#2b2621;color:#ede8e1;cursor:pointer;font-size:12px;font-weight:600;box-shadow:0 1px 0 rgba(255,255,255,.04) inset">Ca</div>
+      <div title="Sets" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#8b8175;cursor:pointer;font-size:12px;font-weight:500" style-hover="background:#221e1a;color:#a79d92">Se</div>
+      <div title="Decks" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#8b8175;cursor:pointer;font-size:12px;font-weight:500" style-hover="background:#221e1a;color:#a79d92">De</div>
+      <div title="Playtest" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#8b8175;cursor:pointer;font-size:12px;font-weight:500" style-hover="background:#221e1a;color:#a79d92">Pl</div>
+      <div title="Simulate" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#8b8175;cursor:pointer;font-size:12px;font-weight:500" style-hover="background:#221e1a;color:#a79d92">Si</div>
+      <div title="Versions" style="width:40px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#8b8175;cursor:pointer;font-size:12px;font-weight:500" style-hover="background:#221e1a;color:#a79d92">Ve</div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0">
+      <div style="height:44px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid #262119">
+        <div style="display:flex;align-items:center;gap:5px"><button style="width:24px;height:24px;background:#221e1a;border:1px solid #3b342c;border-radius:6px;color:#a79d92;cursor:pointer;font-size:11px" style-hover="background:#2b2621;color:#ede8e1">&#8249;</button><button style="width:24px;height:24px;background:#221e1a;border:1px solid #3b342c;border-radius:6px;color:#a79d92;cursor:pointer;font-size:11px" style-hover="background:#2b2621;color:#ede8e1">&#8250;</button></div>
+        <span style="font-size:12px;color:#a79d92">Card 12 of 20 in <span style="color:#ede8e1">set:core type:character</span></span>
+        <div style="flex:1"></div>
+        <span style="display:flex;align-items:center;gap:7px;font-size:12px;color:#7f9c86"><span style="width:6px;height:6px;border-radius:50%;background:#7f9c86"></span>All changes saved &middot; revision 14</span>
+        <button style="height:28px;padding:0 13px;background:#c0392b;border:none;border-radius:14px;color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer" style-hover="background:#d2432f">Playtest this card</button>
+      </div>
+
+      <div style="flex:1;display:flex;min-height:0">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid #262119">
+          <div style="flex:1;overflow-y:auto;padding:18px 20px 26px">
+
+            <input value="Flamecaller Adept" style="width:100%;box-sizing:border-box;background:transparent;border:none;color:#ede8e1;font-family:'IBM Plex Sans',sans-serif;font-size:23px;font-weight:600;padding:0;outline:none;letter-spacing:-.01em" />
+            <div style="display:flex;align-items:center;gap:8px;margin:5px 0 22px;font-size:12px;color:#8b8175"><span style="font-family:'IBM Plex Mono',monospace">core-012</span><span>&middot;</span><span>Emberfall Core Set</span><span>&middot;</span><span style="display:flex;align-items:center;gap:5px;padding:1px 8px;background:#1a201b;border:1px solid #2c3a2e;border-radius:10px;color:#7f9c86;font-size:11px">Approved</span></div>
+
+            <div style="font-size:13px;font-weight:600;color:#ede8e1;margin:0 0 12px">Identity</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 14px;margin-bottom:26px">
+              <div><div style="font-size:11.5px;color:#a79d92;margin-bottom:5px">Type</div><div style="display:flex;align-items:center;height:30px;padding:0 10px;background:#0d0b09;border:1px solid #2a251f;border-radius:6px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);font-size:13px;cursor:pointer" style-hover="border-color:#453d33">Character<span style="flex:1"></span><span style="color:#8b8175">&#9662;</span></div></div>
+              <div><div style="font-size:11.5px;color:#a79d92;margin-bottom:5px">Faction</div><div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 10px;background:#0d0b09;border:1px solid #2a251f;border-radius:6px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);font-size:13px;cursor:pointer" style-hover="border-color:#453d33"><span style="width:10px;height:10px;border-radius:50%;background:#c0392b"></span>Ember<span style="flex:1"></span><span style="color:#8b8175">&#9662;</span></div></div>
+              <div><div style="font-size:11.5px;color:#a79d92;margin-bottom:5px">Rarity</div><div style="display:flex;align-items:center;height:30px;padding:0 10px;background:#0d0b09;border:1px solid #2a251f;border-radius:6px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);font-size:13px;cursor:pointer" style-hover="border-color:#453d33">Uncommon<span style="flex:1"></span><span style="color:#8b8175">&#9662;</span></div></div>
+            </div>
+
+            <div style="display:flex;align-items:baseline;gap:9px;margin:0 0 12px"><span style="font-size:13px;font-weight:600;color:#ede8e1">Attributes</span><span style="font-size:11.5px;color:#8b8175">generated from the Character card type</span></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;margin-bottom:14px">
+              <div><div style="font-size:11.5px;color:#a79d92;margin-bottom:5px">Cost <span style="color:#8b8175">0&ndash;10</span></div><div style="display:flex;height:30px;background:#0d0b09;border:1px solid #2a251f;border-radius:6px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);overflow:hidden"><div style="flex:1;display:flex;align-items:center;padding:0 10px;font-size:14px;font-weight:500">3</div><button style="width:22px;background:#221e1a;border:none;color:#a79d92;cursor:pointer;font-size:10px" style-hover="background:#2b2621;color:#ede8e1">&#9662;</button><button style="width:22px;background:#221e1a;border:none;border-left:1px solid #2a251f;color:#a79d92;cursor:pointer;font-size:10px" style-hover="background:#2b2621;color:#ede8e1">&#9652;</button></div></div>
+              <div><div style="font-size:11.5px;color:#a79d92;margin-bottom:5px">Attack <span style="color:#8b8175">min 0</span></div><div style="display:flex;height:30px;background:#0d0b09;border:1px solid #2a251f;border-radius:6px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);overflow:hidden"><div style="flex:1;display:flex;align-items:center;padding:0 10px;font-size:14px;font-weight:500">2</div><button style="width:22px;background:#221e1a;border:none;color:#a79d92;cursor:pointer;font-size:10px" style-hover="background:#2b2621;color:#ede8e1">&#9662;</button><button style="width:22px;background:#221e1a;border:none;border-left:1px solid #2a251f;color:#a79d92;cursor:pointer;font-size:10px" style-hover="background:#2b2621;color:#ede8e1">&#9652;</button></div></div>
+              <div><div style="font-size:11.5px;color:#a79d92;margin-bottom:5px">Health <span style="color:#8b8175">min 1</span></div><div style="display:flex;height:30px;background:#0d0b09;border:1px solid #2a251f;border-radius:6px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);overflow:hidden"><div style="flex:1;display:flex;align-items:center;padding:0 10px;font-size:14px;font-weight:500">2</div><button style="width:22px;background:#221e1a;border:none;color:#a79d92;cursor:pointer;font-size:10px" style-hover="background:#2b2621;color:#ede8e1">&#9662;</button><button style="width:22px;background:#221e1a;border:none;border-left:1px solid #2a251f;color:#a79d92;cursor:pointer;font-size:10px" style-hover="background:#2b2621;color:#ede8e1">&#9652;</button></div></div>
+            </div>
+            <div style="margin-bottom:26px"><div style="font-size:11.5px;color:#a79d92;margin-bottom:5px">Traits <span style="color:#8b8175">from the traits vocabulary</span></div><div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:30px;padding:5px 7px;background:#0d0b09;border:1px solid #2a251f;border-radius:6px;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)"><span style="display:flex;align-items:center;gap:6px;height:20px;padding:0 8px;background:#2b2621;border-radius:10px;font-size:11.5px">Mystic<span style="color:#8b8175;cursor:pointer" style-hover="color:#d05c4c">&times;</span></span><span style="font-size:11.5px;color:#bcb1a3;cursor:pointer" style-hover="color:#ede8e1">add Soldier, Scout, Beast or Relic</span></div></div>
+
+            <div style="display:flex;align-items:baseline;gap:9px;margin:0 0 12px"><span style="font-size:13px;font-weight:600;color:#ede8e1">Keywords</span><span style="font-size:11.5px;color:#8b8175">none on this card</span></div>
+            <div style="display:flex;gap:7px;margin-bottom:26px"><button style="height:26px;padding:0 11px;background:#221e1a;border:1px solid #3b342c;border-radius:13px;color:#a79d92;font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;cursor:pointer" style-hover="border-color:#5b5245;color:#ede8e1">+ Swift</button><button style="height:26px;padding:0 11px;background:#221e1a;border:1px solid #3b342c;border-radius:13px;color:#a79d92;font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;cursor:pointer" style-hover="border-color:#5b5245;color:#ede8e1">+ Guard</button><button style="height:26px;padding:0 11px;background:#221e1a;border:1px solid #3b342c;border-radius:13px;color:#a79d92;font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;cursor:pointer" style-hover="border-color:#5b5245;color:#ede8e1">+ Bolster N</button></div>
+
+            <div style="display:flex;align-items:baseline;gap:9px;margin:0 0 12px"><span style="font-size:13px;font-weight:600;color:#ede8e1">Abilities</span><span style="font-size:11.5px;color:#8b8175">1 of 3 slots used</span></div>
+
+            <div style="border:1px solid #332d26;border-radius:10px;background:#181513;overflow:hidden;margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:9px;height:36px;padding:0 12px;background:#221e1a;border-bottom:1px solid #332d26">
+                <button onClick="{{ toggleB }}" style="width:18px;height:18px;background:transparent;border:none;color:#a79d92;cursor:pointer;font-size:9px" style-hover="color:#ede8e1">&#9662;</button>
+                <span style="font-size:12.5px;font-weight:600">Triggered ability</span>
+                <span style="padding:1px 8px;background:#2b2621;border-radius:9px;font-size:10.5px;color:#a79d92">forced</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8b8175">a1</span>
+                <div style="flex:1"></div>
+                <span style="font-size:11px;color:#7f9c86">valid</span>
+                <span style="color:#8b8175;cursor:pointer;font-size:14px" style-hover="color:#ede8e1">&#8943;</span>
+              </div>
+              <sc-if value="{{ openB }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:12px">
+
+                <div style="margin-bottom:10px">
+                  <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#c0392b;margin-bottom:5px">When</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:8px 10px;background:#1f1b17;border:1px solid #302a23;border-radius:8px">
+                    <span style="font-size:12px;color:#a79d92">the event</span><span style="display:flex;align-items:center;gap:6px;height:24px;padding:0 9px;background:#0d0b09;border:1px solid #3b342c;border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;cursor:pointer" style-hover="border-color:#5b5245">card.entered_zone<span style="color:#8b8175">&#9662;</span></span>
+                    <span style="font-size:12px;color:#a79d92">happens, resolving</span><span style="display:flex;align-items:center;gap:6px;height:24px;padding:0 9px;background:#0d0b09;border:1px solid #3b342c;border-radius:12px;font-size:11.5px;cursor:pointer" style-hover="border-color:#5b5245">after it<span style="color:#8b8175">&#9662;</span></span>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:10px">
+                  <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#c0392b;margin-bottom:5px">If</div>
+                  <div style="padding:8px 10px;background:#1f1b17;border:1px solid #302a23;border-radius:8px">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="display:flex;align-items:center;gap:6px;height:24px;padding:0 9px;background:#2b2621;border:1px solid #3b342c;border-radius:12px;font-size:11.5px;font-weight:600;cursor:pointer" style-hover="border-color:#5b5245">all of<span style="color:#8b8175">&#9662;</span></span><span style="font-size:11.5px;color:#8b8175">both conditions must hold</span></div>
+                    <div style="padding-left:12px;border-left:2px solid #3b342c;display:flex;flex-direction:column;gap:6px">
+                      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:6px 8px;background:#141110;border:1px solid #262119;border-radius:7px" style-hover="border-color:#3b342c">
+                        <span style="font-size:11.5px;color:#a79d92">the card</span><span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245"><span style="color:#c9a06b">$event.card</span><span style="color:#8b8175">&#9662;</span></span>
+                        <span style="height:22px;display:flex;align-items:center;padding:0 7px;background:#2b2621;border-radius:11px;font-size:11px;color:#a79d92">is</span>
+                        <span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245"><span style="color:#c9a06b">$self</span><span style="color:#8b8175">&#9662;</span></span>
+                        <div style="flex:1"></div><span style="color:#8b8175;cursor:pointer;font-size:13px" style-hover="color:#d05c4c">&times;</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:6px 8px;background:#141110;border:1px solid #262119;border-radius:7px" style-hover="border-color:#3b342c">
+                        <span style="font-size:11.5px;color:#a79d92">the destination</span><span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245"><span style="color:#c9a06b">$event.to</span><span style="color:#8b8175">&#9662;</span></span>
+                        <span style="height:22px;display:flex;align-items:center;padding:0 7px;background:#2b2621;border-radius:11px;font-size:11px;color:#a79d92">is</span>
+                        <span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245">In Play<span style="color:#8b8175">&#9662;</span></span>
+                        <div style="flex:1"></div><span style="color:#8b8175;cursor:pointer;font-size:13px" style-hover="color:#d05c4c">&times;</span>
+                      </div>
+                      <span style="font-size:11.5px;color:#bcb1a3;cursor:pointer" style-hover="color:#ede8e1">+ Add condition</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:10px">
+                  <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#c0392b;margin-bottom:5px">Choose</div>
+                  <div style="padding:8px 10px;background:#1f1b17;border:1px solid #302a23;border-radius:8px">
+                    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:7px">
+                      <span style="font-size:12px;color:#a79d92">exactly</span><span style="height:24px;display:flex;align-items:center;padding:0 9px;background:#0d0b09;border:1px solid #3b342c;border-radius:12px;font-size:11.5px">1</span>
+                      <span style="font-size:12px;color:#a79d92">chosen by</span><span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 9px;background:#0d0b09;border:1px solid #3b342c;border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245"><span style="color:#c9a06b">$you</span><span style="color:#8b8175">&#9662;</span></span>
+                      <span style="font-size:12px;color:#a79d92">called</span><span style="height:24px;display:flex;align-items:center;padding:0 9px;background:#0d0b09;border:1px solid #3b342c;border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c9a06b">victim</span>
+                    </div>
+                    <div style="padding-left:12px;border-left:2px solid #3b342c;display:flex;flex-direction:column;gap:6px">
+                      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:6px 8px;background:#141110;border:1px solid #262119;border-radius:7px">
+                        <span style="font-size:11.5px;color:#a79d92">from</span><span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245">In Play<span style="color:#8b8175">&#9662;</span></span>
+                        <span style="font-size:11.5px;color:#a79d92">of type</span><span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245">Character<span style="color:#8b8175">&#9662;</span></span>
+                        <span style="height:22px;display:flex;align-items:center;padding:0 8px;background:#241d12;border:1px dashed #4a3a1e;border-radius:11px;font-size:11px;color:#d1913c;cursor:pointer" style-hover="border-color:#d1913c">any controller</span>
+                        <div style="flex:1"></div><span style="font-size:11px;color:#7f9c86">4 legal</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:7px;padding:6px 8px;background:#141110;border:1px solid #262119;border-radius:7px">
+                        <span style="font-size:11.5px;color:#a79d92">prompt</span><input value="Choose a character" style="flex:1;background:transparent;border:none;color:#ede8e1;font-family:'IBM Plex Sans',sans-serif;font-size:12px;outline:none" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#c0392b;margin-bottom:5px">Then</div>
+                  <div style="padding:8px 10px;background:#1f1b17;border:1px solid #302a23;border-radius:8px">
+                    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:6px 8px;background:#141110;border:1px solid #262119;border-radius:7px" style-hover="border-color:#3b342c">
+                      <span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#2b2621;border-radius:11px;font-size:11.5px;font-weight:600;cursor:pointer">Deal damage<span style="color:#8b8175">&#9662;</span></span>
+                      <span style="height:22px;display:flex;align-items:center;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-size:11px">1</span>
+                      <span style="font-size:11.5px;color:#a79d92">to</span><span style="height:22px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#5b5245"><span style="color:#c9a06b">$target.victim</span><span style="color:#8b8175">&#9662;</span></span>
+                      <span style="font-size:11.5px;color:#a79d92">from</span><span style="height:22px;display:flex;align-items:center;padding:0 8px;background:#0d0b09;border:1px solid #3b342c;border-radius:11px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c9a06b">$self</span>
+                      <div style="flex:1"></div><span style="color:#8b8175;cursor:pointer;font-size:13px" style-hover="color:#d05c4c">&times;</span>
+                    </div>
+                    <span style="display:inline-block;font-size:11.5px;color:#bcb1a3;cursor:pointer;margin-top:6px" style-hover="color:#ede8e1">+ Add effect</span>
+                  </div>
+                </div>
+
+              </div>
+              </sc-if>
+            </div>
+            <button style="width:100%;height:30px;background:transparent;border:1px dashed #3b342c;border-radius:8px;color:#8b8175;font-family:'IBM Plex Sans',sans-serif;font-size:12px;cursor:pointer;margin-bottom:26px" style-hover="border-color:#5b5245;color:#a79d92">+ Add ability</button>
+
+            <div style="display:flex;align-items:baseline;gap:9px;margin:0 0 12px"><span style="font-size:13px;font-weight:600;color:#ede8e1">Card text</span><span style="font-size:11.5px;color:#8b8175">generated from the ability &mdash; cannot drift</span></div>
+            <div style="padding:14px 16px;background:#1a1714;border:1px solid #302a23;border-radius:10px;font-family:'IM Fell English',serif;font-size:16px;line-height:1.5;color:#ede8e1">When this enters play, deal 1 damage to a character.</div>
+
+          </div>
+          <div style="height:34px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;border-top:1px solid #262119;background:#161311">
+            <div style="display:flex;gap:4px;padding:2px;background:#0d0b09;border-radius:8px">
+              <span style="padding:3px 11px;background:#2b2621;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer">Form</span>
+              <span style="padding:3px 11px;border-radius:6px;font-size:11.5px;color:#8b8175;cursor:pointer" style-hover="color:#ede8e1">JSON</span>
+              <span style="padding:3px 11px;border-radius:6px;font-size:11.5px;color:#8b8175;cursor:pointer" style-hover="color:#ede8e1">Text</span>
+            </div>
+            <div style="flex:1"></div>
+            <span style="font-size:11px;color:#8b8175">&#8984;S save &nbsp; &#8984;K palette &nbsp; [ ] previous / next card</span>
+          </div>
+        </div>
+
+        <div style="width:296px;flex:none;display:flex;flex-direction:column;background:#0f0d0b;border-right:1px solid #262119">
+          <div style="height:34px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #262119"><span style="font-size:12px;font-weight:600">Card face</span><div style="flex:1"></div><div style="display:flex;gap:3px;padding:2px;background:#0d0b09;border-radius:7px"><span style="padding:2px 7px;border-radius:5px;font-size:10.5px;color:#8b8175;cursor:pointer">S</span><span style="padding:2px 7px;border-radius:5px;font-size:10.5px;color:#8b8175;cursor:pointer">M</span><span style="padding:2px 7px;background:#2b2621;border-radius:5px;font-size:10.5px;cursor:pointer">L</span></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 14px;gap:16px;overflow-y:auto">
+
+            <div style="width:230px;flex:none;background:#efe6d8;border-radius:11px;overflow:hidden;box-shadow:0 16px 40px -12px rgba(0,0,0,.95),0 0 0 1px #b5a48c">
+              <div style="position:relative;height:146px;background:repeating-linear-gradient(135deg,#ddd0bb 0 7px,#d5c7b1 7px 14px);display:flex;align-items:center;justify-content:center">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8a7a63">card art &middot; 4:3</span>
+                <div style="position:absolute;top:9px;left:9px;width:28px;height:28px;border-radius:50%;background:#c0392b;box-shadow:0 1px 3px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-family:'IM Fell English',serif;font-size:16px;color:#fff">3</div>
+              </div>
+              <div style="padding:9px 12px 0">
+                <div style="font-family:'IM Fell English',serif;font-size:18px;color:#1d1710;line-height:1.1">Flamecaller Adept</div>
+                <div style="display:flex;align-items:center;gap:7px;margin:4px 0 8px;padding-bottom:7px;border-bottom:1px solid #c3b39a"><span style="font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:#5f5342">Character &mdash; Mystic</span><div style="flex:1"></div><span style="width:9px;height:9px;border-radius:50%;background:#c0392b"></span></div>
+                <div style="min-height:54px;font-family:'IM Fell English',serif;font-size:13px;line-height:1.45;color:#2a2318">When this enters play, deal 1 damage to a character.</div>
+              </div>
+              <div style="display:flex;align-items:center;padding:6px 12px 11px">
+                <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#c0392b;color:#fff;font-family:'IM Fell English',serif;font-size:15px">2</span>
+                <div style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6f6250">core-012 &middot; uncommon</div>
+                <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#3f5c46;color:#fff;font-family:'IM Fell English',serif;font-size:15px">2</span>
+              </div>
+            </div>
+
+            <div style="width:100%;display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#a79d92"><span style="width:6px;height:6px;border-radius:50%;background:#7f9c86"></span>Legal in Ember and Neutral decks</div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#a79d92"><span style="width:6px;height:6px;border-radius:50%;background:#d1913c"></span>No art assigned yet</div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#8b8175">Template: standard-portrait</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:296px;flex:none;display:flex;flex-direction:column;background:#181513">
+          <div style="height:34px;flex:none;display:flex;align-items:stretch;gap:2px;padding:0 8px;border-bottom:1px solid #262119">
+            <div onClick="{{ setLint }}" style="position:relative;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:11.5px;font-weight:500;cursor:pointer">Lint<span style="padding:0 5px;background:#3a2f1a;border-radius:8px;font-size:10px;color:#d1913c">2</span><sc-if value="{{ isLint }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#c0392b;border-radius:2px"></span></sc-if></div>
+            <div onClick="{{ setSim }}" style="position:relative;display:flex;align-items:center;padding:0 8px;font-size:11.5px;color:#8b8175;cursor:pointer" style-hover="color:#ede8e1">Similar<sc-if value="{{ isSim }}"><span style="position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#c0392b;border-radius:2px"></span></sc-if></div>
+            <div onClick="{{ setRev }}" style="position:relative;display:flex;align-items:center;padding:0 8px;font-size:11.5px;color:#8b8175;cursor:pointer" style-hover="color:#ede8e1">Revisions<sc-if value="{{ isRev }}"><span style="position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#c0392b;border-radius:2px"></span></sc-if></div>
+            <div onClick="{{ setNotes }}" style="position:relative;display:flex;align-items:center;padding:0 8px;font-size:11.5px;color:#8b8175;cursor:pointer" style-hover="color:#ede8e1">Notes<sc-if value="{{ isNotes }}"><span style="position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#c0392b;border-radius:2px"></span></sc-if></div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:12px">
+
+            <sc-if value="{{ isLint }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="padding:11px 12px;background:#1d1811;border:1px solid #3a2f1a;border-radius:9px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:7px;height:7px;border-radius:50%;background:#d1913c"></span><span style="font-size:11px;font-weight:600;color:#d1913c">Warning</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8b8175">art.assetId</span></div>
+                <div style="font-size:12.5px;line-height:1.5;color:#ede8e1">No art asset assigned, so proofs and print-and-play render the placeholder frame.</div>
+                <div style="margin-top:8px"><span style="font-size:11.5px;color:#c9a06b;cursor:pointer" style-hover="color:#e0bb87">Assign art &#8594;</span></div>
+              </div>
+              <div style="padding:11px 12px;background:#1d1811;border:1px solid #3a2f1a;border-radius:9px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:7px;height:7px;border-radius:50%;background:#d1913c"></span><span style="font-size:11px;font-weight:600;color:#d1913c">Warning</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8b8175">a1 &middot; victim</span></div>
+                <div style="font-size:12.5px;line-height:1.5;color:#ede8e1">The target query has no controller, so this ability can be forced onto your own characters. Intended?</div>
+                <div style="display:flex;gap:12px;margin-top:8px"><span style="font-size:11.5px;color:#c9a06b;cursor:pointer" style-hover="color:#e0bb87">Restrict to enemies</span><span style="font-size:11.5px;color:#8b8175;cursor:pointer" style-hover="color:#a79d92">Mute</span></div>
+              </div>
+              <div style="padding:11px 12px;background:#141a15;border:1px solid #263a2a;border-radius:9px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:7px;height:7px;border-radius:50%;background:#7f9c86"></span><span style="font-size:11px;font-weight:600;color:#7f9c86">Valid</span></div>
+                <div style="font-size:12.5px;line-height:1.5;color:#a8bfae">Card and ability validate against their schemas.</div>
+              </div>
+              <div style="margin-top:6px;padding-top:12px;border-top:1px solid #262119">
+                <div style="font-size:12px;font-weight:600;margin-bottom:9px">Balance context</div>
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a79d92">Cost 3 characters</span><span>4</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a79d92">Median stat total at 3</span><span>4.5</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a79d92">This card</span><span>4</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a79d92">Play rate, last batch</span><span style="color:#8b8175">no data</span></div>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isSim }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="font-size:11.5px;color:#8b8175;margin-bottom:2px">Three other cards deal damage</div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:#1f1b17;border:1px solid #302a23;border-radius:9px;cursor:pointer" style-hover="border-color:#453d33"><div style="width:26px;height:36px;border-radius:4px;background:repeating-linear-gradient(135deg,#ddd0bb 0 4px,#d5c7b1 4px 8px)"></div><div style="flex:1"><div style="font-size:12.5px">Scorch</div><div style="font-size:11px;color:#8b8175">Event &middot; cost 2 &middot; 3 damage</div></div></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:#1f1b17;border:1px solid #302a23;border-radius:9px;cursor:pointer" style-hover="border-color:#453d33"><div style="width:26px;height:36px;border-radius:4px;background:repeating-linear-gradient(135deg,#ddd0bb 0 4px,#d5c7b1 4px 8px)"></div><div style="flex:1"><div style="font-size:12.5px">Ignis, the First Flame</div><div style="font-size:11px;color:#8b8175">Hero &middot; 2 damage, once per round</div></div></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:#1f1b17;border:1px solid #302a23;border-radius:9px;cursor:pointer" style-hover="border-color:#453d33"><div style="width:26px;height:36px;border-radius:4px;background:repeating-linear-gradient(135deg,#ddd0bb 0 4px,#d5c7b1 4px 8px)"></div><div style="flex:1"><div style="font-size:12.5px">Grey Tide</div><div style="font-size:11px;color:#8b8175">Event &middot; cost 4 &middot; 1 damage each</div></div></div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isRev }}">
+            <div>
+              <div style="display:flex;gap:11px;padding:9px 0;border-bottom:1px solid #262119"><span style="font-size:11px;color:#8b8175;width:38px;flex:none">rev 14</span><div style="flex:1"><div style="font-size:12.5px">Damage 2 &rarr; 1 after aggro simming too hot</div><div style="font-size:11px;color:#8b8175">AI &middot; 2 minutes ago</div></div></div>
+              <div style="display:flex;gap:11px;padding:9px 0;border-bottom:1px solid #262119"><span style="font-size:11px;color:#8b8175;width:38px;flex:none">rev 13</span><div style="flex:1"><div style="font-size:12.5px">Added enters-play trigger</div><div style="font-size:11px;color:#8b8175">AI &middot; yesterday</div></div></div>
+              <div style="display:flex;gap:11px;padding:9px 0;border-bottom:1px solid #262119"><span style="font-size:11px;color:#8b8175;width:38px;flex:none">rev 12</span><div style="flex:1"><div style="font-size:12.5px">Health 1 &rarr; 2</div><div style="font-size:11px;color:#8b8175">AI &middot; yesterday</div></div></div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isNotes }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="padding:10px 12px;background:#1f1b17;border:1px solid #302a23;border-radius:9px"><div style="font-size:12.5px;line-height:1.5">Killed my own Dust Weaver by accident &mdash; the prompt didn't say the target could be friendly.</div><div style="font-size:11px;color:#8b8175;margin-top:6px">Playtest m-3391 &middot; round 4 &middot; open</div></div>
+              <div style="padding:10px 12px;background:#1f1b17;border:1px solid #302a23;border-radius:9px"><div style="font-size:12.5px;line-height:1.5">Feels like the fair version of Scorch. Keep at 1 damage.</div><div style="font-size:11px;color:#8b8175;margin-top:6px">Playtest m-3388 &middot; round 7 &middot; resolved</div></div>
+            </div>
+            </sc-if>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div></div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Bench &mdash; achromatic slate, raised panels, ability tree as an indented outline with a gutter rule</div><div class="dv-card">
+<div style="width:1280px;height:880px;display:flex;flex-direction:column;background:#0d0d0d;color:#f2f2f2;font-family:Archivo,sans-serif;font-size:13px;overflow:hidden;font-feature-settings:'tnum' 1">
+
+  <div style="height:48px;flex:none;display:flex;align-items:center;gap:16px;padding:0 16px;background:#0d0d0d;border-bottom:1px solid #212121">
+    <div style="display:flex;align-items:center;gap:9px"><div style="width:18px;height:18px;background:#c0392b;transform:rotate(45deg)"></div><span style="font-weight:700;font-size:14px;letter-spacing:-.01em">Emberfall</span></div>
+    <button style="display:flex;align-items:center;gap:8px;height:28px;padding:0 10px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;color:#f2f2f2;font-family:Archivo,sans-serif;font-size:12px;font-weight:500;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.03) inset" style-hover="background:#242424"><span style="width:6px;height:6px;background:#d1913c;transform:rotate(45deg)"></span>v0.4.0<span style="color:#8a8a8a;font-weight:400">draft</span><span style="color:#8a8a8a">&#9662;</span></button>
+    <div style="flex:1"></div>
+    <button style="display:flex;align-items:center;gap:12px;width:240px;height:30px;padding:0 11px;background:#151515;border:1px solid #262626;border-radius:7px;color:#8a8a8a;font-family:Archivo,sans-serif;font-size:12px;text-align:left;cursor:pointer" style-hover="border-color:#3a3a3a;color:#a3a3a3"><span style="flex:1">Go to card, run simulation&hellip;</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:1px 4px;background:#242424;border-radius:4px">&#8984;K</span></button>
+    <button style="display:flex;align-items:center;gap:9px;height:28px;padding:0 10px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;color:#f2f2f2;font-size:11.5px;font-weight:500;cursor:pointer" style-hover="background:#242424"><span style="display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#d05c4c"></span>3</span><span style="display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#d1913c"></span>12</span></button>
+    <div style="width:28px;height:28px;border-radius:7px;background:#242424;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#a3a3a3">AI</div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0;padding:10px;gap:10px">
+
+    <div style="width:52px;flex:none;background:#151515;border:1px solid #242424;border-radius:12px;display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:4px;box-shadow:0 1px 0 rgba(255,255,255,.03) inset">
+      <div title="Overview" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;color:#8a8a8a;cursor:pointer;font-size:12px;font-weight:600" style-hover="background:#242424;color:#f2f2f2">OV</div>
+      <div title="System" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;color:#8a8a8a;cursor:pointer;font-size:12px;font-weight:600" style-hover="background:#242424;color:#f2f2f2">SY</div>
+      <div title="Cards" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#f2f2f2;color:#0d0d0d;cursor:pointer;font-size:12px;font-weight:700">CA</div>
+      <div title="Sets" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;color:#8a8a8a;cursor:pointer;font-size:12px;font-weight:600" style-hover="background:#242424;color:#f2f2f2">SE</div>
+      <div title="Decks" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;color:#8a8a8a;cursor:pointer;font-size:12px;font-weight:600" style-hover="background:#242424;color:#f2f2f2">DE</div>
+      <div title="Playtest" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;color:#8a8a8a;cursor:pointer;font-size:12px;font-weight:600" style-hover="background:#242424;color:#f2f2f2">PL</div>
+      <div title="Simulate" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;color:#8a8a8a;cursor:pointer;font-size:12px;font-weight:600" style-hover="background:#242424;color:#f2f2f2">SI</div>
+      <div title="Versions" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;color:#8a8a8a;cursor:pointer;font-size:12px;font-weight:600" style-hover="background:#242424;color:#f2f2f2">VE</div>
+    </div>
+
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#151515;border:1px solid #242424;border-radius:12px;box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 12px 32px -16px rgba(0,0,0,.9);overflow:hidden">
+
+      <div style="height:52px;flex:none;display:flex;align-items:center;gap:14px;padding:0 18px;border-bottom:1px solid #242424">
+        <div>
+          <input value="Flamecaller Adept" style="display:block;width:220px;background:transparent;border:none;color:#f2f2f2;font-family:Archivo,sans-serif;font-size:17px;font-weight:600;padding:0;outline:none;letter-spacing:-.01em" />
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#8a8a8a;margin-top:1px"><span style="font-family:'IBM Plex Mono',monospace">core-012</span><span>&middot;</span><span>Card 12 of 20</span></div>
+        </div>
+        <div style="display:flex;gap:4px"><button style="width:26px;height:26px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;color:#a3a3a3;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px" style-hover="background:#242424;color:#f2f2f2">[</button><button style="width:26px;height:26px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;color:#a3a3a3;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px" style-hover="background:#242424;color:#f2f2f2">]</button></div>
+        <div style="flex:1"></div>
+        <span style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#8fae98"><span style="width:6px;height:6px;border-radius:50%;background:#8fae98"></span>Saved &middot; rev 14</span>
+        <button style="height:30px;padding:0 13px;background:#f2f2f2;border:none;border-radius:8px;color:#0d0d0d;font-family:Archivo,sans-serif;font-size:12px;font-weight:600;cursor:pointer" style-hover="background:#fff">Playtest this card</button>
+      </div>
+
+      <div style="flex:1;display:flex;min-height:0">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid #242424">
+          <div style="flex:1;overflow-y:auto;padding:18px">
+
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:22px">
+              <div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Type</div><div style="display:flex;align-items:center;height:32px;padding:0 10px;background:#101010;border:1px solid #2b2b2b;border-radius:8px;font-size:13px;cursor:pointer" style-hover="border-color:#3a3a3a">Character<span style="flex:1"></span><span style="color:#8a8a8a">&#9662;</span></div></div>
+              <div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Faction</div><div style="display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;background:#101010;border:1px solid #2b2b2b;border-radius:8px;font-size:13px;cursor:pointer" style-hover="border-color:#3a3a3a"><span style="width:12px;height:12px;border-radius:3px;background:#c0392b"></span>Ember<span style="flex:1"></span><span style="color:#8a8a8a">&#9662;</span></div></div>
+              <div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Rarity</div><div style="display:flex;align-items:center;height:32px;padding:0 10px;background:#101010;border:1px solid #2b2b2b;border-radius:8px;font-size:13px;cursor:pointer" style-hover="border-color:#3a3a3a">Uncommon<span style="flex:1"></span><span style="color:#8a8a8a">&#9662;</span></div></div>
+              <div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Cost</div><div style="display:flex;align-items:center;height:32px;background:#101010;border:1px solid #2b2b2b;border-radius:8px;overflow:hidden"><div style="flex:1;padding:0 10px;font-size:16px;font-weight:600">3</div><button style="width:24px;height:100%;background:#1c1c1c;border:none;color:#a3a3a3;cursor:pointer;font-size:10px" style-hover="background:#2b2b2b;color:#f2f2f2">&#9662;</button><button style="width:24px;height:100%;background:#1c1c1c;border:none;border-left:1px solid #2b2b2b;color:#a3a3a3;cursor:pointer;font-size:10px" style-hover="background:#2b2b2b;color:#f2f2f2">&#9652;</button></div></div>
+              <div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Attack</div><div style="display:flex;align-items:center;height:32px;background:#101010;border:1px solid #2b2b2b;border-radius:8px;overflow:hidden"><div style="flex:1;padding:0 10px;font-size:16px;font-weight:600">2</div><button style="width:24px;height:100%;background:#1c1c1c;border:none;color:#a3a3a3;cursor:pointer;font-size:10px" style-hover="background:#2b2b2b;color:#f2f2f2">&#9662;</button><button style="width:24px;height:100%;background:#1c1c1c;border:none;border-left:1px solid #2b2b2b;color:#a3a3a3;cursor:pointer;font-size:10px" style-hover="background:#2b2b2b;color:#f2f2f2">&#9652;</button></div></div>
+              <div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Health</div><div style="display:flex;align-items:center;height:32px;background:#101010;border:1px solid #2b2b2b;border-radius:8px;overflow:hidden"><div style="flex:1;padding:0 10px;font-size:16px;font-weight:600">2</div><button style="width:24px;height:100%;background:#1c1c1c;border:none;color:#a3a3a3;cursor:pointer;font-size:10px" style-hover="background:#2b2b2b;color:#f2f2f2">&#9662;</button><button style="width:24px;height:100%;background:#1c1c1c;border:none;border-left:1px solid #2b2b2b;color:#a3a3a3;cursor:pointer;font-size:10px" style-hover="background:#2b2b2b;color:#f2f2f2">&#9652;</button></div></div>
+              <div style="grid-column:span 4"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Traits</div><div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:32px;box-sizing:border-box;padding:5px 8px;background:#101010;border:1px solid #2b2b2b;border-radius:8px"><span style="display:flex;align-items:center;gap:6px;height:20px;padding:0 8px;background:#2b2b2b;border-radius:6px;font-size:11.5px;font-weight:500">Mystic<span style="color:#8a8a8a;cursor:pointer" style-hover="color:#d05c4c">&times;</span></span><span style="font-size:11.5px;color:#a8a8a8;cursor:pointer" style-hover="color:#f2f2f2">+ add trait</span></div></div>
+              <div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;color:#a3a3a3;margin-bottom:6px">Keywords</div><div style="display:flex;align-items:center;min-height:32px;box-sizing:border-box;padding:5px 8px;background:#101010;border:1px dashed #2b2b2b;border-radius:8px;font-size:11.5px;color:#8a8a8a;cursor:pointer" style-hover="border-color:#7a7a7a;color:#a3a3a3">+ Swift, Guard, Bolster</div></div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="font-size:13px;font-weight:700;letter-spacing:-.01em">Abilities</span><span style="padding:1px 7px;background:#242424;border-radius:6px;font-size:10.5px;font-weight:600;color:#a3a3a3">1 / 3</span><div style="flex:1;height:1px;background:#242424"></div></div>
+
+            <div style="background:#101010;border:1px solid #262626;border-radius:11px;overflow:hidden;margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;background:#1a1a1a;border-bottom:1px solid #262626">
+                <button onClick="{{ toggleC }}" style="width:18px;height:18px;background:transparent;border:none;color:#a3a3a3;cursor:pointer;font-size:9px" style-hover="color:#f2f2f2">&#9662;</button>
+                <span style="font-size:12.5px;font-weight:600">Triggered</span>
+                <span style="padding:1px 7px;background:#242424;border-radius:6px;font-size:10.5px;font-weight:600;color:#a3a3a3">forced</span>
+                <div style="flex:1"></div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8a8a">a1</span>
+                <span style="width:7px;height:7px;border-radius:50%;background:#8fae98"></span>
+                <span style="color:#8a8a8a;cursor:pointer;font-size:14px" style-hover="color:#f2f2f2">&#8943;</span>
+              </div>
+              <sc-if value="{{ openC }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:6px 0">
+
+                <div style="display:flex;gap:0;padding:7px 12px" style-hover="background:#141414">
+                  <div style="flex:none;width:74px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#c0392b;padding-top:6px">When</div>
+                  <div style="flex:1;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+                    <span style="display:flex;align-items:center;gap:6px;height:26px;padding:0 9px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;cursor:pointer" style-hover="border-color:#7a7a7a">card.entered_zone<span style="color:#8a8a8a">&#9662;</span></span>
+                    <span style="font-size:12px;color:#a3a3a3">resolving</span>
+                    <span style="display:flex;align-items:center;gap:6px;height:26px;padding:0 9px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;font-size:11.5px;cursor:pointer" style-hover="border-color:#7a7a7a">after<span style="color:#8a8a8a">&#9662;</span></span>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:0;padding:7px 12px">
+                  <div style="flex:none;width:74px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#c0392b;padding-top:6px">If</div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="display:flex;align-items:center;gap:6px;height:26px;padding:0 9px;background:#242424;border:1px solid #333;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer" style-hover="border-color:#7a7a7a">and<span style="color:#8a8a8a">&#9662;</span></span><span style="font-size:11.5px;color:#8a8a8a">2 conditions</span></div>
+                    <div style="padding-left:14px;box-shadow:inset 2px 0 0 #2b2b2b;display:flex;flex-direction:column;gap:6px">
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 8px;background:#161616;border:1px solid #242424;border-radius:8px" style-hover="border-color:#333">
+                        <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a"><span style="color:#c9a06b">$event.card</span><span style="color:#8a8a8a">&#9662;</span></span>
+                        <span style="height:24px;display:flex;align-items:center;padding:0 8px;background:#242424;border-radius:6px;font-size:11px;font-weight:600;color:#a3a3a3">equals</span>
+                        <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a"><span style="color:#c9a06b">$self</span><span style="color:#8a8a8a">&#9662;</span></span>
+                        <div style="flex:1"></div><span style="color:#7a7a7a;cursor:pointer;font-size:13px" style-hover="color:#d05c4c">&times;</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 8px;background:#161616;border:1px solid #242424;border-radius:8px" style-hover="border-color:#333">
+                        <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a"><span style="color:#c9a06b">$event.to</span><span style="color:#8a8a8a">&#9662;</span></span>
+                        <span style="height:24px;display:flex;align-items:center;padding:0 8px;background:#242424;border-radius:6px;font-size:11px;font-weight:600;color:#a3a3a3">equals</span>
+                        <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a">In Play<span style="color:#8a8a8a">&#9662;</span></span>
+                        <div style="flex:1"></div><span style="color:#7a7a7a;cursor:pointer;font-size:13px" style-hover="color:#d05c4c">&times;</span>
+                      </div>
+                      <span style="font-size:11.5px;color:#a8a8a8;cursor:pointer" style-hover="color:#f2f2f2">+ condition</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:0;padding:7px 12px">
+                  <div style="flex:none;width:74px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#c0392b;padding-top:6px">Choose</div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+                      <span style="height:26px;display:flex;align-items:center;padding:0 9px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;font-size:11.5px">1 target</span>
+                      <span style="height:26px;display:flex;align-items:center;gap:5px;padding:0 9px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a"><span style="color:#c9a06b">victim</span></span>
+                      <span style="font-size:11.5px;color:#a3a3a3">chosen by</span>
+                      <span style="height:26px;display:flex;align-items:center;gap:5px;padding:0 9px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a"><span style="color:#c9a06b">$you</span><span style="color:#8a8a8a">&#9662;</span></span>
+                    </div>
+                    <div style="padding-left:14px;box-shadow:inset 2px 0 0 #2b2b2b;display:flex;flex-direction:column;gap:6px">
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 8px;background:#161616;border:1px solid #242424;border-radius:8px">
+                        <span style="height:24px;display:flex;align-items:center;padding:0 8px;background:#242424;border-radius:6px;font-size:11px;font-weight:600;color:#a3a3a3">query</span>
+                        <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a">In Play<span style="color:#8a8a8a">&#9662;</span></span>
+                        <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a">Character<span style="color:#8a8a8a">&#9662;</span></span>
+                        <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1f1a12;border:1px dashed #4a3a1e;border-radius:6px;font-size:11px;color:#d1913c;cursor:pointer" style-hover="border-color:#d1913c">controller: any</span>
+                        <div style="flex:1"></div><span style="font-size:11px;color:#8fae98">4 legal</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#161616;border:1px solid #242424;border-radius:8px">
+                        <span style="font-size:11.5px;color:#a3a3a3">prompt</span><input value="Choose a character" style="flex:1;background:transparent;border:none;color:#f2f2f2;font-family:Archivo,sans-serif;font-size:12px;outline:none" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:0;padding:7px 12px">
+                  <div style="flex:none;width:74px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#c0392b;padding-top:6px">Then</div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 8px;background:#161616;border:1px solid #242424;border-radius:8px" style-hover="border-color:#333">
+                      <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#242424;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer">Deal damage<span style="color:#8a8a8a">&#9662;</span></span>
+                      <span style="height:24px;display:flex;align-items:center;padding:0 9px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-size:12px;font-weight:600">1</span>
+                      <span style="font-size:11.5px;color:#a3a3a3">to</span>
+                      <span style="height:24px;display:flex;align-items:center;gap:5px;padding:0 8px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#7a7a7a"><span style="color:#c9a06b">$target.victim</span><span style="color:#8a8a8a">&#9662;</span></span>
+                      <div style="flex:1"></div><span style="color:#7a7a7a;cursor:pointer;font-size:13px" style-hover="color:#d05c4c">&times;</span>
+                    </div>
+                    <span style="display:inline-block;font-size:11.5px;color:#a8a8a8;cursor:pointer;margin-top:6px" style-hover="color:#f2f2f2">+ effect</span>
+                  </div>
+                </div>
+
+              </div>
+              </sc-if>
+            </div>
+            <button style="width:100%;height:32px;background:#101010;border:1px dashed #2b2b2b;border-radius:9px;color:#8a8a8a;font-family:Archivo,sans-serif;font-size:12px;font-weight:500;cursor:pointer;margin-bottom:22px" style-hover="border-color:#7a7a7a;color:#a3a3a3">+ Add ability</button>
+
+            <div style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="font-size:13px;font-weight:700;letter-spacing:-.01em">Generated text</span><span style="font-size:11px;color:#8a8a8a">read-only</span><div style="flex:1;height:1px;background:#242424"></div></div>
+            <div style="padding:14px 16px;background:#101010;border:1px solid #262626;border-radius:10px;font-family:Bitter,serif;font-size:14px;line-height:1.5">When this enters play, deal 1 damage to a character.</div>
+
+          </div>
+          <div style="height:36px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;border-top:1px solid #242424">
+            <div style="display:flex;gap:3px"><span style="padding:4px 11px;background:#242424;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer">Form</span><span style="padding:4px 11px;border-radius:7px;font-size:11.5px;color:#8a8a8a;cursor:pointer" style-hover="color:#f2f2f2">JSON</span><span style="padding:4px 11px;border-radius:7px;font-size:11.5px;color:#8a8a8a;cursor:pointer" style-hover="color:#f2f2f2">Text</span></div>
+            <div style="flex:1"></div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7a7a7a">&#8984;S &nbsp; &#8984;K &nbsp; [ ]</span>
+          </div>
+        </div>
+
+        <div style="width:290px;flex:none;display:flex;flex-direction:column;align-items:center;padding:18px 14px;gap:16px;border-right:1px solid #242424;overflow-y:auto">
+          <div style="width:100%;display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a3a3a3">Card face</span><div style="flex:1"></div><div style="display:flex;gap:2px;padding:2px;background:#101010;border-radius:7px"><span style="padding:2px 7px;border-radius:5px;font-size:10.5px;color:#8a8a8a;cursor:pointer">S</span><span style="padding:2px 7px;border-radius:5px;font-size:10.5px;color:#8a8a8a;cursor:pointer">M</span><span style="padding:2px 7px;background:#2b2b2b;border-radius:5px;font-size:10.5px;font-weight:600;cursor:pointer">L</span></div></div>
+
+          <div style="width:228px;flex:none;background:#1a1a1a;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px #333,0 18px 40px -14px rgba(0,0,0,.95)">
+            <div style="position:relative;height:144px;background:repeating-linear-gradient(135deg,#242424 0 7px,#1e1e1e 7px 14px);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8a8a8a">card art &middot; 4:3</span>
+              <div style="position:absolute;top:0;left:0;width:34px;height:34px;background:#c0392b;display:flex;align-items:center;justify-content:center;font-family:Archivo,sans-serif;font-size:16px;font-weight:700;color:#fff;border-bottom-right-radius:12px">3</div>
+            </div>
+            <div style="padding:11px 13px 0">
+              <div style="font-family:Bitter,serif;font-size:16px;font-weight:600;line-height:1.15">Flamecaller Adept</div>
+              <div style="display:flex;align-items:center;gap:7px;margin:4px 0 9px;padding-bottom:8px;border-bottom:1px solid #2b2b2b"><span style="font-size:11px;font-weight:600;letter-spacing:.03em;color:#a3a3a3;text-transform:uppercase">Character &middot; Mystic</span><div style="flex:1"></div><span style="width:10px;height:10px;background:#c0392b;transform:rotate(45deg)"></span></div>
+              <div style="min-height:54px;font-family:Bitter,serif;font-size:12.5px;line-height:1.45;color:#e8e8e8">When this enters play, deal 1 damage to a character.</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 13px 12px">
+              <span style="display:flex;align-items:center;gap:5px;padding:3px 9px;background:#101010;border:1px solid #2b2b2b;border-radius:7px"><span style="font-size:9px;font-weight:700;letter-spacing:.07em;color:#8a8a8a">ATK</span><span style="font-size:14px;font-weight:700">2</span></span>
+              <span style="display:flex;align-items:center;gap:5px;padding:3px 9px;background:#101010;border:1px solid #2b2b2b;border-radius:7px"><span style="font-size:9px;font-weight:700;letter-spacing:.07em;color:#8a8a8a">HP</span><span style="font-size:14px;font-weight:700">2</span></span>
+              <div style="flex:1"></div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7a7a7a">core-012</span>
+            </div>
+          </div>
+
+          <div style="width:100%;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#101010;border:1px solid #242424;border-radius:8px"><span style="width:7px;height:7px;border-radius:50%;background:#8fae98"></span><span style="font-size:11.5px;color:#a3a3a3">Legal in Ember and Neutral decks</span></div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#101010;border:1px solid #242424;border-radius:8px"><span style="width:7px;height:7px;border-radius:50%;background:#d1913c"></span><span style="font-size:11.5px;color:#a3a3a3">No art assigned</span></div>
+          </div>
+        </div>
+
+        <div style="width:290px;flex:none;display:flex;flex-direction:column">
+          <div style="height:40px;flex:none;display:flex;align-items:center;gap:3px;padding:0 10px;border-bottom:1px solid #242424">
+            <div onClick="{{ setLint }}" style="position:relative;display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:7px;font-size:11.5px;font-weight:600;background:#242424;cursor:pointer">Lint<span style="padding:0 5px;background:#3a2f1a;border-radius:5px;font-size:10px;color:#d1913c">2</span></div>
+            <div onClick="{{ setSim }}" style="display:flex;align-items:center;padding:5px 9px;border-radius:7px;font-size:11.5px;font-weight:500;color:#8a8a8a;cursor:pointer" style-hover="color:#f2f2f2">Similar</div>
+            <div onClick="{{ setRev }}" style="display:flex;align-items:center;padding:5px 9px;border-radius:7px;font-size:11.5px;font-weight:500;color:#8a8a8a;cursor:pointer" style-hover="color:#f2f2f2">Revisions</div>
+            <div onClick="{{ setNotes }}" style="display:flex;align-items:center;padding:5px 9px;border-radius:7px;font-size:11.5px;font-weight:500;color:#8a8a8a;cursor:pointer" style-hover="color:#f2f2f2">Notes</div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:12px">
+
+            <sc-if value="{{ isLint }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="padding:11px 12px;background:#101010;border:1px solid #262626;border-radius:10px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="width:7px;height:7px;border-radius:50%;background:#d1913c"></span><span style="font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#d1913c">Warning</span></div>
+                <div style="font-size:12.5px;line-height:1.5">No art asset assigned, so proofs and print-and-play render the placeholder frame.</div>
+                <button style="margin-top:9px;height:26px;padding:0 10px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;color:#f2f2f2;font-family:Archivo,sans-serif;font-size:11.5px;font-weight:500;cursor:pointer" style-hover="background:#242424">Assign art</button>
+              </div>
+              <div style="padding:11px 12px;background:#101010;border:1px solid #262626;border-radius:10px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="width:7px;height:7px;border-radius:50%;background:#d1913c"></span><span style="font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#d1913c">Warning</span></div>
+                <div style="font-size:12.5px;line-height:1.5">The target query has no controller, so this can be forced onto your own characters. Intended?</div>
+                <div style="display:flex;gap:7px;margin-top:9px"><button style="height:26px;padding:0 10px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:7px;color:#f2f2f2;font-family:Archivo,sans-serif;font-size:11.5px;font-weight:500;cursor:pointer" style-hover="background:#242424">Restrict to enemies</button><button style="height:26px;padding:0 10px;background:transparent;border:1px solid #262626;border-radius:7px;color:#8a8a8a;font-family:Archivo,sans-serif;font-size:11.5px;cursor:pointer" style-hover="color:#a3a3a3">Mute</button></div>
+              </div>
+              <div style="padding:11px 12px;background:#101010;border:1px solid #262626;border-radius:10px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="width:7px;height:7px;border-radius:50%;background:#8fae98"></span><span style="font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8fae98">Valid</span></div>
+                <div style="font-size:12.5px;line-height:1.5;color:#a3a3a3">Card and ability validate against their schemas.</div>
+              </div>
+              <div style="padding:12px;background:#101010;border:1px solid #262626;border-radius:10px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#a3a3a3;margin-bottom:10px">Balance context</div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a3a3a3">Cost 3 characters</span><span style="font-weight:600">4</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a3a3a3">Median stat total at 3</span><span style="font-weight:600">4.5</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a3a3a3">This card</span><span style="font-weight:600">4</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px"><span style="flex:1;color:#a3a3a3">Play rate, last batch</span><span style="color:#8a8a8a">no data</span></div>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isSim }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px;padding:9px;background:#101010;border:1px solid #262626;border-radius:10px;cursor:pointer" style-hover="border-color:#3a3a3a"><div style="width:26px;height:36px;border-radius:5px;background:repeating-linear-gradient(135deg,#242424 0 4px,#1e1e1e 4px 8px)"></div><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Scorch</div><div style="font-size:11px;color:#8a8a8a">Event &middot; cost 2 &middot; 3 damage</div></div></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:9px;background:#101010;border:1px solid #262626;border-radius:10px;cursor:pointer" style-hover="border-color:#3a3a3a"><div style="width:26px;height:36px;border-radius:5px;background:repeating-linear-gradient(135deg,#242424 0 4px,#1e1e1e 4px 8px)"></div><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Ignis, the First Flame</div><div style="font-size:11px;color:#8a8a8a">Hero &middot; 2 damage, 1/round</div></div></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:9px;background:#101010;border:1px solid #262626;border-radius:10px;cursor:pointer" style-hover="border-color:#3a3a3a"><div style="width:26px;height:36px;border-radius:5px;background:repeating-linear-gradient(135deg,#242424 0 4px,#1e1e1e 4px 8px)"></div><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Grey Tide</div><div style="font-size:11px;color:#8a8a8a">Event &middot; cost 4 &middot; 1 damage each</div></div></div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isRev }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="padding:10px 12px;background:#101010;border:1px solid #262626;border-radius:10px"><div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8a8a">rev 14</span><div style="flex:1;font-size:12.5px">Damage 2 &rarr; 1 after aggro simming too hot</div></div><div style="font-size:11px;color:#8a8a8a;margin-top:5px">AI &middot; 2 minutes ago</div></div>
+              <div style="padding:10px 12px;background:#101010;border:1px solid #262626;border-radius:10px"><div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8a8a">rev 13</span><div style="flex:1;font-size:12.5px">Added enters-play trigger</div></div><div style="font-size:11px;color:#8a8a8a;margin-top:5px">AI &middot; yesterday</div></div>
+              <div style="padding:10px 12px;background:#101010;border:1px solid #262626;border-radius:10px"><div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8a8a">rev 12</span><div style="flex:1;font-size:12.5px">Health 1 &rarr; 2</div></div><div style="font-size:11px;color:#8a8a8a;margin-top:5px">AI &middot; yesterday</div></div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isNotes }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="padding:11px 12px;background:#101010;border:1px solid #262626;border-radius:10px"><div style="font-size:12.5px;line-height:1.5">Killed my own Dust Weaver by accident &mdash; the prompt didn't say the target could be friendly.</div><div style="font-size:11px;color:#8a8a8a;margin-top:6px">Playtest m-3391 &middot; round 4 &middot; open</div></div>
+              <div style="padding:11px 12px;background:#101010;border:1px solid #262626;border-radius:10px"><div style="font-size:12.5px;line-height:1.5">Feels like the fair version of Scorch. Keep at 1 damage.</div><div style="font-size:11px;color:#8a8a8a;margin-top:6px">Playtest m-3388 &middot; round 7 &middot; resolved</div></div>
+            </div>
+            </sc-if>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div></div>
+
+</div>
+<p class="dv-next">Try next: "build the play table and phases tab in <a class="dv-oid" href="#1b">1b</a>" &middot; "<a class="dv-oid" href="#1a">1a</a> chrome with the <a class="dv-oid" href="#1b">1b</a> card face" &middot; "show <a class="dv-oid" href="#1c">1c</a> with the ability tree four levels deep"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showDepthBadges&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Ability builder&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 'lint', openA: true, openB: true, openC: true };
+  renderVals() {
+    const t = this.state.tab;
+    return {
+      badges: this.props.showDepthBadges ?? true,
+      openA: this.state.openA, openB: this.state.openB, openC: this.state.openC,
+      toggleA: () => this.setState(s => ({ openA: !s.openA })),
+      toggleB: () => this.setState(s => ({ openB: !s.openB })),
+      toggleC: () => this.setState(s => ({ openC: !s.openC })),
+      isLint: t === 'lint', isSim: t === 'sim', isRev: t === 'rev', isNotes: t === 'notes',
+      setLint: () => this.setState({ tab: 'lint' }),
+      setSim: () => this.setState({ tab: 'sim' }),
+      setRev: () => this.setState({ tab: 'rev' }),
+      setNotes: () => this.setState({ tab: 'notes' })
+    };
+  }
+}
+</script>
+</body>
+</html>

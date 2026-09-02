@@ -69,6 +69,8 @@ for (const game of games) {
 // Cross-document integrity
 // ---------------------------------------------------------------------------
 
+console.log('')
+
 /** A card may be flat or double-sided; yield each face as a (type, attributes, keywords) view. */
 const facesOf = (card) =>
   card.sides
@@ -221,12 +223,39 @@ for (const game of games) {
   }
 }
 
+// Card counts vs. each set's design.budget. Not a failure — a budget gap is a legitimate
+// design state (it is what the completeness view exists to show) — but printing it keeps
+// prose that quotes counts honest.
+for (const game of games) {
+  const setsDir = join(root, `examples/${game}/sets`)
+  if (!existsSync(setsDir)) continue
+  for (const f of readdirSync(setsDir).filter((f) => f.endsWith('.json'))) {
+    const set = read(`examples/${game}/sets/${f}`)
+    const actual = {}
+    for (const card of set.cards ?? []) {
+      const type = facesOf(card)[0].type
+      actual[type] = (actual[type] ?? 0) + 1
+    }
+    const total = (set.cards ?? []).length
+    const budget = set.design?.budget
+    const planned = budget ? Object.values(budget).reduce((a, b) => a + b, 0) : null
+    const gaps = budget
+      ? Object.entries(budget).filter(([t, n]) => (actual[t] ?? 0) !== n)
+          .map(([t, n]) => `${t} ${actual[t] ?? 0}/${n}`)
+      : []
+    console.log(
+      `  ${game}/${f}: ${total} cards` +
+      (planned ? ` (budget ${planned}${gaps.length ? `, gaps: ${gaps.join(', ')}` : ', met'})` : '')
+    )
+  }
+}
+
 if (lint.length) {
   failures += lint.length
   console.error('\n✗ cross-document integrity:')
   for (const l of lint) console.error(`    ${l}`)
 } else {
-  console.log('\n✓ cross-document integrity (card types, vocabularies, keywords, deck legality, adversary zones, anchors, encounter sets)')
+  console.log('✓ cross-document integrity (card types, vocabularies, keywords, deck legality, adversary zones, anchors, encounter sets)')
 }
 
 console.log(`\n${checked} documents checked across ${games.length} game(s), ${failures} problem(s).`)

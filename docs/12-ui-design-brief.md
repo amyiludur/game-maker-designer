@@ -1,5 +1,10 @@
 # 12 — UI Design Brief
 
+> **Six screens from this brief have been designed** — see [`design/`](../design/) and
+> [`design/HANDOFF.md`](../design/HANDOFF.md) for tokens, per-screen specs and known gaps.
+> They cover the competitive duel shape; the cooperative play table (§8, and
+> [doc 16](16-cooperative-and-adversary-games.md)) is still open.
+>
 > **This document is the brief for the UI design pass.** It describes what each screen must
 > do, what data it has, and the constraints that matter. It does not prescribe visual style
 > beyond the principles below — that's the design work.

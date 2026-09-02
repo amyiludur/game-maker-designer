@@ -10,7 +10,7 @@ run by the same kernel — see [doc 16](../../docs/16-cooperative-and-adversary-
 ```
 game-system.json                  Zones, the warden adversary and its activation script,
                                   card types, the Watch phase, scenario building
-sets/core.json                    16 cards: a double-sided identity, player cards,
+sets/core.json                    15 cards: a double-sided identity, player cards,
                                   the Warden, the main scheme, minions and treacheries
 encounter-sets/hollow.json        The scenario encounter set
 scenarios/the-warden.json         The adversary's "deck": anchors + encounter sets

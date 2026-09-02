@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Bitter:wght@500;600;700&display=swap" rel="stylesheet"><style>body{margin:0;background:#0a0d10;font-family:Archivo,sans-serif}a{color:#8fb4d4}a:hover{color:#b0cde4}</style></helmet>
+
+<div style="width:1280px;height:880px;display:flex;flex-direction:column;background:#0e1216;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:13px;overflow:hidden;font-feature-settings:'tnum' 1">
+
+  <div style="height:44px;flex:none;display:flex;align-items:center;gap:14px;padding:0 14px;background:#141a20;border-bottom:1px solid #26313b">
+    <div style="display:flex;align-items:center;gap:8px"><div style="width:16px;height:16px;border-radius:3px;background:#c0392b"></div><span style="font-weight:600;font-size:13.5px">Emberfall</span></div>
+    <button style="display:flex;align-items:center;gap:6px;height:24px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#e2e8ee;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#3c4a57"><span style="width:6px;height:6px;border-radius:50%;background:#d1913c"></span>v0.4.0<span style="color:#7c8b98">draft</span><span style="color:#7c8b98">&#9662;</span></button>
+    <div style="width:1px;height:20px;background:#26313b"></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a8b6c2">Decks<span style="color:#6c7c8a">&nbsp;/&nbsp;</span><span style="color:#e2e8ee">Ember Aggro</span></div>
+    <div style="flex:1"></div>
+    <button style="display:flex;align-items:center;gap:10px;width:180px;height:26px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#7c8b98;font-family:Archivo,sans-serif;font-size:12px;text-align:left;cursor:pointer" style-hover="border-color:#3c4a57;color:#a8b6c2"><span style="flex:1">Search&hellip;</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px">&#8984;K</span></button>
+    <button style="display:flex;align-items:center;gap:7px;height:26px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#e2e8ee;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#3c4a57"><span style="color:#d05c4c">&#9670; 3</span><span style="color:#d1913c">&#9650; 12</span></button>
+    <div style="width:24px;height:24px;border-radius:3px;background:#212b34;border:1px solid #2f3b45;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2">AI</div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0">
+
+    <div style="width:56px;flex:none;background:#11171c;border-right:1px solid #26313b;display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px">
+      <div title="Overview" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#e2e8ee"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">OV</span></div>
+      <div title="System" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#e2e8ee"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">SY</span></div>
+      <div title="Cards" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#e2e8ee"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">CA</span></div>
+      <div title="Sets" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#e2e8ee"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">SE</span></div>
+      <div title="Decks" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;background:#212b34;color:#e2e8ee;box-shadow:inset 2px 0 0 #c0392b;cursor:pointer"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">DE</span></div>
+      <div title="Playtest" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#e2e8ee"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">PL</span></div>
+      <div title="Simulate" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#e2e8ee"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">SI</span></div>
+      <div title="Versions" style="width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#7c8b98;cursor:pointer" style-hover="background:#1a222a;color:#e2e8ee"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">VE</span></div>
+    </div>
+
+    <div style="width:466px;flex:none;display:flex;flex-direction:column;border-right:1px solid #1e262e;background:#0d1114">
+      <div style="height:34px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #1e262e">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2">Card pool</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">9 legal for this hero</span>
+        <div style="flex:1"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">filters</span>
+      </div>
+
+      <div style="flex:none;display:flex;align-items:center;gap:6px;padding:7px 12px;border-bottom:1px solid #1a2127">
+        <span style="padding:2px 7px;background:#212b34;border:1px solid #c0392b;border-radius:2px;font-size:11px;cursor:pointer">Ember</span>
+        <span style="padding:2px 7px;background:#212b34;border:1px solid #c0392b;border-radius:2px;font-size:11px;cursor:pointer">Neutral</span>
+        <span style="padding:2px 7px;background:#141a20;border:1px solid #26313b;border-radius:2px;font-size:11px;color:#7c8b98;text-decoration:line-through;cursor:not-allowed">Ash</span>
+        <div style="width:1px;height:14px;background:#26313b"></div>
+        <span style="padding:2px 7px;background:#141a20;border:1px solid #26313b;border-radius:2px;font-size:11px;color:#a8b6c2;cursor:pointer" style-hover="border-color:#3c4a57;color:#e2e8ee">cost&le;3</span>
+        <span style="padding:2px 7px;background:#141a20;border:1px solid #26313b;border-radius:2px;font-size:11px;color:#a8b6c2;cursor:pointer" style-hover="border-color:#3c4a57;color:#e2e8ee">Soldier</span>
+        <div style="flex:1"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">sort cost</span>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;padding:10px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:9px;align-content:start">
+
+        <div style="background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#6b3327">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd;min-height:22px">Cinder Scout</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f0b4a0">1</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93806f">2/1</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:100%;height:100%;background:#c0392b"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#3a1f18;border:1px solid #6b3327;border-radius:2px;color:#f0b4a0">3/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#6b3327">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd;min-height:22px">Emberkin Brawler</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93806f">3/1</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:100%;height:100%;background:#c0392b"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#3a1f18;border:1px solid #6b3327;border-radius:2px;color:#f0b4a0">3/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#6b3327">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd;min-height:22px">Flamecaller Adept</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f0b4a0">3</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93806f">2/2</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:100%;height:100%;background:#c0392b"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#3a1f18;border:1px solid #6b3327;border-radius:2px;color:#f0b4a0">3/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#6b3327">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd;min-height:22px">Warhorn Bearer</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f0b4a0">4</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93806f">2/3</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:66%;height:100%;background:#d1913c"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#1a1611;border:1px solid #40331c;border-radius:2px;color:#d1913c">2/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#6b3327">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd;min-height:22px">Scorch</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93806f">event</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:100%;height:100%;background:#c0392b"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#3a1f18;border:1px solid #6b3327;border-radius:2px;color:#f0b4a0">3/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#6b3327">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd;min-height:22px">Second Wind</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f0b4a0">1</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93806f">event</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:66%;height:100%;background:#d1913c"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#1a1611;border:1px solid #40331c;border-radius:2px;color:#d1913c">2/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#6b3327">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd;min-height:22px">Ember Brand</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f0b4a0">1</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93806f">attach</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:100%;height:100%;background:#c0392b"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#3a1f18;border:1px solid #6b3327;border-radius:2px;color:#f0b4a0">3/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3f3830;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#5e564a">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#26231e 0 6px,#201d19 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#ece5da;min-height:22px">Wandering Emberkin</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#d8cec0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#998f81">2/2</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:100%;height:100%;background:#8d8378"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#2b2823;border:1px solid #4a453c;border-radius:2px;color:#d8cec0">3/3</div>
+        </div>
+
+        <div style="background:#191512;border:1px solid #3f3830;border-radius:4px;overflow:hidden;cursor:pointer;position:relative" style-hover="border-color:#5e564a">
+          <div style="height:46px;background:repeating-linear-gradient(135deg,#26231e 0 6px,#201d19 6px 12px)"></div>
+          <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#ece5da;min-height:22px">Salvage</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#d8cec0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#998f81">event</span></div></div>
+          <div style="height:3px;background:#1a222a"><div style="width:66%;height:100%;background:#d1913c"></div></div>
+          <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#1a1611;border:1px solid #40331c;border-radius:2px;color:#d1913c">2/3</div>
+        </div>
+
+        <div style="grid-column:span 4;margin-top:4px;padding:8px 9px;background:#141a20;border:1px solid #26313b;border-left:2px solid #d05c4c;border-radius:3px">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#d05c4c;font-weight:600">Hidden by faction_lock</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">7 Ash cards</span></div>
+          <div style="font-size:11.5px;line-height:1.45;color:#a8b6c2">Ignis is an Ember hero, so only Ember and Neutral cards are legal. <span style="color:#a8b6c2;text-decoration:underline;cursor:pointer">Show them anyway</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="width:396px;flex:none;display:flex;flex-direction:column;border-right:1px solid #1e262e">
+      <div style="height:34px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #1e262e;background:#0d1114">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2">Deck</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#f0b4a0">25</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">of 24&ndash;30</span>
+        <div style="flex:1"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">v4 &#9662;</span>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;padding:10px 12px">
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98">Hero</span><div style="flex:1;height:1px;background:#1a2127"></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 7px;background:#191512;border:1px solid #6b3327;border-radius:3px;margin-bottom:14px">
+          <div style="width:22px;height:30px;border-radius:2px;background:repeating-linear-gradient(135deg,#2a201a 0 4px,#231b16 4px 8px);border:1px solid #3a2a24;flex:none"></div>
+          <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500">Ignis, the First Flame</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#93806f">core-001 &middot; 20 health &middot; Ember</div></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">swap</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98">Character</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2">15</span><div style="flex:1;height:1px;background:#1a2127"></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:14px">
+
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">3</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">1</span>
+            <span style="flex:1;min-width:0;font-size:12px">Cinder Scout</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">2/1</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#7c8b98;cursor:not-allowed;font-size:10px">+</button></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">3</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">2</span>
+            <span style="flex:1;min-width:0;font-size:12px">Emberkin Brawler</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">3/1</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#7c8b98;cursor:not-allowed;font-size:10px">+</button></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">3</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">3</span>
+            <span style="flex:1;min-width:0;font-size:12px">Flamecaller Adept</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">2/2</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#7c8b98;cursor:not-allowed;font-size:10px">+</button></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">3</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#8d8378;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">2</span>
+            <span style="flex:1;min-width:0;font-size:12px">Wandering Emberkin</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">2/2</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#7c8b98;cursor:not-allowed;font-size:10px">+</button></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">2</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">4</span>
+            <span style="flex:1;min-width:0;font-size:12px">Warhorn Bearer</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">2/3</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">+</button></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;background:#1f1311;box-shadow:inset 2px 0 0 #d05c4c;cursor:pointer">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none;color:#f0b4a0">1</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#5d6d7e;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">3</span>
+            <span style="flex:1;min-width:0;font-size:12px;color:#f0d0c6">Ashen Vanguard</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:0 4px;background:#3a1f18;border:1px solid #6b3327;border-radius:2px;color:#f0b4a0">illegal</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#2a1f1c;border:1px solid #6b3327;border-radius:2px;color:#f0d0c6;cursor:pointer;font-size:10px" style-hover="background:#3a2a25">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#7c8b98;cursor:not-allowed;font-size:10px">+</button></div>
+          </div>
+
+        </div>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98">Event</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2">7</span><div style="flex:1;height:1px;background:#1a2127"></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">3</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">2</span>
+            <span style="flex:1;min-width:0;font-size:12px">Scorch</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">3 dmg</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#7c8b98;cursor:not-allowed;font-size:10px">+</button></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">2</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">1</span>
+            <span style="flex:1;min-width:0;font-size:12px">Second Wind</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:0 4px;background:#1a1611;border:1px solid #40331c;border-radius:2px;color:#d1913c">review</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">+</button></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">2</span>
+            <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#8d8378;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">2</span>
+            <span style="flex:1;min-width:0;font-size:12px">Salvage</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:0 4px;background:#1a1611;border:1px solid #40331c;border-radius:2px;color:#d1913c">review</span>
+            <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">+</button></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98">Attachment</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2">3</span><div style="flex:1;height:1px;background:#1a2127"></div></div>
+        <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 6px;border-radius:2px;cursor:pointer" style-hover="background:#141a20">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;width:16px;flex:none">3</span>
+          <span style="display:flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;flex:none">1</span>
+          <span style="flex:1;min-width:0;font-size:12px">Ember Brand</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">+2 atk</span>
+          <div style="display:flex;gap:2px"><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#a8b6c2;cursor:pointer;font-size:10px" style-hover="border-color:#3c4a57;color:#e2e8ee">&minus;</button><button style="width:18px;height:18px;background:#0b0f13;border:1px solid #26313b;border-radius:2px;color:#7c8b98;cursor:not-allowed;font-size:10px">+</button></div>
+        </div>
+
+      </div>
+
+      <div style="flex:none;padding:9px 12px;border-top:1px solid #1e262e;background:#0d1114;display:flex;gap:6px">
+        <button style="flex:1;height:28px;background:#c0392b;border:none;border-radius:3px;color:#fff;font-family:Archivo,sans-serif;font-size:12px;font-weight:600;cursor:pointer" style-hover="background:#d2432f">Playtest vs bot</button>
+        <button style="flex:1;height:28px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:12px;font-weight:500;cursor:pointer" style-hover="border-color:#3c4a57">Simulate vs&hellip;</button>
+      </div>
+    </div>
+
+    <div style="width:306px;flex:none;display:flex;flex-direction:column;background:#11171c">
+      <div style="height:34px;flex:none;display:flex;align-items:stretch;border-bottom:1px solid #1e262e">
+        <div onClick="{{ setLegal }}" style="position:relative;display:flex;align-items:center;gap:5px;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;cursor:pointer">Legality<span style="color:#d05c4c">&#9670;1</span><sc-if value="{{ isLegal }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+        <div onClick="{{ setStats }}" style="position:relative;display:flex;align-items:center;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">Shape<sc-if value="{{ isStats }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+        <div onClick="{{ setVers }}" style="position:relative;display:flex;align-items:center;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">Versions<sc-if value="{{ isVers }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+      </div>
+
+      <sc-if value="{{ isLegal }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px">
+        <div style="flex:none;padding:9px 10px;background:#1c1512;border:1px solid #4a2620;border-left:2px solid #d05c4c;border-radius:3px">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#d05c4c;font-weight:600">Error</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8907f">faction_lock</span></div>
+          <div style="font-size:12.5px;line-height:1.5;color:#f0d0c6">Every card must match your hero's faction or be neutral.</div>
+          <div style="margin-top:7px;padding-top:7px;border-top:1px solid #3a221c">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#a8907f;margin-bottom:5px">1 offending card</div>
+            <div style="display:flex;align-items:center;gap:7px;cursor:pointer" style-hover="color:#fff"><span style="width:7px;height:7px;border-radius:2px;background:#5d6d7e"></span><span style="flex:1;font-size:12px;color:#e2e8ee">Ashen Vanguard</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8907f">Ash &ne; Ember</span></div>
+          </div>
+          <div style="display:flex;gap:7px;margin-top:8px">
+            <button style="height:24px;padding:0 9px;background:#2a1f1c;border:1px solid #6b3327;border-radius:3px;color:#f0d0c6;font-family:Archivo,sans-serif;font-size:11.5px;cursor:pointer" style-hover="background:#3a2a25">Remove it</button>
+            <button style="height:24px;padding:0 9px;background:transparent;border:1px solid #3a221c;border-radius:3px;color:#c9ab9e;font-family:Archivo,sans-serif;font-size:11.5px;cursor:pointer" style-hover="border-color:#6b3327">Switch hero to Vess</button>
+          </div>
+        </div>
+
+        <div style="flex:none;display:flex;flex-direction:column;gap:6px;padding:9px 10px;background:#0b0f13;border:1px solid #212b34;border-radius:3px">
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="color:#6f9e7c">&#10003;</span><span style="flex:1;color:#a8b6c2">Deck size</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">25</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">24&ndash;30</span></div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="color:#6f9e7c">&#10003;</span><span style="flex:1;color:#a8b6c2">Copy limit</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">max 3</span></div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="color:#6f9e7c">&#10003;</span><span style="flex:1;color:#a8b6c2">Identity</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">1 hero</span></div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="color:#d05c4c">&#10007;</span><span style="flex:1;color:#f0d0c6">Faction lock</span><span style="font-family:'IBM Plex Mono',monospace;color:#f0b4a0">1 card</span></div>
+        </div>
+
+        <div style="flex:none;padding:9px 10px;background:#1a1611;border:1px solid #40331c;border-left:2px solid #d1913c;border-radius:3px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#d1913c;margin-bottom:5px">Warning</div>
+          <div style="font-size:12.5px;line-height:1.5;color:#dfe6ec">4 of the 25 cards are still at design status <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c98a3c">review</span>. Simulation results against them are provisional.</div>
+        </div>
+
+        <div style="flex:none;padding:9px 10px;background:#0b0f13;border:1px solid #212b34;border-radius:3px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2;margin-bottom:6px">Deck note</div>
+          <div style="font-size:12px;line-height:1.5;color:#dfe6ec">24 cards, curve topping at 4. Testing whether 2x Warhorn Bearer is one too many for a deck that wants to be empty-handed by round 5.</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isStats }}">
+      <div style="flex:1;overflow-y:auto;padding:10px">
+
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <div style="flex:1;padding:7px 9px;background:#0b0f13;border:1px solid #212b34;border-radius:3px"><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98;margin-bottom:3px">Avg cost</div><div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;line-height:1">2.0</div></div>
+          <div style="flex:1;padding:7px 9px;background:#0b0f13;border:1px solid #212b34;border-radius:3px"><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98;margin-bottom:3px">Cards</div><div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;line-height:1">25</div></div>
+          <div style="flex:1;padding:7px 9px;background:#0b0f13;border:1px solid #212b34;border-radius:3px"><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98;margin-bottom:3px">Top end</div><div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;line-height:1">4</div></div>
+        </div>
+
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2;margin-bottom:8px">Curve</div>
+        <div style="display:flex;align-items:flex-end;gap:6px;height:88px;margin-bottom:5px">
+          <div style="flex:1;height:73%;background:#5b8cae;border-radius:2px 2px 0 0;position:relative"><span style="position:absolute;top:-14px;left:0;right:0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2">8</span></div>
+          <div style="flex:1;height:100%;background:#5b8cae;border-radius:2px 2px 0 0;position:relative"><span style="position:absolute;top:-14px;left:0;right:0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee">11</span></div>
+          <div style="flex:1;height:36%;background:#5b8cae;border-radius:2px 2px 0 0;position:relative"><span style="position:absolute;top:-14px;left:0;right:0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2">4</span></div>
+          <div style="flex:1;height:18%;background:#5b8cae;border-radius:2px 2px 0 0;position:relative"><span style="position:absolute;top:-14px;left:0;right:0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2">2</span></div>
+          <div style="flex:1;height:2px;background:#212b34;border-radius:2px 2px 0 0"></div>
+          <div style="flex:1;height:2px;background:#212b34;border-radius:2px 2px 0 0"></div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:16px">
+          <span style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">1</span>
+          <span style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">2</span>
+          <span style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">3</span>
+          <span style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">4</span>
+          <span style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">5</span>
+          <span style="flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">6</span>
+        </div>
+
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2;margin-bottom:7px">Type split</div>
+        <div style="display:flex;gap:3px;margin-bottom:7px">
+          <div style="flex:15;height:6px;background:#5b8cae;border-radius:2px"></div>
+          <div style="flex:7;height:6px;background:#7c8b98;border-radius:2px"></div>
+          <div style="flex:3;height:6px;background:#3c4a57;border-radius:2px"></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;margin-bottom:16px"><span><span style="color:#e2e8ee">15</span> character</span><span><span style="color:#e2e8ee">7</span> event</span><span><span style="color:#e2e8ee">3</span> attachment</span></div>
+
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2;margin-bottom:7px">Trait density</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:56px;flex:none;font-size:11.5px;color:#a8b6c2">Soldier</span><div style="flex:1;height:5px;background:#1a222a;border-radius:2px;overflow:hidden"><div style="width:100%;height:100%;background:#5b8cae"></div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;width:14px;text-align:right">6</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:56px;flex:none;font-size:11.5px;color:#a8b6c2">Scout</span><div style="flex:1;height:5px;background:#1a222a;border-radius:2px;overflow:hidden"><div style="width:50%;height:100%;background:#5b8cae"></div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;width:14px;text-align:right">3</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:56px;flex:none;font-size:11.5px;color:#a8b6c2">Mystic</span><div style="flex:1;height:5px;background:#1a222a;border-radius:2px;overflow:hidden"><div style="width:50%;height:100%;background:#5b8cae"></div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;width:14px;text-align:right">3</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:56px;flex:none;font-size:11.5px;color:#a8b6c2">Beast</span><div style="flex:1;height:5px;background:#1a222a;border-radius:2px;overflow:hidden"><div style="width:50%;height:100%;background:#5b8cae"></div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;width:14px;text-align:right">3</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:56px;flex:none;font-size:11.5px;color:#a8b6c2">Relic</span><div style="flex:1;height:5px;background:#1a222a;border-radius:2px;overflow:hidden"><div style="width:50%;height:100%;background:#5b8cae"></div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;width:14px;text-align:right">3</span></div>
+        </div>
+
+        <div style="margin-top:14px;padding:8px 9px;background:#141a20;border:1px solid #26313b;border-left:2px solid #c98a3c;border-radius:3px;font-size:12px;line-height:1.45;color:#dfe6ec">6 Soldiers across 25 cards. Warhorn Bearer's buff hits 5 of them, so the lord is live in roughly one opening hand in three.</div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isVers }}">
+      <div style="flex:1;overflow-y:auto;padding:10px">
+        <div style="padding:9px 10px;background:#141a20;border:1px solid #26313b;border-radius:3px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;font-weight:600">v4</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:0 5px;background:#212b34;border-radius:2px;color:#a8b6c2">working</span><div style="flex:1"></div><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">unsaved</span></div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:11px"><span style="color:#a8d4b0">+1</span><span style="color:#e2e8ee">Ashen Vanguard</span></div>
+          </div>
+        </div>
+        <div style="padding:9px 10px;background:#0b0f13;border:1px solid #212b34;border-radius:3px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;font-weight:600">v3</span><div style="flex:1"></div><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">2 days ago</span></div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:11px"><span style="color:#a8d4b0">+2</span><span style="color:#a8b6c2">Wandering Emberkin</span></div>
+            <div style="display:flex;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:11px"><span style="color:#e7a49a">&minus;1</span><span style="color:#a8b6c2">Warhorn Bearer</span></div>
+          </div>
+        </div>
+        <div style="padding:9px 10px;background:#0b0f13;border:1px solid #212b34;border-radius:3px">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;font-weight:600">v2</span><div style="flex:1"></div><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#7c8b98">6 days ago</span></div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:11px"><span style="color:#a8d4b0">+3</span><span style="color:#a8b6c2">Ember Brand</span></div>
+            <div style="display:flex;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:11px"><span style="color:#e7a49a">&minus;1</span><span style="color:#a8b6c2">Cinderpriest</span></div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  state = { tab: 'legal' };
+  renderVals() {
+    const t = this.state.tab;
+    return {
+      isLegal: t === 'legal', isStats: t === 'stats', isVers: t === 'vers',
+      setLegal: () => this.setState({ tab: 'legal' }),
+      setStats: () => this.setState({ tab: 'stats' }),
+      setVers: () => this.setState({ tab: 'vers' })
+    };
+  }
+}
+</script>
+</body>
+</html>

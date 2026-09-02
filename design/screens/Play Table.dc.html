@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Bitter:wght@500;600;700&display=swap" rel="stylesheet"><style>body{margin:0;background:#0a0d10;font-family:Archivo,sans-serif}a{color:#8fb4d4}a:hover{color:#b0cde4}</style></helmet>
+
+<div style="width:1280px;height:880px;display:flex;flex-direction:column;background:#0e1216;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:13px;overflow:hidden;font-feature-settings:'tnum' 1">
+
+  <div style="height:34px;flex:none;display:flex;align-items:center;gap:12px;padding:0 12px;background:#141a20;border-bottom:1px solid #26313b">
+    <div style="display:flex;align-items:center;gap:7px"><div style="width:13px;height:13px;border-radius:3px;background:#c0392b"></div><span style="font-weight:600;font-size:12.5px">Emberfall</span></div>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7d8d9a">m-3402 &middot; hotseat &middot; seed 7741&middot;b2</span>
+    <div style="width:1px;height:16px;background:#26313b"></div>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7c8b98">v0.4.0 draft</span>
+    <div style="flex:1"></div>
+    <span style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7c8b98">animation<span style="color:#e2e8ee">normal</span><span style="color:#6c7c8a">&#9662;</span></span>
+    <button style="height:22px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#a8b6c2;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#3c4a57;color:#e2e8ee">N &nbsp;note</button>
+    <button style="height:22px;padding:0 8px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#a8b6c2;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#3c4a57;color:#e2e8ee">? &nbsp;keys</button>
+  </div>
+
+  <div style="height:46px;flex:none;display:flex;align-items:stretch;background:#11171c;border-bottom:1px solid #1e262e">
+    <div style="width:86px;flex:none;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid #1e262e"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98">Round</span><span style="font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;line-height:1">3</span></div>
+
+    <div style="flex:1;display:flex;align-items:stretch;min-width:0">
+      <div style="flex:none;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 12px;border-right:1px solid #1e262e;opacity:.5">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98">Refresh</span>
+        <div style="display:flex;gap:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">ready</span><span style="color:#3a4650">&middot;</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">ember</span><span style="color:#3a4650">&middot;</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">draw</span></div>
+      </div>
+      <div style="flex:none;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 12px;border-right:1px solid #1e262e;opacity:.5">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98">Action</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">main</span>
+      </div>
+      <div style="flex:none;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 12px;border-right:1px solid #1e262e;background:#1a222a;box-shadow:inset 0 -2px 0 #c0392b">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#c0392b;font-weight:600">Combat</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98;text-decoration:line-through">attackers</span><span style="color:#3a4650">&middot;</span>
+          <span style="display:flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;font-weight:600"><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span>blockers</span><span style="color:#3a4650">&middot;</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">resolve</span>
+        </div>
+      </div>
+      <div style="flex:none;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 12px;border-right:1px solid #1e262e;opacity:.5">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98">End</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7c8b98">cleanup</span>
+      </div>
+      <div style="flex:1"></div>
+    </div>
+
+    <div style="flex:none;display:flex;align-items:center;gap:9px;padding:0 12px;border-left:1px solid #1e262e;background:#191316">
+      <span style="width:7px;height:7px;border-radius:50%;background:#c0392b;box-shadow:0 0 0 3px rgba(192,57,43,.22)"></span>
+      <div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#c98a3c">Your decision</div><div style="font-size:12px;font-weight:600;color:#f0dcd4">Declare blockers</div></div>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0">
+
+    <div style="width:126px;flex:none;display:flex;flex-direction:column;background:#0b0f13;border-right:1px solid #1e262e">
+
+      <div style="flex:none;padding:10px;border-bottom:1px solid #1e262e">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px"><span style="width:8px;height:8px;border-radius:2px;background:#5d6d7e"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8fa0af">Ash &middot; bot</span></div>
+        <div style="width:100%;background:#16171a;border:1px solid #3a4450;border-radius:5px;overflow:hidden;margin-bottom:7px">
+          <div style="height:52px;background:repeating-linear-gradient(135deg,#232629 0 6px,#1d2023 6px 12px);display:flex;align-items:center;justify-content:center"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#8b9099">hero art</span></div>
+          <div style="padding:5px 6px 6px">
+            <div style="font-family:Bitter,serif;font-size:10.5px;font-weight:600;color:#e6e9ec;line-height:1.15">Vess of the Grey Ash</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:5px">
+              <span style="display:flex;align-items:center;gap:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#e7b0a4">13</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#93a0ab">/20</span></span>
+              <span style="display:flex;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#a8b6c2">&times;7</span></span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;background:#141a20;border:1px solid #26313b;border-radius:3px">
+          <span style="width:9px;height:9px;border-radius:50%;background:#c0392b"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">0</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">Ember left</span>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98"><span>deck 17</span><span>hand 4</span></div>
+      </div>
+
+      <div style="flex:1"></div>
+
+      <div style="flex:none;padding:10px;border-top:1px solid #1e262e;background:#100c0c">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px"><span style="width:8px;height:8px;border-radius:2px;background:#c0392b"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#d8a99e">Ember &middot; you</span></div>
+        <div style="width:100%;background:#191512;border:1px solid #6b3327;border-radius:5px;overflow:hidden;margin-bottom:7px;box-shadow:0 0 0 1px rgba(192,57,43,.25)">
+          <div style="height:52px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px);display:flex;align-items:center;justify-content:center"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#a08b7c">hero art</span></div>
+          <div style="padding:5px 6px 6px">
+            <div style="font-family:Bitter,serif;font-size:10.5px;font-weight:600;color:#f3e7dd;line-height:1.15">Ignis, the First Flame</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:5px">
+              <span style="display:flex;align-items:center;gap:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#f0b4a0">17</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#ab9385">/20</span></span>
+              <span style="display:flex;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span></span>
+            </div>
+            <div style="margin-top:5px;padding-top:5px;border-top:1px solid #3a2a24;display:flex;align-items:center;gap:5px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:1px 4px;background:#3a1f18;border:1px solid #6b3327;border-radius:2px;color:#f0b4a0">exhausted</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#93806f">1/1 used</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;background:#1a1210;border:1px solid #4a2a22;border-radius:3px">
+          <span style="width:9px;height:9px;border-radius:50%;background:#c0392b"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#f0b4a0">1</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8907f">Ember left</span>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98"><span>deck 14</span><span>discard 6</span></div>
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#0d1114">
+
+      <div style="flex:none;padding:10px 14px 8px;border-bottom:1px solid #1a2127;background:#101519">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#8fa0af">Opponent &middot; In Play</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">3 cards</span>
+          <div style="flex:1;height:1px;background:#1a2127"></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#c98a3c">2 attacking</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;opacity:.55">
+
+          <div style="width:88px;flex:none">
+            <div style="position:relative;background:#16171a;border:1px solid #6b3327;border-radius:5px;overflow:hidden;box-shadow:0 0 0 2px rgba(192,57,43,.3)">
+              <div style="height:48px;background:repeating-linear-gradient(135deg,#232629 0 6px,#1d2023 6px 12px)"></div>
+              <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#e6e9ec">Ashen Vanguard</div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#93a0ab;margin-top:1px">Soldier</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;padding:0 3px;background:#2a3138;border-radius:2px;color:#c3ccd4">Guard</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#a8d4b0">3</span></div></div>
+              <div style="position:absolute;top:3px;left:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#c0392b;border-radius:2px;color:#fff;font-weight:600">ATTACKING</div>
+            </div>
+          </div>
+
+          <div style="width:88px;flex:none">
+            <div style="position:relative;background:#16171a;border:1px solid #6b3327;border-radius:5px;overflow:hidden;box-shadow:0 0 0 2px rgba(192,57,43,.3)">
+              <div style="height:48px;background:repeating-linear-gradient(135deg,#232629 0 6px,#1d2023 6px 12px)"></div>
+              <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#e6e9ec">Gravewatch Sentinel</div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#93a0ab;margin-top:1px">Soldier</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;padding:0 3px;background:#2a3138;border-radius:2px;color:#c3ccd4">Guard</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#a8d4b0">5</span></div></div>
+              <div style="position:absolute;top:3px;left:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#c0392b;border-radius:2px;color:#fff;font-weight:600">ATTACKING</div>
+              <div style="position:absolute;bottom:3px;right:3px;display:flex;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span><span style="width:5px;height:5px;border-radius:50%;background:#c0392b"></span></div>
+            </div>
+          </div>
+
+          <div style="width:112px;flex:none;padding-top:14px">
+            <div style="transform:rotate(90deg);transform-origin:center;background:#16171a;border:1px solid #2f3a44;border-radius:5px;overflow:hidden;width:88px">
+              <div style="height:48px;background:repeating-linear-gradient(135deg,#232629 0 6px,#1d2023 6px 12px)"></div>
+              <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#e6e9ec">Cinderpriest</div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#93a0ab;margin-top:1px">Mystic</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#f0b4a0">1</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#a8d4b0">3</span></div></div>
+            </div>
+            <div style="margin-top:16px;text-align:center"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#212b34;border:1px solid #3c4a57;border-radius:2px;color:#a8b6c2">exhausted</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="flex:none;display:flex;align-items:center;gap:8px;padding:5px 14px;background:#0b0f12;border-bottom:1px solid #1a2127;opacity:.55">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98">Out of Play &middot; shared</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">0 cards</span>
+        <div style="flex:1;height:1px;background:#1a2127"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">expand</span>
+      </div>
+
+      <div style="flex:1;min-height:0;padding:10px 14px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#d8a99e">You &middot; In Play</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2">3 cards &middot; 2 ready</span>
+          <div style="flex:1;height:1px;background:#241a17"></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#c98a3c">choose a blocker</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+
+          <div style="width:88px;flex:none">
+            <div onClick="{{ pickWarhorn }}" style="position:relative;background:#191512;border:2px solid #c98a3c;border-radius:5px;overflow:hidden;cursor:pointer;box-shadow:0 0 0 3px rgba(201,138,60,.2),0 6px 18px -8px rgba(0,0,0,.9)" style-hover="box-shadow:0 0 0 4px rgba(201,138,60,.38),0 6px 18px -8px rgba(0,0,0,.9)">
+              <div style="height:48px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+              <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd">Warhorn Bearer</div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#b09287;margin-top:1px">Soldier</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#a8d4b0">3</span></div></div>
+              <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#1f2a22;border:1px solid #35543c;border-radius:2px;color:#a8d4b0">ready</div>
+            </div>
+            <div style="margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#93806f;line-height:1.3">grants +1 attack to<br />other friendly Soldiers</div>
+          </div>
+
+          <div style="width:88px;flex:none">
+            <div onClick="{{ pickBrawler }}" style="position:relative;background:#191512;border:2px solid #c98a3c;border-radius:5px;overflow:hidden;cursor:pointer;box-shadow:0 0 0 3px rgba(201,138,60,.2),0 6px 18px -8px rgba(0,0,0,.9)" style-hover="box-shadow:0 0 0 4px rgba(201,138,60,.38),0 6px 18px -8px rgba(0,0,0,.9)">
+              <div style="height:48px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+              <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd">Emberkin Brawler</div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#b09287;margin-top:1px">Soldier</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px"><span style="display:flex;align-items:baseline;gap:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#f0b4a0">4</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#c98a3c">+1</span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#a8d4b0">1</span></div></div>
+              <div style="position:absolute;top:3px;right:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#1f2a22;border:1px solid #35543c;border-radius:2px;color:#a8d4b0">ready</div>
+            </div>
+            <div style="margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#c98a3c;line-height:1.3">selected as blocker</div>
+          </div>
+
+          <div style="width:112px;flex:none;padding-top:14px;opacity:.4">
+            <div style="transform:rotate(90deg);transform-origin:center;background:#191512;border:1px solid #3a2a24;border-radius:5px;overflow:hidden;width:88px">
+              <div style="height:48px;background:repeating-linear-gradient(135deg,#2a201a 0 6px,#231b16 6px 12px)"></div>
+              <div style="padding:4px 5px 5px"><div style="font-family:Bitter,serif;font-size:9.5px;font-weight:600;line-height:1.15;color:#f3e7dd">Cinder Scout</div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#b09287;margin-top:1px">Scout &middot; Swift</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px"><span style="display:flex;align-items:baseline;gap:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#f0b4a0">4</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#c98a3c">+2</span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#a8d4b0">1</span></div></div>
+            </div>
+            <div style="margin-top:16px;text-align:center"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;background:#212b34;border:1px solid #3c4a57;border-radius:2px;color:#a8b6c2">exhausted</span></div>
+            <div style="margin-top:5px;padding:3px 4px;background:#141a20;border:1px solid #26313b;border-left:2px solid #c0392b;border-radius:2px"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#a8b6c2">Ember Brand</div><div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#7c8b98">attached &middot; +2 attack</div></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="flex:none;background:#0b0f12;border-top:1px solid #1a2127">
+        <div style="display:flex;align-items:center;gap:9px;padding:6px 14px 0">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#7c8b98">Hand</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">5 cards &middot; 0 playable in this window</span>
+          <div style="flex:1"></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">why?</span>
+        </div>
+        <div style="display:flex;gap:7px;padding:8px 14px 10px;align-items:flex-end">
+          <div style="width:76px;flex:none;background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;opacity:.42;transform:rotate(-3deg)"><div style="height:40px;background:repeating-linear-gradient(135deg,#2a201a 0 5px,#231b16 5px 10px)"></div><div style="padding:3px 4px 4px"><div style="font-family:Bitter,serif;font-size:9px;font-weight:600;color:#f3e7dd;line-height:1.1">Scorch</div><div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#93806f">event</span></div></div></div>
+          <div style="width:76px;flex:none;background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;opacity:.42;transform:rotate(-1.5deg)"><div style="height:40px;background:repeating-linear-gradient(135deg,#2a201a 0 5px,#231b16 5px 10px)"></div><div style="padding:3px 4px 4px"><div style="font-family:Bitter,serif;font-size:9px;font-weight:600;color:#f3e7dd;line-height:1.1">Second Wind</div><div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#f0b4a0">1</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#93806f">event</span></div></div></div>
+          <div style="width:76px;flex:none;background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;opacity:.42"><div style="height:40px;background:repeating-linear-gradient(135deg,#2a201a 0 5px,#231b16 5px 10px)"></div><div style="padding:3px 4px 4px"><div style="font-family:Bitter,serif;font-size:9px;font-weight:600;color:#f3e7dd;line-height:1.1">Flamecaller Adept</div><div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#f0b4a0">3</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#93806f">2/2</span></div></div></div>
+          <div style="width:76px;flex:none;background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;opacity:.42;transform:rotate(1.5deg)"><div style="height:40px;background:repeating-linear-gradient(135deg,#2a201a 0 5px,#231b16 5px 10px)"></div><div style="padding:3px 4px 4px"><div style="font-family:Bitter,serif;font-size:9px;font-weight:600;color:#f3e7dd;line-height:1.1">Wandering Emberkin</div><div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#93806f">2/2</span></div></div></div>
+          <div style="width:76px;flex:none;background:#191512;border:1px solid #3a2a24;border-radius:4px;overflow:hidden;opacity:.42;transform:rotate(3deg)"><div style="height:40px;background:repeating-linear-gradient(135deg,#2a201a 0 5px,#231b16 5px 10px)"></div><div style="padding:3px 4px 4px"><div style="font-family:Bitter,serif;font-size:9px;font-weight:600;color:#f3e7dd;line-height:1.1">Salvage</div><div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#f0b4a0">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#93806f">event</span></div></div></div>
+          <div style="flex:1"></div>
+          <div style="display:flex;gap:6px;align-items:flex-end">
+            <div style="width:48px;height:66px;border-radius:4px;background:repeating-linear-gradient(135deg,#1c242b 0 5px,#171e24 5px 10px);border:1px solid #2f3b45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600">14</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#a8b6c2">deck</span></div>
+            <div style="width:48px;height:66px;border-radius:4px;background:#141a20;border:1px solid #2f3b45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="border-color:#3c4a57"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600">6</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#a8b6c2">discard</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:none;background:#141a20;border-top:1px solid #26313b">
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:9px 14px;background:#1a1512;border-bottom:1px solid #3a2a24">
+          <div style="flex:none;width:3px;align-self:stretch;background:#c0392b;border-radius:2px"></div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#c98a3c;font-weight:600">Choose &middot; 1 of 2</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8907f">declare_block &middot; blocker</span>
+            </div>
+            <div style="font-size:14px;font-weight:600;color:#f5e6de">Assign a ready character to block an attacker.</div>
+            <div style="font-size:12px;color:#c9ab9e;margin-top:2px">Emberkin Brawler selected &mdash; now pick the attacker it blocks. Any ready character may block any attacker, and blocking is not required. Unblocked attackers hit your hero.</div>
+          </div>
+          <div style="flex:none;display:flex;gap:6px;align-items:center">
+            <button style="height:28px;padding:0 12px;background:#c0392b;border:none;border-radius:3px;color:#fff;font-family:Archivo,sans-serif;font-size:12px;font-weight:600;cursor:pointer" style-hover="background:#d2432f">Block Ashen Vanguard</button>
+            <button style="height:28px;padding:0 12px;background:#2a1f1c;border:1px solid #6b3327;border-radius:3px;color:#f0d0c6;font-family:Archivo,sans-serif;font-size:12px;font-weight:500;cursor:pointer" style-hover="background:#3a2a25">Block Gravewatch Sentinel</button>
+            <button style="height:28px;padding:0 10px;background:transparent;border:1px solid #4a3a34;border-radius:3px;color:#c9ab9e;font-family:'IBM Plex Mono',monospace;font-size:10.5px;cursor:pointer" style-hover="border-color:#6b3327;color:#f0d0c6">Esc &nbsp;cancel</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;padding:7px 14px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;margin-right:2px">actions</span>
+          <button style="display:flex;align-items:center;gap:6px;height:26px;padding:0 10px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:12px;cursor:pointer" style-hover="border-color:#3c4a57"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2">1</span>Declare a block</button>
+          <button style="display:flex;align-items:center;gap:6px;height:26px;padding:0 10px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#e2e8ee;font-family:Archivo,sans-serif;font-size:12px;cursor:pointer" style-hover="border-color:#3c4a57"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2">2</span>Pass</button>
+          <div style="flex:1"></div>
+          <button style="height:26px;padding:0 10px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#a8b6c2;font-family:Archivo,sans-serif;font-size:12px;cursor:pointer" style-hover="border-color:#3c4a57;color:#e2e8ee">Undo</button>
+          <button style="height:26px;padding:0 10px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;color:#a8b6c2;font-family:Archivo,sans-serif;font-size:12px;cursor:pointer" style-hover="border-color:#3c4a57;color:#e2e8ee">End phase</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="width:288px;flex:none;display:flex;flex-direction:column;background:#11171c;border-left:1px solid #1e262e">
+
+      <div style="height:28px;flex:none;display:flex;align-items:stretch;border-bottom:1px solid #1e262e">
+        <div onClick="{{ setLog }}" style="position:relative;display:flex;align-items:center;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e2e8ee;cursor:pointer">Log<sc-if value="{{ isLog }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+        <div onClick="{{ setCard }}" style="position:relative;display:flex;align-items:center;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">Card<sc-if value="{{ isCard }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+        <div onClick="{{ setNotes }}" style="position:relative;display:flex;align-items:center;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">Notes<sc-if value="{{ isNotes }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#c0392b"></span></sc-if></div>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;padding:0 10px;color:#7c8b98;cursor:pointer;font-size:11px" style-hover="color:#e2e8ee">&#8594;|</div>
+      </div>
+
+      <sc-if value="{{ isLog }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+        <div style="flex:none;display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid #1e262e">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 6px;background:#212b34;border-radius:2px;color:#e2e8ee;cursor:pointer">all</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 6px;border-radius:2px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">plays</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 6px;border-radius:2px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">damage</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 6px;border-radius:2px;color:#a8b6c2;cursor:pointer" style-hover="color:#e2e8ee">triggers</span>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:1px">
+          <div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid #1a2127"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98">Round 3 &middot; Refresh</span><div style="flex:1;height:1px;background:#1a2127"></div></div>
+          <div style="display:flex;gap:8px;padding:4px 0;cursor:pointer" style-hover="background:#161d23"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;width:24px">3.1</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#a8b6c2">Both players readied their cards, set Ember to 4, and drew 1.</span></div>
+
+          <div style="display:flex;align-items:center;gap:7px;padding:5px 0 4px;margin-top:4px;border-bottom:1px solid #1a2127"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7c8b98">Round 3 &middot; Action</span><div style="flex:1;height:1px;background:#1a2127"></div></div>
+          <div style="display:flex;gap:8px;padding:4px 0;cursor:pointer" style-hover="background:#161d23"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;width:24px">3.2</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#c3ccd4"><span style="color:#8fa0af">Ash</span> played <span style="color:#e2e8ee;text-decoration:underline;text-decoration-color:#3c4a57">Gravewatch Sentinel</span> for 4 Ember.</span></div>
+          <div style="display:flex;gap:8px;padding:4px 0;cursor:pointer" style-hover="background:#161d23"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;width:24px">3.3</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#c3ccd4"><span style="color:#d8a99e">Ember</span> played <span style="color:#e2e8ee;text-decoration:underline;text-decoration-color:#3c4a57">Emberkin Brawler</span> for 2 Ember.</span></div>
+          <div style="display:flex;gap:8px;padding:4px 0;cursor:pointer" style-hover="background:#161d23"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;width:24px">3.4</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#c3ccd4"><span style="color:#d8a99e">Ember</span> attached <span style="color:#e2e8ee;text-decoration:underline;text-decoration-color:#3c4a57">Ember Brand</span> to <span style="color:#e2e8ee;text-decoration:underline;text-decoration-color:#3c4a57">Cinder Scout</span>. Attack 2 &rarr; 4.</span></div>
+          <div style="display:flex;gap:8px;padding:4px 0;cursor:pointer" style-hover="background:#161d23"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;width:24px">3.5</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#c3ccd4">Both players passed. Action phase ended.</span></div>
+
+          <div style="display:flex;align-items:center;gap:7px;padding:5px 0 4px;margin-top:4px;border-bottom:1px solid #1a2127"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#c98a3c">Round 3 &middot; Combat</span><div style="flex:1;height:1px;background:#2a2118"></div></div>
+          <div style="display:flex;gap:8px;padding:4px 0;cursor:pointer" style-hover="background:#161d23"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;width:24px">3.6</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#c3ccd4"><span style="color:#8fa0af">Ash</span> exhausted and declared <span style="color:#e2e8ee;text-decoration:underline;text-decoration-color:#3c4a57">Ashen Vanguard</span> as an attacker.</span></div>
+          <div style="display:flex;gap:8px;padding:4px 0;cursor:pointer" style-hover="background:#161d23"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98;width:24px">3.7</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#c3ccd4"><span style="color:#8fa0af">Ash</span> exhausted and declared <span style="color:#e2e8ee;text-decoration:underline;text-decoration-color:#3c4a57">Gravewatch Sentinel</span> as an attacker.</span></div>
+          <div style="display:flex;gap:8px;padding:5px 0;background:#1a1512;border-left:2px solid #c0392b;padding-left:6px;margin-top:3px"><span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#c98a3c;width:24px">now</span><span style="flex:1;font-size:11.5px;line-height:1.4;color:#f0d0c6">Waiting for <span style="color:#f5e6de;font-weight:600">Ember</span> to declare blockers.</span></div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isCard }}">
+      <div style="flex:1;overflow-y:auto;padding:10px">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2">Inspecting</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c8b98">core-011</span></div>
+
+        <div style="width:184px;margin:0 auto 12px;background:#191512;border:1px solid #3a2a24;border-radius:6px;overflow:hidden;box-shadow:0 10px 28px -10px rgba(0,0,0,.9)">
+          <div style="height:112px;background:repeating-linear-gradient(135deg,#241c18 0 6px,#1e1714 6px 12px);display:flex;align-items:center;justify-content:center;position:relative"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#93806f">card art &middot; 4:3</span><div style="position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:50%;background:#c0392b;border:1.5px solid #e07a52;display:flex;align-items:center;justify-content:center;font-family:Bitter,serif;font-size:13px;font-weight:700;color:#fff">2</div></div>
+          <div style="padding:7px 9px 9px">
+            <div style="font-family:Bitter,serif;font-size:13px;font-weight:600;color:#f3e7dd;line-height:1.15">Emberkin Brawler</div>
+            <div style="font-family:Bitter,serif;font-size:10px;color:#b09287;margin:2px 0 7px;padding-bottom:6px;border-bottom:1px solid #3a2a24">Character &mdash; Soldier</div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="display:flex;align-items:center;gap:5px"><span style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:4px;background:#3a1f18;border:1px solid #6b3327;font-family:Bitter,serif;font-size:13px;font-weight:700;color:#f0b4a0">4</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#c98a3c">3 printed</span></span>
+              <span style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:4px;background:#1f2a22;border:1px solid #35543c;font-family:Bitter,serif;font-size:13px;font-weight:700;color:#a8d4b0">1</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:9px 10px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;margin-bottom:10px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2;margin-bottom:7px">Attack breakdown</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#a8b6c2">Printed</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">3</span></div>
+            <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#a8b6c2">Warhorn Bearer &middot; static</span><span style="font-family:'IBM Plex Mono',monospace;color:#c98a3c">+1</span></div>
+            <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px;padding-top:5px;border-top:1px solid #1e262e"><span style="flex:1;font-weight:600">Current</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">4</span></div>
+          </div>
+          <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:9px;line-height:1.4;color:#7d8d9a">layer: while_source_in_play &middot; query traits.any Soldier, exclude $self</div>
+        </div>
+
+        <div style="padding:9px 10px;background:#0b0f13;border:1px solid #26313b;border-radius:3px;margin-bottom:10px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#a8b6c2;margin-bottom:7px">State</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#a8b6c2">Ready / exhausted</span><span style="color:#a8d4b0">ready</span></div>
+            <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#a8b6c2">Damage counters</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">0</span></div>
+            <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#a8b6c2">Entered play</span><span style="font-family:'IBM Plex Mono',monospace;color:#e2e8ee">this round</span></div>
+            <div style="display:flex;align-items:baseline;gap:8px;font-size:12px"><span style="flex:1;color:#a8b6c2">Attachments</span><span style="color:#7d8d9a">none</span></div>
+          </div>
+        </div>
+
+        <div style="padding:9px 10px;background:#141a20;border:1px solid #26313b;border-left:2px solid #c98a3c;border-radius:3px">
+          <div style="font-size:12px;line-height:1.45;color:#e2e8ee">Blocking Ashen Vanguard trades: 4 damage kills a 3-health body, and 2 damage kills this 1-health body.</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2;margin-top:5px">simultaneous_strike</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isNotes }}">
+      <div style="flex:1;overflow-y:auto;padding:10px">
+        <button style="width:100%;height:28px;background:#0b0f13;border:1px dashed #2f3b45;border-radius:3px;color:#a8b6c2;font-family:Archivo,sans-serif;font-size:12px;cursor:pointer;margin-bottom:10px" style-hover="border-color:#5b8cae;color:#e2e8ee">+ File a note here &nbsp;<span style="font-family:'IBM Plex Mono',monospace;font-size:10px">N</span></button>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="padding:8px 9px;background:#141a20;border:1px solid #26313b;border-radius:3px">
+            <div style="font-size:12px;line-height:1.45;color:#e2e8ee">Two Guard bodies at once means aggro has to spend removal to attack at all. Feels rough on this draw.</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2;margin-top:5px">round 3 &middot; combat.declare_blockers &middot; anchored</div>
+            <div style="width:100%;height:34px;margin-top:6px;border-radius:2px;background:repeating-linear-gradient(135deg,#1c242b 0 5px,#171e24 5px 10px);border:1px solid #2f3b45;display:flex;align-items:center;justify-content:center"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#a8b6c2">board thumbnail at 3.7</span></div>
+          </div>
+          <div style="padding:8px 9px;background:#141a20;border:1px solid #26313b;border-radius:3px">
+            <div style="font-size:12px;line-height:1.45;color:#e2e8ee">Ember Brand on a Scout instead of a Soldier felt like a trap &mdash; Warhorn doesn't stack with it.</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#a8b6c2;margin-top:5px">round 3 &middot; action.main &middot; open</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  state = { tab: 'log' };
+  renderVals() {
+    const t = this.state.tab;
+    return {
+      isLog: t === 'log', isCard: t === 'card', isNotes: t === 'notes',
+      setLog: () => this.setState({ tab: 'log' }),
+      setCard: () => this.setState({ tab: 'card' }),
+      setNotes: () => this.setState({ tab: 'notes' }),
+      pickBrawler: () => this.setState({ tab: 'card' }),
+      pickWarhorn: () => this.setState({ tab: 'card' })
+    };
+  }
+}
+</script>
+</body>
+</html>
