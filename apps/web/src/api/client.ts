@@ -116,9 +116,16 @@ export const api = {
     }>(`/games/${game}/sets/${set}/completeness`),
 
   decks: (game: string) =>
-    request<{ id: string; name: string; archetype: string | null; cardCount: number; valid: boolean | null }[]>(
-      `/games/${game}/decks`,
-    ),
+    request<
+      {
+        id: string
+        headVersionId: string | null
+        name: string
+        archetype: string | null
+        cardCount: number
+        valid: boolean | null
+      }[]
+    >(`/games/${game}/decks`),
 
   deck: (id: string) =>
     request<{ id: string; name: string; document: Record<string, unknown>; legality: DeckLegality }>(`/decks/${id}`),
@@ -129,9 +136,14 @@ export const api = {
       body: JSON.stringify({ document }),
     }),
 
+  botProfiles: (game: string) =>
+    request<{ id: string; name: string; strategy: string; implemented: boolean }[]>(
+      `/games/${game}/bot-profiles`,
+    ),
+
   createMatch: (payload: {
     gameVersionId: string
-    seats: { seat: number; deckVersionId?: string }[]
+    seats: { seat: number; deckVersionId?: string; botProfileId?: string }[]
     seed?: number
     mode?: string
   }) => request<MatchEnvelope>('/matches', { method: 'POST', body: JSON.stringify(payload) }),

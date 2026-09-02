@@ -9,7 +9,8 @@
         "typecheck": "vue-tsc --noEmit",
         "test": "vitest run",
         "types": "node scripts/generate-types.mjs",
-        "types:check": "node scripts/generate-types.mjs && git diff --exit-code -- src/api/documents.gen.d.ts"
+        "types:check": "node scripts/generate-types.mjs && git diff --exit-code -- src/api/documents.gen.d.ts",
+        "e2e": "playwright test"
     },
     "dependencies": {
         "pinia": "^2.2.6",
@@ -17,6 +18,7 @@
         "vue-router": "^4.4.5"
     },
     "devDependencies": {
+        "@playwright/test": "^1.62.1",
         "@types/node": "^22.10.1",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/test-utils": "^2.4.6",

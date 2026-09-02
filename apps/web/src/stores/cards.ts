@@ -69,6 +69,46 @@ export const useCardsStore = defineStore('cards', () => {
     filters.value = empty()
   }
 
+  /** The filter as a query string — the shareable form of this view. */
+  function toQuery(): Record<string, string | string[]> {
+    const query: Record<string, string | string[]> = {}
+    for (const [key, value] of Object.entries(filters.value)) {
+      if (Array.isArray(value)) {
+        if (value.length > 0) query[key] = value
+      } else if (value !== undefined && value !== '') {
+        query[key] = String(value)
+      }
+    }
+    return query
+  }
+
+  /**
+   * Reads a filter back out of a query string.
+   *
+   * Unknown keys are ignored rather than kept: a link is a filter, and a filter the store
+   * does not understand is not one this build can honour.
+   */
+  function fromQuery(query: Record<string, unknown>): void {
+    const next = empty()
+
+    for (const key of ['type', 'faction', 'status', 'traits', 'keywords'] as const) {
+      const value = query[key]
+      if (value === undefined) continue
+      next[key] = (Array.isArray(value) ? value : [value]).map(String)
+    }
+
+    for (const key of ['costMin', 'costMax'] as const) {
+      const value = query[key]
+      if (value === undefined) continue
+      const parsed = Number(value)
+      if (Number.isInteger(parsed)) next[key] = parsed
+    }
+
+    if (typeof query.q === 'string' && query.q !== '') next.q = query.q
+
+    filters.value = next
+  }
+
   /** Facet counts, computed from what came back rather than asked for separately. */
   function counts(field: 'type' | 'faction' | 'status'): Record<string, number> {
     const key = field === 'type' ? 'type' : field
@@ -81,5 +121,5 @@ export const useCardsStore = defineStore('cards', () => {
     return tally
   }
 
-  return { cards, total, loading, filters, selection, chips, load, toggle, clear, counts }
+  return { cards, total, loading, filters, selection, chips, load, toggle, clear, counts, toQuery, fromQuery }
 })

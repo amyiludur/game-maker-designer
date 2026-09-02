@@ -21,7 +21,7 @@ const stripe = computed(() => games.factionColor(props.faction) ?? 'var(--border
 </script>
 
 <template>
-  <article class="thumb" :class="{ selected }">
+  <article class="thumb" :class="{ selected }" :data-card="code">
     <header>
       <span v-if="cost !== null" class="cost" :style="{ background: stripe }">{{ cost }}</span>
       <span class="name">{{ name ?? code }}</span>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, toRaw, watch } from 'vue'
 
 import { ApiError_, api } from '@/api/client'
 import AbilityNode from '@/components/editor/AbilityNode.vue'
@@ -38,8 +38,13 @@ const abilities = computed(() => (document_.value.abilities as unknown[]) ?? [])
 watch(
   () => props.card,
   async (code) => {
-    detail.value = await api.card(code)
-    document_.value = structuredClone(detail.value.document)
+    const loaded = await api.card(code)
+
+    // Cloned from the response, not from the ref: reading it back through Vue's reactive
+    // proxy makes `structuredClone` throw, which left the editor with an empty document and
+    // every card claiming its type was not in the compiled bundle.
+    document_.value = structuredClone(loaded.document)
+    detail.value = loaded
     violations.value = []
     saved.value = null
   },
@@ -50,7 +55,7 @@ async function save(): Promise<void> {
   saving.value = true
   violations.value = []
   try {
-    detail.value = await api.saveCard(props.card, document_.value)
+    detail.value = await api.saveCard(props.card, toRaw(document_.value))
     saved.value = new Date().toLocaleTimeString()
   } catch (error) {
     if (error instanceof ApiError_) violations.value = error.violations

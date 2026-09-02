@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { api } from '@/api/client'
 import CardThumb from '@/components/card/CardThumb.vue'
@@ -12,6 +12,7 @@ const props = defineProps<{ game: string }>()
 const cards = useCardsStore()
 const games = useGameStore()
 const router = useRouter()
+const route = useRoute()
 
 const view = ref<'grid' | 'table'>('table')
 const completeness = ref<Awaited<ReturnType<typeof api.completeness>> | null>(null)
@@ -21,12 +22,23 @@ async function refresh(): Promise<void> {
 }
 
 onMounted(async () => {
+  // The URL is read first, so a pasted link opens the view it was copied from.
+  cards.fromQuery(route.query)
   await refresh()
+
   const set = (await api.game(props.game)).sets[0]
   if (set !== undefined) completeness.value = await api.completeness(props.game, set.code)
 })
 
-watch(() => cards.filters, refresh, { deep: true })
+watch(
+  () => cards.filters,
+  async () => {
+    // `replace`, not `push`: ticking six facets should not mean six presses of Back.
+    await router.replace({ query: cards.toQuery() })
+    await refresh()
+  },
+  { deep: true },
+)
 
 const typeCounts = computed(() => cards.counts('type'))
 const factionCounts = computed(() => cards.counts('faction'))
@@ -124,7 +136,7 @@ function open(code: string): void {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="card in cards.cards" :key="card.id" @click="open(card.code)">
+          <tr v-for="card in cards.cards" :key="card.id" :data-card="card.code" @click="open(card.code)">
             <td class="mono muted">{{ card.code }}</td>
             <td class="name">{{ card.name }}</td>
             <td>{{ card.type }}</td>
