@@ -63,6 +63,10 @@ function delta(attribute: string): string | null {
 <style scoped>
 .card {
   position: relative;
+  /* Fixed, and never shrunk: a wide board scrolls rather than squeezing thirteen cards
+     into the width of nine, which made the last one unreadable and the exhausted one a
+     column of vertical letters. */
+  flex: 0 0 88px;
   width: 88px;
   min-height: 108px;
   background: #191512;

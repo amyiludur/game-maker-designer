@@ -377,6 +377,17 @@ function name(value: string): string {
   gap: var(--gap-5);
   min-height: 112px;
   align-items: flex-start;
+  /* A row a designer has filled with a dozen characters is a normal late board, not an
+     edge case. It scrolls; the page never does. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: var(--gap-3);
+}
+
+/* An exhausted card is rotated, and a rotation does not change the box the layout
+   reserves for it, so it would overlap its neighbour without this. */
+.strip :deep(.card.exhausted) {
+  margin: 0 10px;
 }
 
 .empty {

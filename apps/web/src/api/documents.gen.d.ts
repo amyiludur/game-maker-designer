@@ -20,7 +20,8 @@ export type AbilityEffectDSL = {
  * A value or predicate. Either a literal, a selector, or an {op: ...} node.
  */
 
-export type AbilityExpression = AbilityLiteral | AbilitySelector | AbilityExpressionNode | AbilityExpression[]
+export type AbilityExpression =
+  AbilityLiteral | AbilitySelector | AbilityExpressionNode | AbilityExpression[]
 
 export type AbilityLiteral = string | number | boolean | null
 
@@ -386,7 +387,7 @@ export interface GameSystem {
       faceDown?: boolean
       supportsAttachments?: boolean
       maxSize?: number | null
-    }[],
+    }[]
   ]
   /**
    * @minItems 1
@@ -399,7 +400,8 @@ export interface GameSystem {
       attributes: {
         id: string
         name: string
-        type: 'integer' | 'decimal' | 'string' | 'text' | 'boolean' | 'enum' | 'tagList' | 'reference'
+        type:
+          'integer' | 'decimal' | 'string' | 'text' | 'boolean' | 'enum' | 'tagList' | 'reference'
         required?: boolean
         default?: unknown
         min?: number
@@ -429,7 +431,8 @@ export interface GameSystem {
       attributes: {
         id: string
         name: string
-        type: 'integer' | 'decimal' | 'string' | 'text' | 'boolean' | 'enum' | 'tagList' | 'reference'
+        type:
+          'integer' | 'decimal' | 'string' | 'text' | 'boolean' | 'enum' | 'tagList' | 'reference'
         required?: boolean
         default?: unknown
         min?: number
@@ -451,7 +454,7 @@ export interface GameSystem {
       isIdentity?: boolean
       doubleSided?: boolean
       controlledBy?: 'player' | 'adversary'
-    }[],
+    }[]
   ]
   keywords?: {
     id: string
@@ -517,7 +520,7 @@ export interface GameSystem {
               skipIfNoActions?: boolean
             }
             repeatPerPlayer?: boolean
-          }[],
+          }[]
         ]
       },
       ...{
@@ -550,9 +553,9 @@ export interface GameSystem {
               skipIfNoActions?: boolean
             }
             repeatPerPlayer?: boolean
-          }[],
+          }[]
         ]
-      }[],
+      }[]
     ]
   }
   actions?: {
@@ -644,7 +647,7 @@ export interface GameSystem {
         eliminate?: string
       }
       text?: string
-    }[],
+    }[]
   ]
   deckbuilding?: {
     deckSize: {

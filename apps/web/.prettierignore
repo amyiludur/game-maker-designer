@@ -1,0 +1,6 @@
+dist
+test-results
+playwright-report
+# Generated: its formatting is the generator's, and `npm run types:check` compares against
+# exactly what the generator emits.
+src/api/documents.gen.d.ts
