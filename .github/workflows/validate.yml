@@ -218,6 +218,7 @@ jobs:
         working-directory: apps/api
         run: |
           php artisan migrate --force
+          php artisan db:seed --force
           php artisan games:import ../../examples/emberfall
       # The port and host are in apps/web/vite.config.ts, so both the dev loop and CI reach
       # the SPA at the same address and the Playwright baseURL needs no override.
