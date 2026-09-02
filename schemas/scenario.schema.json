@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/scenario.schema.json",
+  "title": "Scenario",
+  "description": "The adversary's side of a cooperative game: which villain stages, schemes and encounter sets make up the opposition. The cooperative counterpart of a deck, and versioned, playtested and simulated the same way.",
+  "type": "object",
+  "required": ["schemaVersion", "gameId", "gameVersion", "id", "name", "adversary"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "gameId": { "type": "string" },
+    "gameVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "name": { "type": "string" },
+    "adversary": { "type": "string", "description": "Which declared adversary side this scenario fills" },
+
+    "anchors": {
+      "type": "object",
+      "description": "Anchor id to card code. Stage progressions are given as an ordered array.",
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        ]
+      }
+    },
+
+    "encounterSets": {
+      "type": "array",
+      "description": "Encounter set codes forming the encounter deck.",
+      "items": { "type": "string" }
+    },
+
+    "difficulty": { "type": "string" },
+
+    "setup": {
+      "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/effect",
+      "description": "Scenario-specific setup, run after the system's own setup script."
+    },
+
+    "playerCount": {
+      "type": "object",
+      "properties": {
+        "min": { "type": "integer", "minimum": 1 },
+        "max": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+
+    "design": {
+      "type": "object",
+      "properties": {
+        "targetWinRate": {
+          "type": "object",
+          "description": "The difficulty the designer is aiming for, per player count. Simulation measures against this rather than against 50%.",
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "expectedRounds": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "integer" },
+            "max": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "notes": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

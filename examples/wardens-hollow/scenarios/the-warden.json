@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../schemas/scenario.schema.json",
+  "schemaVersion": "1.0.0",
+  "gameId": "wardens-hollow",
+  "gameVersion": "0.2.0",
+  "id": "the-warden",
+  "name": "The Warden of the Hollow",
+  "adversary": "warden",
+  "anchors": {
+    "boss": "wh-100",
+    "mainScheme": "wh-110"
+  },
+  "encounterSets": ["wh-hollow"],
+  "difficulty": "standard",
+  "playerCount": { "min": 1, "max": 4 },
+  "design": {
+    "targetWinRate": { "1": 0.6, "2": 0.55, "3": 0.5, "4": 0.45 },
+    "expectedRounds": { "min": 6, "max": 12 },
+    "notes": "The 4-player target is deliberately lower; if simulation shows it is HIGHER than 2-player, the per-player scaling on threshold is doing too much work relative to flat acceleration.",
+    "tags": ["introductory"]
+  }
+}

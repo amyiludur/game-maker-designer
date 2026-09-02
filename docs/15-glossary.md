@@ -55,3 +55,12 @@
 | **Finding** | An automated balance observation with supporting evidence |
 | **Projection** | An index column derived from a JSON document |
 | **Impact report** | What a system change would invalidate |
+| **Side** | Any participant that owns cards and zones: a player seat (`p0`) or an adversary (`villain`) |
+| **Adversary** | An engine-controlled side that executes a script rather than choosing actions |
+| **Anchor** | A named persistent instance of an adversary (`$adversary.boss`, `$adversary.mainScheme`) |
+| **Activation** | The adversary's scripted turn, defined in the system document |
+| **Encounter deck** | The adversary's deck, dealt to players during its phase |
+| **Encounter set** | A named bundle of adversary cards a scenario includes by reference |
+| **Scenario** | The adversary's side of a co-op game: anchors plus encounter sets. The co-op counterpart of a deck |
+| **Modular set** | An encounter set that can be swapped into a scenario to vary it |
+| **Face** | Which side of a double-sided card is currently up |

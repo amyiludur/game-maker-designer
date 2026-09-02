@@ -55,6 +55,9 @@ are all declared in JSON, then:
 * Card authoring with dynamic, system-driven forms and a visual ability builder
 * Set / expansion management and card pool organisation
 * Deckbuilding with live legality checking
+* **Cooperative and solo-vs-the-game play**: 1–4 players against an engine-controlled
+  adversary with its own encounter deck (the Marvel Champions / Arkham Horror shape) —
+  see [doc 16](16-cooperative-and-adversary-games.md)
 * Browser playtesting: solo, hotseat, and multiplayer over WebSocket
 * Bot opponents and headless batch simulation
 * Balance metrics and reporting
@@ -71,6 +74,9 @@ are all declared in JSON, then:
   a script pasted into a card.
 * **Real-time / hidden-simultaneous action games.** The timing model assumes discrete,
   sequential priority windows. Trick-taking and dexterity games are not targets.
+* **Legacy / campaign persistence.** Carrying state between scenarios (XP, permanent
+  injuries, an evolving campaign log) is a natural extension of the scenario model but is
+  not designed yet.
 * **Physical print fulfilment.** We export print-ready PDFs and stop there.
 * **Perfect AI.** Bots exist to find degenerate lines and generate statistics, not to be
   a fun opponent. (A good bot is a happy side effect.)

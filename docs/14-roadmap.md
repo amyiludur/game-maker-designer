@@ -79,6 +79,29 @@ reading documentation.
 
 ---
 
+## M3.5 · Cooperative & adversary games
+
+**Goal:** 1–4 players play a scenario against an engine-controlled adversary.
+
+* Side ids in state (`p0`, `villain`), replacing seat integers on instances
+* Adversary registration, anchors, and `run_activation`
+* Ops: `reveal_encounter`, `flip_card`, `replace_card`, `engage`
+* `player_count` expression and `perPlayer` attribute scaling at setup
+* `allWin` / `allLose` / `eliminate` outcomes
+* Rotating first-player token; `repeatPerPlayer` turn steps
+* Scenario and encounter-set documents, scenario builder UI
+* Co-op board layout: adversary area, threat track, per-player engagement rows
+* Defence windows (a `reaction` window type in the phase model)
+
+**Exit:** a four-player Warden's Hollow scenario plays end to end, and the same kernel still
+passes every Emberfall conformance replay unchanged.
+
+*Sequenced here, not later, because it is the shape the platform is most likely to be used
+for — and because retrofitting side ids after the play table is built is far more expensive
+than doing it before.*
+
+---
+
 ## M4 · Automation & balance
 
 **Goal:** questions get answered by data.
@@ -89,6 +112,8 @@ reading documentation.
 * Balance report with automated findings and replay links
 * Simulation lab UI, batch comparison
 * Static analysis: curve, outliers, orphans, cost regression
+* Co-op difficulty metrics: scenario win rate per player count against its stated target,
+  threat gained vs. removed per round, per-encounter-card severity
 
 **Exit:** a card change can be evaluated with a 2,000-match batch in under five minutes,
 with a report that names what changed.
@@ -131,8 +156,7 @@ regression test.
 | Thing | Why |
 |---|---|
 | TypeScript kernel for optimistic play | Only if latency proves to be a real problem; gated on the conformance suite ([ADR-0002](adr/0002-single-authoritative-kernel.md)) |
-| Multiplayer (3+ seats) | The format supports it; the UI and priority model get much harder. Prove 2p first. |
-| Cooperative / encounter-deck games | Needs an automated "encounter" agent driven by the system doc |
+| Multiplayer duels (3+ competitive seats) | The format supports it; the priority model gets much harder. Co-op multiplayer (M3.5) is the priority, since it needs turn order rather than interleaved priority. |
 | Real-time collaborative editing | Revisions + optimistic locking are sufficient for a small team |
 | Public sharing / community browsing | Not until the core loop is genuinely good |
 | Mobile app | Responsive web first |

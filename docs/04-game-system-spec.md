@@ -45,8 +45,13 @@ Every section below is declarative. Nothing here is code.
 { "min": 2, "max": 2, "mode": "competitive", "teams": false }
 ```
 
-`mode` is one of `competitive`, `cooperative`, `solo`. Co-op games get a shared "encounter"
-side driven by automatic actions rather than a player.
+`mode` is one of `competitive`, `cooperative`, `solo`.
+
+Cooperative games add an `adversaries` section: engine-controlled sides with their own
+zones, anchor cards and a scripted activation. That is a large enough subject to have its
+own document — see [16 — Cooperative & adversary games](16-cooperative-and-adversary-games.md),
+which also covers double-sided cards, per-player scaling, shared win/loss outcomes and
+scenario building.
 
 ## `vocabularies`
 

@@ -4,7 +4,7 @@
   "title": "Card",
   "description": "One card's design document. Attribute contents are additionally validated against the compiled schema for its card type.",
   "type": "object",
-  "required": ["schemaVersion", "code", "gameId", "name", "type"],
+  "required": ["schemaVersion", "code", "gameId"],
   "properties": {
     "$schema": { "type": "string" },
     "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
@@ -14,6 +14,16 @@
     "number": { "type": "integer", "minimum": 1 },
     "name": { "type": "string", "minLength": 1 },
     "type": { "type": "string" },
+    "sides": {
+      "type": "object",
+      "description": "Double-sided cards (hero/alter-ego, villain stage I/II, scheme 1A/1B). When present, name/type/attributes/abilities live inside each side instead of at the top level.",
+      "required": ["front", "back"],
+      "properties": {
+        "front": { "$ref": "#/$defs/side" },
+        "back": { "$ref": "#/$defs/side" }
+      },
+      "additionalProperties": false
+    },
     "faction": { "type": ["string", "null"] },
     "rarity": { "type": ["string", "null"] },
     "quantity": { "type": "integer", "minimum": 1, "default": 1, "description": "Copies included in the physical product" },
@@ -64,5 +74,50 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+
+  "oneOf": [
+    { "required": ["name", "type"], "not": { "required": ["sides"] } },
+    { "required": ["sides"] }
+  ],
+
+  "$defs": {
+    "side": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string" },
+        "attributes": { "type": "object" },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": { "type": "string" },
+              "params": { "type": "object" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "abilities": {
+          "type": "array",
+          "items": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/ability" }
+        },
+        "text": { "type": ["string", "null"] },
+        "flavor": { "type": ["string", "null"] },
+        "art": {
+          "type": "object",
+          "properties": {
+            "assetId": { "type": ["string", "null"] },
+            "artist": { "type": ["string", "null"] },
+            "focus": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }

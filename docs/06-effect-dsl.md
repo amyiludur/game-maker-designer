@@ -69,6 +69,7 @@ The DSL is deliberately four small languages that compose, rather than one big o
 | `$card`, `$player` | The item under evaluation inside a query filter or state check |
 | `$host` | The card `$self` is attached to (attachments only) |
 | `$deck.identity` | The deck's identity card (hero/leader) |
+| `$adversary` | The engine-controlled side; `$adversary.<anchor>` names one of its anchor cards ([doc 16](16-cooperative-and-adversary-games.md)) |
 | `$param.<id>` | A keyword parameter value |
 
 ### 2. Queries
@@ -83,6 +84,8 @@ A query selects card instances or players.
   "traits": { "any": ["Soldier"] },  // any | all | none
   "keywords": { "none": ["swift"] },
   "where": { "op": "lte", "left": { "op": "attr", "of": "$card", "attr": "cost" }, "right": 3 },
+  "zonePlayer": "$player",         // whose copy of a player-scoped zone — distinct from controller
+  "face": "front",
   "exclude": ["$self"],
   "order": { "by": { "op": "attr", "of": "$card", "attr": "cost" }, "dir": "desc" },
   "limit": 3
@@ -108,6 +111,8 @@ Expressions produce a **value** (number, string, boolean, list). Everything is
 | `count` | `{"op":"count","query":{...}}` |
 | `zone_size` | `{"op":"zone_size","zone":"hand","player":"$opponent"}` |
 | `round` / `phase` | current round number / phase id |
+| `player_count` | Number of players in this match |
+| `face` | Which side of a double-sided card is up (`front`/`back`) |
 | `var` | a variable set earlier by `set_var` |
 | `param` | a keyword parameter |
 | `random_int` | `{"op":"random_int","min":1,"max":6}` — draws from the seeded RNG |

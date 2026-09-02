@@ -41,6 +41,7 @@ validate the worked example, and the example game is complete enough to build a 
 | 13 | [Validation & testing](docs/13-validation-and-testing.md) | Schema linting, golden replays, fuzzing |
 | 14 | [Roadmap](docs/14-roadmap.md) | Milestones, in build order, with exit criteria |
 | 15 | [Glossary](docs/15-glossary.md) | LCG terms and platform terms |
+| 16 | [Cooperative & adversary games](docs/16-cooperative-and-adversary-games.md) | 1–4 players vs. an automated villain and its encounter deck |
 
 Architecture decisions with their trade-offs are recorded in [`docs/adr/`](docs/adr/).
 
@@ -50,18 +51,29 @@ Architecture decisions with their trade-offs are recorded in [`docs/adr/`](docs/
 docs/                     Specifications and plans
   adr/                    Architecture decision records
 schemas/                  JSON Schema (draft 2020-12) — the machine-readable contracts
-examples/emberfall/       A complete worked example game: system, cards, decks, replay, bot
+examples/emberfall/       Worked example 1 — a competitive two-player duel
+examples/wardens-hollow/  Worked example 2 — 1-4 player co-op vs. an automated adversary
 scripts/                  validate-examples.mjs — schema + cross-document integrity checks
 ```
 
-## The worked example: Emberfall
+## The worked examples
 
-[`examples/emberfall/`](examples/emberfall/) is a small but complete two-player duel LCG
-defined entirely in this platform's data formats. It exists so that:
+Two complete games, defined entirely in this platform's data formats, covering the two
+shapes an LCG takes:
+
+| Example | Shape | Proves |
+|---|---|---|
+| [`emberfall/`](examples/emberfall/) | Competitive 2-player duel | Resources, combat, keywords, attachments, modifier layers |
+| [`wardens-hollow/`](examples/wardens-hollow/) | **1–4 player co-op vs. an automated adversary** | Encounter decks, scripted villains, double-sided cards, per-player scaling, shared defeat |
+
+The second is the Marvel Champions / Arkham Horror / LOTR LCG shape. It is a first-class
+supported configuration, not an extension — see [doc 16](docs/16-cooperative-and-adversary-games.md).
+
+They exist so that:
 
 * every spec claim is backed by a concrete file you can look at,
 * the UI can be designed and built against real, representative data,
-* the engine has a first conformance target.
+* the engine has conformance targets covering both shapes.
 
 Validate every example against the schemas — plus the cross-document integrity checks a
 JSON Schema can't express (unknown keywords, out-of-vocabulary traits, deck legality):

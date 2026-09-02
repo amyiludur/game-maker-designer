@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-maker-designer.dev/schemas/encounter-set.schema.json",
+  "title": "Encounter Set",
+  "description": "A named bundle of adversary cards (treacheries, minions, attachments) that scenarios include by reference. Modular sets are what let one scenario be reconfigured without rewriting it.",
+  "type": "object",
+  "required": ["schemaVersion", "code", "gameId", "name", "cards"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "code": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "gameId": { "type": "string" },
+    "name": { "type": "string" },
+    "kind": { "enum": ["scenario", "modular", "nemesis", "difficulty"], "default": "scenario" },
+    "matching": { "type": "string", "description": "For nemesis sets: the hero card code this set belongs to" },
+    "summary": { "type": "string" },
+    "cards": {
+      "type": "array",
+      "description": "Card codes and how many copies the set contributes.",
+      "items": {
+        "type": "object",
+        "required": ["code", "count"],
+        "properties": {
+          "code": { "type": "string" },
+          "count": { "type": "integer", "minimum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "design": {
+      "type": "object",
+      "properties": {
+        "goals": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

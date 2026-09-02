@@ -1,123 +1,222 @@
 #!/usr/bin/env node
 /**
- * Validates every document under examples/ against its JSON Schema.
+ * Validates every document under examples/ against its JSON Schema, then runs the
+ * cross-document integrity checks a JSON Schema cannot express.
  *
- * The example game is a test fixture, not decoration: if it stops validating,
+ * The example games are test fixtures, not decoration: if one stops validating,
  * either the schemas or the example is wrong, and CI should say so.
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
+import { join } from 'node:path'
 import Ajv2020 from 'ajv/dist/2020.js'
 import addFormats from 'ajv-formats'
 
 const root = new URL('..', import.meta.url).pathname
 const read = (p) => JSON.parse(readFileSync(join(root, p), 'utf8'))
+const BASE = 'https://game-maker-designer.dev/schemas/'
 
 const SCHEMAS = [
-  'schemas/ability.schema.json',
-  'schemas/game-system.schema.json',
-  'schemas/card.schema.json',
-  'schemas/set.schema.json',
-  'schemas/deck.schema.json',
-  'schemas/game-state.schema.json',
-  'schemas/replay.schema.json',
-  'schemas/bot-profile.schema.json',
+  'ability', 'game-system', 'card', 'set', 'deck',
+  'game-state', 'replay', 'bot-profile', 'scenario', 'encounter-set',
 ]
 
-// Which schema validates which example path.
-const TARGETS = [
-  ['examples/emberfall/game-system.json', 'game-system.schema.json'],
-  ['examples/emberfall/sets', 'set.schema.json'],
-  ['examples/emberfall/decks', 'deck.schema.json'],
-  ['examples/emberfall/bots', 'bot-profile.schema.json'],
-  ['examples/emberfall/replays', 'replay.schema.json'],
-]
-
-const BASE = 'https://game-maker-designer.dev/schemas/'
+/** Directory name -> schema, applied to every .json file in that directory. */
+const DIRS = {
+  sets: 'set',
+  decks: 'deck',
+  bots: 'bot-profile',
+  replays: 'replay',
+  scenarios: 'scenario',
+  'encounter-sets': 'encounter-set',
+}
 
 const ajv = new Ajv2020({ allErrors: true, strict: false, allowUnionTypes: true })
 addFormats(ajv)
-for (const path of SCHEMAS) ajv.addSchema(read(path))
+for (const name of SCHEMAS) ajv.addSchema(read(`schemas/${name}.schema.json`))
 
-const expand = (p) => {
-  const full = join(root, p)
-  if (!statSync(full).isDirectory()) return [p]
-  return readdirSync(full).filter((f) => f.endsWith('.json')).map((f) => join(p, f))
-}
+const games = readdirSync(join(root, 'examples')).filter((d) =>
+  statSync(join(root, 'examples', d)).isDirectory()
+)
 
 let failures = 0
 let checked = 0
 
-for (const [target, schemaFile] of TARGETS) {
-  const validate = ajv.getSchema(BASE + schemaFile)
-  if (!validate) {
-    console.error(`✗ schema not registered: ${schemaFile}`)
+const check = (file, schemaName) => {
+  checked++
+  const validate = ajv.getSchema(BASE + schemaName + '.schema.json')
+  if (validate(read(file))) {
+    console.log(`✓ ${file}`)
+  } else {
     failures++
-    continue
+    console.error(`✗ ${file}`)
+    for (const err of validate.errors) console.error(`    ${err.instancePath || '/'} ${err.message}`)
   }
-  for (const file of expand(target)) {
-    checked++
-    const doc = read(file)
-    if (validate(doc)) {
-      console.log(`✓ ${file}`)
-    } else {
-      failures++
-      console.error(`✗ ${file}`)
-      for (const err of validate.errors) {
-        console.error(`    ${err.instancePath || '/'} ${err.message}`)
+}
+
+for (const game of games) {
+  const base = `examples/${game}`
+  check(`${base}/game-system.json`, 'game-system')
+  for (const [dir, schema] of Object.entries(DIRS)) {
+    const path = join(root, base, dir)
+    if (!existsSync(path)) continue
+    for (const f of readdirSync(path).filter((f) => f.endsWith('.json'))) {
+      check(`${base}/${dir}/${f}`, schema)
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Cross-document integrity
+// ---------------------------------------------------------------------------
+
+/** A card may be flat or double-sided; yield each face as a (type, attributes, keywords) view. */
+const facesOf = (card) =>
+  card.sides
+    ? Object.entries(card.sides).map(([face, s]) => ({ face, ...s }))
+    : [{ face: 'front', name: card.name, type: card.type, attributes: card.attributes, keywords: card.keywords }]
+
+const lint = []
+
+for (const game of games) {
+  const base = `examples/${game}`
+  const system = read(`${base}/game-system.json`)
+  const typeIds = new Set(system.cardTypes.map((t) => t.id))
+  const keywordIds = new Set((system.keywords ?? []).map((k) => k.id))
+  const traits = new Set(system.vocabularies?.traits ?? [])
+  const factions = new Set((system.vocabularies?.factions ?? []).map((f) => f.id))
+  const adversaryIds = new Set((system.adversaries ?? []).map((a) => a.id))
+  const zoneIds = new Set(system.zones.map((z) => z.id))
+
+  const cards = new Map()
+  const setsDir = join(root, base, 'sets')
+  if (existsSync(setsDir)) {
+    for (const f of readdirSync(setsDir).filter((f) => f.endsWith('.json'))) {
+      for (const card of read(`${base}/sets/${f}`).cards ?? []) cards.set(card.code, card)
+    }
+  }
+
+  const at = (what) => `${game}: ${what}`
+
+  // Zones declared for an adversary must exist and be scoped to it.
+  for (const adv of system.adversaries ?? []) {
+    for (const z of adv.zones ?? []) {
+      const zone = system.zones.find((x) => x.id === z)
+      if (!zone) lint.push(at(`adversary "${adv.id}" declares unknown zone "${z}"`))
+      else if (zone.scope !== 'adversary' || zone.side !== adv.id) {
+        lint.push(at(`zone "${z}" is claimed by adversary "${adv.id}" but is not scoped to it`))
+      }
+    }
+    for (const anchor of adv.anchors ?? []) {
+      if (!typeIds.has(anchor.type)) lint.push(at(`anchor "${anchor.id}" has unknown card type "${anchor.type}"`))
+      if (anchor.zone && !zoneIds.has(anchor.zone)) lint.push(at(`anchor "${anchor.id}" names unknown zone "${anchor.zone}"`))
+    }
+  }
+
+  // Cards: types, factions, keywords, traits, required attributes — per face.
+  for (const card of cards.values()) {
+    if (card.faction && !factions.has(card.faction)) lint.push(at(`${card.code}: unknown faction "${card.faction}"`))
+    for (const face of facesOf(card)) {
+      const where = card.sides ? `${card.code} (${face.face})` : card.code
+      if (!typeIds.has(face.type)) { lint.push(at(`${where}: unknown card type "${face.type}"`)); continue }
+      for (const kw of face.keywords ?? []) {
+        if (!keywordIds.has(kw.id)) lint.push(at(`${where}: unknown keyword "${kw.id}"`))
+      }
+      for (const trait of face.attributes?.traits ?? []) {
+        if (!traits.has(trait)) lint.push(at(`${where}: trait "${trait}" is not in the vocabulary`))
+      }
+      const type = system.cardTypes.find((t) => t.id === face.type)
+      for (const attr of type?.attributes ?? []) {
+        if (attr.required && face.attributes?.[attr.id] === undefined) {
+          lint.push(at(`${where}: missing required attribute "${attr.id}"`))
+        }
+      }
+      if (card.sides && !type?.doubleSided) {
+        lint.push(at(`${where}: card has sides but type "${face.type}" is not marked doubleSided`))
       }
     }
   }
-}
 
-// Cross-document integrity: the checks a JSON Schema cannot express.
-const system = read('examples/emberfall/game-system.json')
-const set = read('examples/emberfall/sets/core.json')
-const cardsByCode = new Map(set.cards.map((c) => [c.code, c]))
-const typeIds = new Set(system.cardTypes.map((t) => t.id))
-const keywordIds = new Set((system.keywords ?? []).map((k) => k.id))
-const traits = new Set(system.vocabularies?.traits ?? [])
-const factions = new Set((system.vocabularies?.factions ?? []).map((f) => f.id))
-
-const lint = []
-for (const card of set.cards) {
-  if (!typeIds.has(card.type)) lint.push(`${card.code}: unknown card type "${card.type}"`)
-  if (card.faction && !factions.has(card.faction)) lint.push(`${card.code}: unknown faction "${card.faction}"`)
-  for (const kw of card.keywords ?? []) {
-    if (!keywordIds.has(kw.id)) lint.push(`${card.code}: unknown keyword "${kw.id}"`)
-  }
-  for (const trait of card.attributes?.traits ?? []) {
-    if (!traits.has(trait)) lint.push(`${card.code}: trait "${trait}" is not in the vocabulary`)
-  }
-  const type = system.cardTypes.find((t) => t.id === card.type)
-  for (const attr of type?.attributes ?? []) {
-    if (attr.required && card.attributes?.[attr.id] === undefined) {
-      lint.push(`${card.code}: missing required attribute "${attr.id}"`)
+  // Decks.
+  const decksDir = join(root, base, 'decks')
+  if (existsSync(decksDir)) {
+    for (const f of readdirSync(decksDir).filter((f) => f.endsWith('.json'))) {
+      const deck = read(`${base}/decks/${f}`)
+      const total = deck.cards.reduce((n, c) => n + c.count, 0)
+      const { min, max } = system.deckbuilding?.deckSize ?? {}
+      if (min && (total < min || (max && total > max))) lint.push(at(`${f}: ${total} cards, must be ${min}-${max}`))
+      const identity = cards.get(deck.identity)
+      if (!identity) lint.push(at(`${f}: unknown identity "${deck.identity}"`))
+      for (const entry of deck.cards) {
+        const card = cards.get(entry.code)
+        if (!card) { lint.push(at(`${f}: unknown card "${entry.code}"`)); continue }
+        if (entry.count > (system.deckbuilding?.maxCopies ?? Infinity)) {
+          lint.push(at(`${f}: ${entry.count}x ${entry.code} exceeds the ${system.deckbuilding.maxCopies}-copy limit`))
+        }
+        if (entry.count > card.quantity) {
+          lint.push(at(`${f}: ${entry.count}x ${entry.code} exceeds the ${card.quantity} printed in the set`))
+        }
+        // Faction legality: match the identity, or a neutral faction if the game has one.
+        if (identity && card.faction !== identity.faction && card.faction !== 'neutral') {
+          lint.push(at(`${f}: ${entry.code} (${card.faction}) does not match identity faction ${identity.faction}`))
+        }
+      }
     }
   }
-}
 
-for (const deckFile of expand('examples/emberfall/decks')) {
-  const deck = read(deckFile)
-  const name = relative('examples/emberfall/decks', deckFile)
-  const total = deck.cards.reduce((n, c) => n + c.count, 0)
-  const { min, max } = system.deckbuilding.deckSize
-  if (total < min || (max && total > max)) {
-    lint.push(`${name}: ${total} cards, must be ${min}-${max}`)
+  // Encounter sets.
+  const encDir = join(root, base, 'encounter-sets')
+  const encounterSets = new Map()
+  if (existsSync(encDir)) {
+    for (const f of readdirSync(encDir).filter((f) => f.endsWith('.json'))) {
+      const set = read(`${base}/encounter-sets/${f}`)
+      encounterSets.set(set.code, set)
+      for (const entry of set.cards) {
+        const card = cards.get(entry.code)
+        if (!card) { lint.push(at(`${f}: unknown card "${entry.code}"`)); continue }
+        const type = system.cardTypes.find((t) => t.id === facesOf(card)[0].type)
+        if (type?.controlledBy !== 'adversary') {
+          lint.push(at(`${f}: ${entry.code} is a player card and cannot be in an encounter set`))
+        }
+      }
+    }
   }
-  const identity = cardsByCode.get(deck.identity)
-  if (!identity) lint.push(`${name}: unknown identity "${deck.identity}"`)
-  for (const entry of deck.cards) {
-    const card = cardsByCode.get(entry.code)
-    if (!card) { lint.push(`${name}: unknown card "${entry.code}"`); continue }
-    if (entry.count > system.deckbuilding.maxCopies) {
-      lint.push(`${name}: ${entry.count}x ${entry.code} exceeds the ${system.deckbuilding.maxCopies}-copy limit`)
-    }
-    if (entry.count > card.quantity) {
-      lint.push(`${name}: ${entry.count}x ${entry.code} exceeds the ${card.quantity} printed in the set`)
-    }
-    if (identity && card.faction !== identity.faction && card.faction !== 'neutral') {
-      lint.push(`${name}: ${entry.code} (${card.faction}) does not match hero faction ${identity.faction}`)
+
+  // Scenarios.
+  const scnDir = join(root, base, 'scenarios')
+  if (existsSync(scnDir)) {
+    for (const f of readdirSync(scnDir).filter((f) => f.endsWith('.json'))) {
+      const scenario = read(`${base}/scenarios/${f}`)
+      if (!adversaryIds.has(scenario.adversary)) {
+        lint.push(at(`${f}: unknown adversary "${scenario.adversary}"`))
+      }
+      const adv = (system.adversaries ?? []).find((a) => a.id === scenario.adversary)
+      for (const anchor of adv?.anchors ?? []) {
+        const filled = scenario.anchors?.[anchor.id]
+        if (anchor.required !== false && !filled) {
+          lint.push(at(`${f}: required anchor "${anchor.id}" is not filled`))
+          continue
+        }
+        for (const code of [filled].flat().filter(Boolean)) {
+          const card = cards.get(code)
+          if (!card) { lint.push(at(`${f}: anchor "${anchor.id}" names unknown card "${code}"`)); continue }
+          if (!facesOf(card).some((s) => s.type === anchor.type)) {
+            lint.push(at(`${f}: anchor "${anchor.id}" expects type "${anchor.type}" but ${code} has none`))
+          }
+        }
+      }
+      for (const code of scenario.encounterSets ?? []) {
+        if (!encounterSets.has(code)) lint.push(at(`${f}: unknown encounter set "${code}"`))
+      }
+      const required = system.scenarioBuilding?.encounterSets?.required ?? []
+      for (const code of required) {
+        if (!(scenario.encounterSets ?? []).includes(code)) {
+          lint.push(at(`${f}: required encounter set "${code}" is missing`))
+        }
+      }
+      const max = scenario.playerCount?.max
+      if (max && max > system.players.max) {
+        lint.push(at(`${f}: allows ${max} players but the system caps at ${system.players.max}`))
+      }
     }
   }
 }
@@ -127,8 +226,8 @@ if (lint.length) {
   console.error('\n✗ cross-document integrity:')
   for (const l of lint) console.error(`    ${l}`)
 } else {
-  console.log('✓ cross-document integrity (card types, vocabularies, keywords, deck legality)')
+  console.log('\n✓ cross-document integrity (card types, vocabularies, keywords, deck legality, adversary zones, anchors, encounter sets)')
 }
 
-console.log(`\n${checked} documents checked, ${failures} problem(s).`)
+console.log(`\n${checked} documents checked across ${games.length} game(s), ${failures} problem(s).`)
 process.exit(failures ? 1 : 0)

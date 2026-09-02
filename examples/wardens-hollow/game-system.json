@@ -1,0 +1,653 @@
+{
+  "$schema": "../../schemas/game-system.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "wardens-hollow",
+  "version": "0.2.0",
+  "name": "Warden's Hollow",
+  "summary": "One to four Watchers against the Warden and its encounter deck. Beat the villain before the Hollow deepens.",
+
+  "players": { "min": 1, "max": 4, "mode": "cooperative", "teams": true },
+
+  "adversaries": [
+    {
+      "id": "warden",
+      "name": "The Warden",
+      "controlledBy": "engine",
+      "zones": ["encounter_deck", "encounter_discard", "warden_area"],
+      "anchors": [
+        { "id": "boss", "type": "warden", "required": true, "zone": "warden_area" },
+        { "id": "mainScheme", "type": "scheme", "required": true, "zone": "warden_area" }
+      ],
+      "activation": [
+        {
+          "op": "for_each_player",
+          "order": "turn",
+          "do": [
+            {
+              "op": "if",
+              "cond": {
+                "op": "eq",
+                "left": { "op": "attr", "of": "$player.identity", "attr": "form" },
+                "right": "guardian"
+              },
+              "then": [
+                {
+                  "op": "deal_damage",
+                  "target": "$player.identity",
+                  "amount": { "op": "attr", "of": "$adversary.boss", "attr": "attack" },
+                  "source": "$adversary.boss",
+                  "defendable": true
+                }
+              ],
+              "else": [
+                {
+                  "op": "add_counter",
+                  "card": "$adversary.mainScheme",
+                  "counter": "threat",
+                  "amount": { "op": "attr", "of": "$adversary.boss", "attr": "thwart" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "op": "add_counter",
+          "card": "$adversary.mainScheme",
+          "counter": "threat",
+          "amount": { "op": "attr", "of": "$adversary.mainScheme", "attr": "acceleration" }
+        },
+        {
+          "op": "for_each_player",
+          "order": "turn",
+          "do": [
+            {
+              "op": "reveal_encounter",
+              "from": "warden.encounter_deck",
+              "discard": "warden.encounter_discard",
+              "to": "engaged",
+              "zonePlayer": "$player",
+              "count": 1,
+              "shuffleOnEmpty": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "vocabularies": {
+    "traits": ["Watcher", "Hound", "Relic", "Mist"],
+    "rarities": ["common", "uncommon", "rare"],
+    "factions": [
+      { "id": "watch", "name": "The Watch", "color": "#2e86a8", "icon": "lantern" },
+      { "id": "hollow", "name": "The Hollow", "color": "#4a3b52", "icon": "mist" }
+    ]
+  },
+
+  "counters": [
+    { "id": "damage", "name": "Damage", "visual": "pip-red" },
+    { "id": "threat", "name": "Threat", "visual": "pip-purple" }
+  ],
+
+  "zones": [
+    { "id": "deck",              "name": "Deck",             "scope": "player",    "visibility": "none",   "ordered": true, "faceDown": true },
+    { "id": "hand",              "name": "Hand",             "scope": "player",    "visibility": "owner",  "ordered": false },
+    { "id": "play",              "name": "Play Area",        "scope": "player",    "visibility": "public", "ordered": false, "supportsAttachments": true },
+    { "id": "discard",           "name": "Discard",          "scope": "player",    "visibility": "public", "ordered": true },
+    { "id": "engaged",           "name": "Engaged",          "scope": "player",    "visibility": "public", "ordered": false, "supportsAttachments": true },
+    { "id": "encounter_deck",    "name": "Encounter Deck",   "scope": "adversary", "side": "warden", "visibility": "none",   "ordered": true, "faceDown": true },
+    { "id": "encounter_discard", "name": "Encounter Discard","scope": "adversary", "side": "warden", "visibility": "public", "ordered": true },
+    { "id": "warden_area",       "name": "Warden",           "scope": "adversary", "side": "warden", "visibility": "public", "ordered": false, "supportsAttachments": true },
+    { "id": "removed",           "name": "Out of Play",      "scope": "shared",    "visibility": "public", "ordered": false }
+  ],
+
+  "cardTypes": [
+    {
+      "id": "citizen",
+      "name": "Citizen",
+      "isIdentity": true,
+      "doubleSided": true,
+      "unique": true,
+      "playableTo": ["play"],
+      "attributes": [
+        { "id": "health",  "name": "Health",  "type": "integer", "min": 1, "required": true, "showOnCard": "bottom-right" },
+        { "id": "recover", "name": "Recover", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-left" },
+        { "id": "form",    "name": "Form",    "type": "enum", "options": ["citizen", "guardian"], "required": true, "showOnCard": false }
+      ],
+      "modifiableAttributes": ["health", "recover"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "guardian",
+      "name": "Guardian",
+      "isIdentity": true,
+      "doubleSided": true,
+      "unique": true,
+      "playableTo": ["play"],
+      "attributes": [
+        { "id": "health", "name": "Health", "type": "integer", "min": 1, "required": true, "showOnCard": "bottom-right" },
+        { "id": "attack", "name": "Attack", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-left" },
+        { "id": "thwart", "name": "Thwart", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-center" },
+        { "id": "form",   "name": "Form",   "type": "enum", "options": ["citizen", "guardian"], "required": true, "showOnCard": false }
+      ],
+      "modifiableAttributes": ["health", "attack", "thwart"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "ally",
+      "name": "Ally",
+      "playableTo": ["play"],
+      "attributes": [
+        { "id": "cost",   "name": "Cost",   "type": "integer", "min": 0, "max": 8, "required": true, "showOnCard": "top-left" },
+        { "id": "attack", "name": "Attack", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-left" },
+        { "id": "thwart", "name": "Thwart", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-center" },
+        { "id": "health", "name": "Health", "type": "integer", "min": 1, "required": true, "showOnCard": "bottom-right" },
+        { "id": "traits", "name": "Traits", "type": "tagList", "vocabulary": "traits", "showOnCard": "type-line" }
+      ],
+      "modifiableAttributes": ["attack", "thwart", "health", "cost"],
+      "abilitySlots": { "max": 3 }
+    },
+    {
+      "id": "event",
+      "name": "Event",
+      "playableTo": ["discard"],
+      "attributes": [
+        { "id": "cost", "name": "Cost", "type": "integer", "min": 0, "max": 8, "required": true, "showOnCard": "top-left" }
+      ],
+      "modifiableAttributes": ["cost"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "upgrade",
+      "name": "Upgrade",
+      "playableTo": ["play"],
+      "attributes": [
+        { "id": "cost",   "name": "Cost",   "type": "integer", "min": 0, "max": 8, "required": true, "showOnCard": "top-left" },
+        { "id": "traits", "name": "Traits", "type": "tagList", "vocabulary": "traits", "showOnCard": "type-line" }
+      ],
+      "modifiableAttributes": ["cost"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "warden",
+      "name": "Warden",
+      "controlledBy": "adversary",
+      "doubleSided": true,
+      "unique": true,
+      "attributes": [
+        { "id": "health", "name": "Health", "type": "integer", "min": 1, "required": true, "perPlayer": true, "showOnCard": "bottom-right" },
+        { "id": "attack", "name": "Attack", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-left" },
+        { "id": "thwart", "name": "Thwart", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-center" },
+        { "id": "stage",  "name": "Stage",  "type": "enum", "options": ["opening", "final"], "required": true, "showOnCard": "top-right" }
+      ],
+      "modifiableAttributes": ["health", "attack", "thwart"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "scheme",
+      "name": "Scheme",
+      "controlledBy": "adversary",
+      "unique": true,
+      "attributes": [
+        { "id": "threshold",    "name": "Threshold",    "type": "integer", "min": 1, "required": true, "perPlayer": true, "showOnCard": "bottom-right" },
+        { "id": "acceleration", "name": "Acceleration", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-left" }
+      ],
+      "modifiableAttributes": ["threshold", "acceleration"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "minion",
+      "name": "Minion",
+      "controlledBy": "adversary",
+      "playableTo": ["engaged"],
+      "attributes": [
+        { "id": "attack", "name": "Attack", "type": "integer", "min": 0, "required": true, "showOnCard": "bottom-left" },
+        { "id": "health", "name": "Health", "type": "integer", "min": 1, "required": true, "showOnCard": "bottom-right" },
+        { "id": "traits", "name": "Traits", "type": "tagList", "vocabulary": "traits", "showOnCard": "type-line" }
+      ],
+      "modifiableAttributes": ["attack", "health"],
+      "abilitySlots": { "max": 2 }
+    },
+    {
+      "id": "treachery",
+      "name": "Treachery",
+      "controlledBy": "adversary",
+      "playableTo": ["encounter_discard"],
+      "attributes": [],
+      "abilitySlots": { "max": 2 }
+    }
+  ],
+
+  "keywords": [
+    {
+      "id": "guard_post",
+      "name": "Guard Post",
+      "reminder": "While this ally is ready, the Warden's attacks against you may be defended by it.",
+      "grants": [{ "kind": "permission", "permission": "may_defend", "value": true }]
+    }
+  ],
+
+  "setup": [
+    {
+      "op": "for_each_player",
+      "order": "seat",
+      "do": [
+        { "op": "put_into_play", "card": "$deck.identity", "controller": "$player", "ready": true, "face": "front" },
+        { "op": "shuffle", "zone": "deck", "player": "$player" },
+        { "op": "draw", "player": "$player", "count": 6 }
+      ]
+    },
+    { "op": "shuffle", "zone": "encounter_deck", "player": "$adversary" },
+    { "op": "set_first_player", "rule": "random" }
+  ],
+
+  "mulligan": { "enabled": true, "mode": "full_redraw", "times": 1 },
+
+  "round": {
+    "structure": "phased",
+    "firstPlayer": { "rule": "rotate" },
+    "triggerOrdering": "apnap",
+    "phases": [
+      {
+        "id": "watch",
+        "name": "Watch Phase",
+        "steps": [
+          {
+            "id": "turn",
+            "name": "Player turn",
+            "repeatPerPlayer": true,
+            "window": { "type": "active_player", "endOn": "consecutive_passes" }
+          },
+          {
+            "id": "refill",
+            "name": "Refill hand",
+            "repeatPerPlayer": true,
+            "auto": [{ "op": "draw", "player": "$player", "count": 6, "upTo": true }]
+          }
+        ]
+      },
+      {
+        "id": "warden",
+        "name": "Warden Phase",
+        "steps": [
+          {
+            "id": "activate",
+            "name": "The Warden acts",
+            "auto": [{ "op": "run_activation", "adversary": "warden" }]
+          }
+        ]
+      },
+      {
+        "id": "cleanup",
+        "name": "Cleanup",
+        "steps": [
+          {
+            "id": "ready_all",
+            "name": "Ready cards",
+            "auto": [
+              { "op": "for_each_player", "order": "turn", "do": [{ "op": "ready_all", "zone": "play", "player": "$player" }] },
+              { "op": "expire_modifiers", "duration": "round" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  "actions": [
+    {
+      "id": "play_ally",
+      "name": "Play an ally",
+      "windows": ["watch.turn"],
+      "targets": [
+        { "id": "card", "query": { "zone": "hand", "controller": "$you", "types": ["ally"] }, "count": 1, "chooser": "$you" }
+      ],
+      "cost": [
+        {
+          "op": "discard",
+          "player": "$you",
+          "chooser": "$you",
+          "query": { "zone": "hand", "controller": "$you", "exclude": ["$target.card"] },
+          "count": { "op": "attr", "of": "$target.card", "attr": "cost" }
+        }
+      ],
+      "effect": [{ "op": "put_into_play", "card": "$target.card", "controller": "$you", "ready": true }],
+      "emits": ["card.played"],
+      "text": "Discard cards equal to an ally's cost to put it into play."
+    },
+    {
+      "id": "play_event",
+      "name": "Play an event",
+      "windows": ["watch.turn"],
+      "targets": [
+        { "id": "card", "query": { "zone": "hand", "controller": "$you", "types": ["event"] }, "count": 1, "chooser": "$you" }
+      ],
+      "cost": [
+        {
+          "op": "discard",
+          "player": "$you",
+          "chooser": "$you",
+          "query": { "zone": "hand", "controller": "$you", "exclude": ["$target.card"] },
+          "count": { "op": "attr", "of": "$target.card", "attr": "cost" }
+        }
+      ],
+      "effect": [{ "op": "move_card", "card": "$target.card", "to": "discard", "controller": "$you" }],
+      "emits": ["card.played"],
+      "text": "Discard cards equal to an event's cost, resolve it, then discard it."
+    },
+    {
+      "id": "play_upgrade",
+      "name": "Play an upgrade",
+      "windows": ["watch.turn"],
+      "targets": [
+        { "id": "card", "query": { "zone": "hand", "controller": "$you", "types": ["upgrade"] }, "count": 1, "chooser": "$you" }
+      ],
+      "cost": [
+        {
+          "op": "discard",
+          "player": "$you",
+          "chooser": "$you",
+          "query": { "zone": "hand", "controller": "$you", "exclude": ["$target.card"] },
+          "count": { "op": "attr", "of": "$target.card", "attr": "cost" }
+        }
+      ],
+      "effect": [
+        { "op": "put_into_play", "card": "$target.card", "controller": "$you", "ready": true },
+        { "op": "attach", "card": "$target.card", "to": "$you.identity" }
+      ],
+      "emits": ["card.played"],
+      "text": "Discard cards equal to an upgrade's cost and attach it to your identity."
+    },
+    {
+      "id": "change_form",
+      "name": "Change form",
+      "windows": ["watch.turn"],
+      "effect": [{ "op": "flip_card", "card": "$you.identity" }],
+      "limit": { "perPhase": 1 },
+      "text": "Flip your identity card. Once per turn."
+    },
+    {
+      "id": "basic_attack",
+      "name": "Attack",
+      "windows": ["watch.turn"],
+      "targets": [
+        {
+          "id": "enemy",
+          "query": { "zone": ["warden_area", "engaged"], "controller": "$adversary", "types": ["warden", "minion"] },
+          "count": 1,
+          "chooser": "$you",
+          "prompt": "Choose an enemy to attack"
+        }
+      ],
+      "cost": [{ "op": "exhaust", "card": "$you.identity" }],
+      "requirements": [
+        { "op": "eq", "left": { "op": "attr", "of": "$you.identity", "attr": "form" }, "right": "guardian" }
+      ],
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": "$target.enemy",
+          "amount": { "op": "attr", "of": "$you.identity", "attr": "attack" },
+          "source": "$you.identity"
+        }
+      ],
+      "text": "Exhaust your guardian to deal damage equal to its Attack."
+    },
+    {
+      "id": "basic_thwart",
+      "name": "Thwart",
+      "windows": ["watch.turn"],
+      "cost": [{ "op": "exhaust", "card": "$you.identity" }],
+      "requirements": [
+        { "op": "eq", "left": { "op": "attr", "of": "$you.identity", "attr": "form" }, "right": "guardian" }
+      ],
+      "effect": [
+        {
+          "op": "remove_counter",
+          "card": "$adversary.mainScheme",
+          "counter": "threat",
+          "amount": { "op": "attr", "of": "$you.identity", "attr": "thwart" }
+        }
+      ],
+      "text": "Exhaust your guardian to remove threat equal to its Thwart."
+    },
+    {
+      "id": "recover",
+      "name": "Recover",
+      "windows": ["watch.turn"],
+      "cost": [{ "op": "exhaust", "card": "$you.identity" }],
+      "requirements": [
+        { "op": "eq", "left": { "op": "attr", "of": "$you.identity", "attr": "form" }, "right": "citizen" }
+      ],
+      "effect": [
+        {
+          "op": "heal",
+          "target": "$you.identity",
+          "amount": { "op": "attr", "of": "$you.identity", "attr": "recover" }
+        }
+      ],
+      "text": "Exhaust your citizen to heal damage equal to its Recover."
+    },
+    {
+      "id": "ally_attack",
+      "name": "Attack with an ally",
+      "windows": ["watch.turn"],
+      "targets": [
+        {
+          "id": "ally",
+          "query": {
+            "zone": "play", "controller": "$you", "types": ["ally"],
+            "where": { "op": "not", "of": { "op": "is_exhausted", "card": "$card" } }
+          },
+          "count": 1, "chooser": "$you"
+        },
+        {
+          "id": "enemy",
+          "query": { "zone": ["warden_area", "engaged"], "controller": "$adversary", "types": ["warden", "minion"] },
+          "count": 1, "chooser": "$you"
+        }
+      ],
+      "cost": [{ "op": "exhaust", "card": "$target.ally" }],
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": "$target.enemy",
+          "amount": { "op": "attr", "of": "$target.ally", "attr": "attack" },
+          "source": "$target.ally"
+        }
+      ],
+      "text": "Exhaust an ally to deal damage equal to its Attack."
+    },
+    {
+      "id": "ally_thwart",
+      "name": "Thwart with an ally",
+      "windows": ["watch.turn"],
+      "targets": [
+        {
+          "id": "ally",
+          "query": {
+            "zone": "play", "controller": "$you", "types": ["ally"],
+            "where": { "op": "not", "of": { "op": "is_exhausted", "card": "$card" } }
+          },
+          "count": 1, "chooser": "$you"
+        }
+      ],
+      "cost": [{ "op": "exhaust", "card": "$target.ally" }],
+      "effect": [
+        {
+          "op": "remove_counter",
+          "card": "$adversary.mainScheme",
+          "counter": "threat",
+          "amount": { "op": "attr", "of": "$target.ally", "attr": "thwart" }
+        }
+      ],
+      "text": "Exhaust an ally to remove threat equal to its Thwart."
+    }
+  ],
+
+  "stateChecks": [
+    {
+      "id": "warden_advances",
+      "scope": { "zone": "warden_area", "types": ["warden"] },
+      "when": {
+        "op": "and",
+        "of": [
+          { "op": "eq", "left": { "op": "face", "card": "$card" }, "right": "front" },
+          {
+            "op": "gte",
+            "left": { "op": "counter", "of": "$card", "counter": "damage" },
+            "right": { "op": "attr", "of": "$card", "attr": "health" }
+          }
+        ]
+      },
+      "then": [
+        {
+          "op": "remove_counter",
+          "card": "$card",
+          "counter": "damage",
+          "amount": { "op": "counter", "of": "$card", "counter": "damage" }
+        },
+        { "op": "flip_card", "card": "$card", "to": "back" }
+      ]
+    },
+    {
+      "id": "ally_destroyed",
+      "scope": { "zone": "play", "types": ["ally"] },
+      "when": {
+        "op": "gte",
+        "left": { "op": "counter", "of": "$card", "counter": "damage" },
+        "right": { "op": "attr", "of": "$card", "attr": "health" }
+      },
+      "then": [{ "op": "destroy", "card": "$card" }]
+    },
+    {
+      "id": "minion_destroyed",
+      "scope": { "zone": "engaged", "types": ["minion"] },
+      "when": {
+        "op": "gte",
+        "left": { "op": "counter", "of": "$card", "counter": "damage" },
+        "right": { "op": "attr", "of": "$card", "attr": "health" }
+      },
+      "then": [{ "op": "move_card", "card": "$card", "to": "warden.encounter_discard" }]
+    }
+  ],
+
+  "winConditions": [
+    {
+      "id": "warden_defeated",
+      "check": {
+        "op": "and",
+        "of": [
+          { "op": "eq", "left": { "op": "attr", "of": "$adversary.boss", "attr": "stage" }, "right": "final" },
+          {
+            "op": "gte",
+            "left": { "op": "counter", "of": "$adversary.boss", "counter": "damage" },
+            "right": { "op": "attr", "of": "$adversary.boss", "attr": "health" }
+          }
+        ]
+      },
+      "outcome": { "allWin": true },
+      "text": "When the Warden is defeated in its final stage, the Watchers win."
+    },
+    {
+      "id": "scheme_completed",
+      "check": {
+        "op": "gte",
+        "left": { "op": "counter", "of": "$adversary.mainScheme", "counter": "threat" },
+        "right": { "op": "attr", "of": "$adversary.mainScheme", "attr": "threshold" }
+      },
+      "outcome": { "allLose": true },
+      "text": "If threat on the main scheme reaches its threshold, all players lose."
+    },
+    {
+      "id": "watcher_defeated",
+      "scope": { "players": "all" },
+      "check": {
+        "op": "gte",
+        "left": { "op": "counter", "of": "$player.identity", "counter": "damage" },
+        "right": { "op": "attr", "of": "$player.identity", "attr": "health" }
+      },
+      "outcome": { "allLose": true },
+      "text": "If any Watcher is defeated, all players lose. (Change this outcome to `eliminate` for the Arkham model.)"
+    },
+    {
+      "id": "round_limit",
+      "check": { "op": "gt", "left": { "op": "round" }, "right": 20 },
+      "outcome": { "allLose": true },
+      "text": "If round 20 ends with the Warden alive, the Hollow wins."
+    }
+  ],
+
+  "deckbuilding": {
+    "deckSize": { "min": 20, "max": 25 },
+    "maxCopies": 3,
+    "identity": { "type": "citizen", "count": 1, "zone": "play" },
+    "sideboard": null,
+    "constraints": [
+      {
+        "id": "watch_only",
+        "severity": "error",
+        "rule": {
+          "op": "all",
+          "of": { "zone": "deck" },
+          "match": {
+            "op": "eq",
+            "left": { "op": "attr", "of": "$card", "attr": "faction" },
+            "right": "watch"
+          }
+        },
+        "message": "Player decks may only contain cards of The Watch."
+      }
+    ]
+  },
+
+  "scenarioBuilding": {
+    "requires": [
+      { "anchor": "boss", "from": "warden" },
+      { "anchor": "mainScheme", "from": "scheme" }
+    ],
+    "encounterSets": {
+      "required": ["wh-hollow"],
+      "modular": { "min": 0, "max": 1 }
+    },
+    "difficulties": [
+      { "id": "standard", "name": "Standard", "encounterSets": [] },
+      { "id": "expert", "name": "Expert", "encounterSets": ["wh-expert"] }
+    ]
+  },
+
+  "ui": {
+    "board": {
+      "layout": "coop-adversary",
+      "rows": [
+        { "id": "warden", "zone": "warden_area", "player": "$adversary", "label": "The Warden" },
+        { "id": "engaged", "zone": "engaged", "player": "$each", "label": "Engaged" },
+        { "id": "watchers", "zone": "play", "player": "$each", "label": "Watchers" }
+      ],
+      "docks": { "hand": "bottom", "deck": "bottom-right", "discard": "bottom-right", "identity": "left" }
+    },
+    "cardTemplate": "standard-portrait",
+    "theme": { "accent": "#2e86a8", "surface": "#14171c" }
+  },
+
+  "rulesText": {
+    "sections": [
+      {
+        "id": "overview",
+        "title": "Overview",
+        "body": "One to four Watchers stand against the Warden. Defeat it in its final stage to win. If threat on the main scheme reaches its threshold, or any Watcher falls, everyone loses."
+      },
+      {
+        "id": "forms",
+        "title": "Citizen and Guardian",
+        "body": "Your identity card has two sides. As a Citizen you recover and the Warden schemes against you; as a Guardian you attack and thwart, and the Warden attacks you. You may change form once per turn."
+      },
+      {
+        "id": "resources",
+        "title": "Paying for Cards",
+        "body": "There is no resource pool. To play a card, discard cards from your hand equal to its cost."
+      }
+    ],
+    "generate": ["phases", "keywords", "zones", "deckbuilding"]
+  }
+}

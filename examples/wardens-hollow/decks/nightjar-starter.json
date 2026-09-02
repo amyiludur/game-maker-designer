@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../schemas/deck.schema.json",
+  "schemaVersion": "1.0.0",
+  "gameId": "wardens-hollow",
+  "gameVersion": "0.2.0",
+  "name": "Nightjar Starter",
+  "archetype": "balanced",
+  "identity": "wh-001",
+  "cards": [
+    { "code": "wh-010", "count": 3 },
+    { "code": "wh-011", "count": 3 },
+    { "code": "wh-012", "count": 3 },
+    { "code": "wh-020", "count": 3 },
+    { "code": "wh-021", "count": 3 },
+    { "code": "wh-022", "count": 2 },
+    { "code": "wh-030", "count": 2 },
+    { "code": "wh-031", "count": 2 }
+  ],
+  "sideboard": [],
+  "notes": "21 cards. Deliberately thwart-heavy: the scheme clock, not the Warden's health, is what kills new players."
+}

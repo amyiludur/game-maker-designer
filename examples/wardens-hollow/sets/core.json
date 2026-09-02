@@ -1,0 +1,472 @@
+{
+  "$schema": "../../../schemas/set.schema.json",
+  "schemaVersion": "1.0.0",
+  "code": "whcore",
+  "gameId": "wardens-hollow",
+  "name": "Warden's Hollow Core Set",
+  "releaseOrder": 1,
+  "status": "draft",
+  "summary": "One Watcher, the Warden, and enough of the Hollow to run a scenario end to end.",
+  "design": {
+    "goals": [
+      "Prove the double-sided identity and the form-flip loop",
+      "Prove an engine-scripted adversary and an encounter deck",
+      "Prove per-player scaling on villain health and scheme threshold"
+    ],
+    "budget": { "citizen": 1, "ally": 3, "event": 3, "upgrade": 2, "warden": 1, "scheme": 1, "minion": 2, "treachery": 2 }
+  },
+
+  "cards": [
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-001",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 1,
+      "faction": "watch",
+      "rarity": "rare",
+      "quantity": 1,
+      "sides": {
+        "front": {
+          "name": "Aria Vance",
+          "type": "citizen",
+          "attributes": { "health": 11, "recover": 4, "form": "citizen" },
+          "abilities": [
+            {
+              "id": "a1",
+              "kind": "activated",
+              "speed": "action",
+              "cost": [{ "op": "exhaust", "card": "$self" }],
+              "effect": [{ "op": "draw", "player": "$you", "count": 1 }],
+              "limit": { "perRound": 1 },
+              "text": "Exhaust: Draw a card. Limit once per round."
+            }
+          ],
+          "text": null,
+          "flavor": "Nobody looks twice at the lamplighter's daughter."
+        },
+        "back": {
+          "name": "Nightjar",
+          "type": "guardian",
+          "attributes": { "health": 11, "attack": 2, "thwart": 2, "form": "guardian" },
+          "abilities": [
+            {
+              "id": "a1",
+              "kind": "triggered",
+              "speed": "forced",
+              "trigger": {
+                "event": "card.flipped",
+                "filter": {
+                  "op": "and",
+                  "of": [
+                    { "op": "eq", "left": "$event.card", "right": "$self" },
+                    { "op": "eq", "left": "$event.to", "right": "back" }
+                  ]
+                }
+              },
+              "effect": [
+                {
+                  "op": "remove_counter",
+                  "card": "$adversary.mainScheme",
+                  "counter": "threat",
+                  "amount": 1
+                }
+              ],
+              "text": "When you change to Nightjar, remove 1 threat from the main scheme."
+            }
+          ],
+          "text": null,
+          "flavor": "The lamps go out one street ahead of her."
+        }
+      },
+      "design": {
+        "status": "approved",
+        "intendedRole": "Demonstrates a double-sided identity where each face has its own type, attributes and abilities.",
+        "tags": ["identity", "double-sided"]
+      }
+    },
+
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-010",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 10,
+      "name": "Emberwatch Runner",
+      "type": "ally",
+      "faction": "watch",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 1, "attack": 1, "thwart": 1, "health": 1, "traits": ["Watcher"] },
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "The cheapest body; usually a one-shot thwart.", "tags": ["benchmark"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-011",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 11,
+      "name": "Lamplighter",
+      "type": "ally",
+      "faction": "watch",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2, "attack": 1, "thwart": 2, "health": 2, "traits": ["Watcher"] },
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Thwart-leaning two-drop; the main answer to acceleration.", "tags": ["archetype:thwart"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-012",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 12,
+      "name": "Old Hollis",
+      "type": "ally",
+      "faction": "watch",
+      "rarity": "uncommon",
+      "quantity": 3,
+      "attributes": { "cost": 3, "attack": 2, "thwart": 1, "health": 3, "traits": ["Watcher"] },
+      "keywords": [{ "id": "guard_post" }],
+      "text": null,
+      "flavor": "Forty years on the wall. He is not in a hurry.",
+      "design": { "status": "approved", "intendedRole": "Defensive body; the reason a Guardian can stay flipped up.", "tags": ["archetype:defense"] }
+    },
+
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-020",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 20,
+      "name": "Steady Nerve",
+      "type": "event",
+      "faction": "watch",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 0 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": { "event": "card.played", "filter": { "op": "eq", "left": "$event.card", "right": "$self" } },
+          "effect": [{ "op": "ready", "card": "$you.identity" }],
+          "text": "Ready your identity."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Free action economy; costs a card, which is the real price.", "tags": ["tempo"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-021",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 21,
+      "name": "Rally the Watch",
+      "type": "event",
+      "faction": "watch",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 1 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": { "event": "card.played", "filter": { "op": "eq", "left": "$event.card", "right": "$self" } },
+          "effect": [
+            {
+              "op": "remove_counter",
+              "card": "$adversary.mainScheme",
+              "counter": "threat",
+              "amount": { "op": "add", "left": 1, "right": { "op": "player_count" } }
+            }
+          ],
+          "text": "Remove threat from the main scheme equal to 1 plus the number of players."
+        }
+      ],
+      "text": null,
+      "design": { "status": "review", "intendedRole": "Demonstrates player_count scaling in an ability. Watch this at 4 players.", "tags": ["scaling-demo", "watchlist"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-022",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 22,
+      "name": "Drive Them Back",
+      "type": "event",
+      "faction": "watch",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2 },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": { "event": "card.played", "filter": { "op": "eq", "left": "$event.card", "right": "$self" } },
+          "targets": [
+            {
+              "id": "minion",
+              "query": { "zone": "engaged", "zonePlayer": "$you", "controller": "$adversary", "types": ["minion"] },
+              "count": 1,
+              "chooser": "$you",
+              "prompt": "Choose a minion engaged with you"
+            }
+          ],
+          "effect": [{ "op": "deal_damage", "target": "$target.minion", "amount": 3, "source": "$self" }],
+          "text": "Deal 3 damage to a minion engaged with you."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Demonstrates zonePlayer: only YOUR engaged enemies are legal targets.", "tags": ["engagement-demo"] }
+    },
+
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-030",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 30,
+      "name": "Hollow Lantern",
+      "type": "upgrade",
+      "faction": "watch",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 1, "traits": ["Relic"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "static",
+          "speed": "passive",
+          "activeWhile": { "op": "is_attached", "card": "$self" },
+          "effect": [
+            {
+              "op": "modify",
+              "target": "$host",
+              "changes": [{ "attr": "thwart", "mode": "add", "value": 1 }],
+              "duration": "while_source_in_play"
+            }
+          ],
+          "text": "Your identity gets +1 Thwart."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Tests a modifier on an attribute that only exists on one face of a double-sided card.", "tags": ["engine-test"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-031",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 31,
+      "name": "Ward Stone",
+      "type": "upgrade",
+      "faction": "watch",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "cost": 2, "traits": ["Relic"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "static",
+          "speed": "passive",
+          "activeWhile": { "op": "is_attached", "card": "$self" },
+          "effect": [
+            {
+              "op": "modify",
+              "target": "$host",
+              "changes": [{ "attr": "attack", "mode": "add", "value": 1 }],
+              "duration": "while_source_in_play"
+            }
+          ],
+          "text": "Your identity gets +1 Attack."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Attack counterpart to Hollow Lantern.", "tags": [] }
+    },
+
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-100",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 100,
+      "faction": "hollow",
+      "rarity": "rare",
+      "quantity": 1,
+      "sides": {
+        "front": {
+          "name": "The Warden Stirs",
+          "type": "warden",
+          "attributes": { "health": 9, "attack": 2, "thwart": 1, "stage": "opening" },
+          "text": null,
+          "flavor": "Something under the hill remembers your name."
+        },
+        "back": {
+          "name": "The Warden Unbound",
+          "type": "warden",
+          "attributes": { "health": 12, "attack": 3, "thwart": 2, "stage": "final" },
+          "abilities": [
+            {
+              "id": "a1",
+              "kind": "triggered",
+              "speed": "forced",
+              "trigger": {
+                "event": "card.flipped",
+                "filter": {
+                  "op": "and",
+                  "of": [
+                    { "op": "eq", "left": "$event.card", "right": "$self" },
+                    { "op": "eq", "left": "$event.to", "right": "back" }
+                  ]
+                }
+              },
+              "effect": [
+                { "op": "add_counter", "card": "$adversary.mainScheme", "counter": "threat", "amount": { "op": "player_count" } }
+              ],
+              "text": "When the Warden advances, place 1 threat per player on the main scheme."
+            }
+          ],
+          "text": null
+        }
+      },
+      "design": {
+        "status": "approved",
+        "intendedRole": "Health is printed per player: 9 becomes 27 at three players. Stage advance is a card flip, not a replacement.",
+        "tags": ["adversary", "double-sided", "scaling-demo"]
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-110",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 110,
+      "name": "The Hollow Deepens",
+      "type": "scheme",
+      "faction": "hollow",
+      "rarity": "rare",
+      "quantity": 1,
+      "attributes": { "threshold": 9, "acceleration": 1 },
+      "text": null,
+      "flavor": "The mist does not advance. The edges simply stop being anywhere.",
+      "design": { "status": "approved", "intendedRole": "The clock. Threshold is per player, acceleration is flat — that asymmetry is the main difficulty dial.", "tags": ["adversary", "balance-dial"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-120",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 120,
+      "name": "Hollow Hound",
+      "type": "minion",
+      "faction": "hollow",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": { "attack": 2, "health": 3, "traits": ["Hound"] },
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "Standard minion; engages the player who revealed it.", "tags": ["adversary"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-121",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 121,
+      "name": "Lantern Snuffer",
+      "type": "minion",
+      "faction": "hollow",
+      "rarity": "common",
+      "quantity": 2,
+      "attributes": { "attack": 1, "health": 2, "traits": ["Mist"] },
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": { "event": "card.revealed", "filter": { "op": "eq", "left": "$event.card", "right": "$self" } },
+          "targets": [
+            {
+              "id": "relic",
+              "query": { "zone": "play", "zonePlayer": "$event.player", "types": ["upgrade"], "traits": { "any": ["Relic"] } },
+              "count": 1,
+              "optional": true,
+              "chooser": "$event.player",
+              "prompt": "Discard a Relic upgrade"
+            }
+          ],
+          "effect": [{ "op": "destroy", "card": "$target.relic" }],
+          "text": "When Revealed: Discard a Relic upgrade you control."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "A When Revealed on a minion, targeting only the revealing player's cards.", "tags": ["adversary", "engagement-demo"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-130",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 130,
+      "name": "Creeping Mist",
+      "type": "treachery",
+      "faction": "hollow",
+      "rarity": "common",
+      "quantity": 3,
+      "attributes": {},
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": { "event": "card.revealed", "filter": { "op": "eq", "left": "$event.card", "right": "$self" } },
+          "effect": [
+            { "op": "add_counter", "card": "$adversary.mainScheme", "counter": "threat", "amount": 2 },
+            { "op": "move_card", "card": "$self", "to": "warden.encounter_discard" }
+          ],
+          "text": "When Revealed: Place 2 threat on the main scheme."
+        }
+      ],
+      "text": null,
+      "design": { "status": "approved", "intendedRole": "The baseline treachery. Threat that no one can prevent.", "tags": ["adversary"] }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "code": "wh-131",
+      "gameId": "wardens-hollow",
+      "setId": "whcore",
+      "number": 131,
+      "name": "Grasping Roots",
+      "type": "treachery",
+      "faction": "hollow",
+      "rarity": "uncommon",
+      "quantity": 2,
+      "attributes": {},
+      "abilities": [
+        {
+          "id": "a1",
+          "kind": "triggered",
+          "speed": "forced",
+          "trigger": { "event": "card.revealed", "filter": { "op": "eq", "left": "$event.card", "right": "$self" } },
+          "effect": [
+            {
+              "op": "for_each_player",
+              "order": "turn",
+              "do": [{ "op": "exhaust", "card": "$player.identity" }]
+            },
+            { "op": "move_card", "card": "$self", "to": "warden.encounter_discard" }
+          ],
+          "text": "When Revealed: Exhaust each Watcher's identity."
+        }
+      ],
+      "text": null,
+      "design": { "status": "review", "intendedRole": "Scales brutally with player count — deliberately, to test that the sim catches it.", "tags": ["adversary", "watchlist", "scaling-demo"] }
+    }
+  ]
+}

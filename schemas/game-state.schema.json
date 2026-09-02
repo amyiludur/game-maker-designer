@@ -12,6 +12,7 @@
     "version": { "type": "integer", "minimum": 0, "description": "Optimistic-lock counter, incremented per action" },
     "round": { "type": "integer", "minimum": 0 },
     "activePlayer": { "type": "integer", "minimum": 0 },
+    "playerCount": { "type": "integer", "minimum": 1 },
     "firstPlayer": { "type": "integer", "minimum": 0 },
     "phase": { "type": "string" },
     "step": { "type": "string" },
@@ -28,7 +29,7 @@
           "resources": { "type": "object", "additionalProperties": { "type": "integer" } },
           "flags": { "type": "object" },
           "identityInstance": { "type": ["string", "null"] },
-          "status": { "enum": ["playing", "won", "lost", "conceded"] }
+          "status": { "enum": ["playing", "won", "lost", "conceded", "eliminated"] }
         },
         "additionalProperties": false
       }
@@ -40,6 +41,19 @@
       "additionalProperties": { "type": "array", "items": { "type": "string" } }
     },
 
+    "adversaries": {
+      "type": "object",
+      "description": "Engine-controlled sides, keyed by adversary id. anchors maps anchor id to instance id.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "anchors": { "type": "object", "additionalProperties": { "type": "string" } },
+          "flags": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    },
+
     "instances": {
       "type": "object",
       "additionalProperties": {
@@ -47,16 +61,17 @@
         "required": ["code", "owner", "controller", "zone"],
         "properties": {
           "code": { "type": "string" },
-          "owner": { "type": "integer" },
-          "controller": { "type": "integer" },
+          "owner": { "type": "string", "description": "Side id: p0, p1, ... for players; the adversary id for engine-controlled sides." },
+          "controller": { "type": "string", "description": "Side id. An enemy engaged with player 2 sits in zone p1.engaged with controller \"villain\"." },
           "zone": { "type": "string" },
+          "face": { "enum": ["front", "back"], "default": "front" },
           "exhausted": { "type": "boolean", "default": false },
           "faceDown": { "type": "boolean", "default": false },
           "counters": { "type": "object", "additionalProperties": { "type": "integer" } },
           "attachedTo": { "type": ["string", "null"] },
           "attachments": { "type": "array", "items": { "type": "string" } },
           "enteredOnRound": { "type": "integer" },
-          "revealedTo": { "type": "array", "items": { "type": "integer" } },
+          "revealedTo": { "type": "array", "items": { "type": "string" } },
           "usedLimits": { "type": "object" }
         },
         "additionalProperties": false

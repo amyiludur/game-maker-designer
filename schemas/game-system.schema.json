@@ -4,7 +4,7 @@
   "title": "Game System",
   "description": "A complete declarative definition of a card game's rules structure.",
   "type": "object",
-  "required": ["schemaVersion", "id", "version", "name", "players", "zones", "cardTypes", "round", "winConditions", "deckbuilding"],
+  "required": ["schemaVersion", "id", "version", "name", "players", "zones", "cardTypes", "round", "winConditions"],
   "properties": {
     "$schema": { "type": "string" },
     "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
@@ -23,6 +23,38 @@
         "teams": { "type": "boolean", "default": false }
       },
       "additionalProperties": false
+    },
+
+    "adversaries": {
+      "type": "array",
+      "description": "Non-player sides controlled by the engine rather than by a person or a bot. See docs/16-cooperative-and-adversary-games.md.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "controlledBy"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string" },
+          "controlledBy": { "enum": ["engine"], "description": "An adversary executes a script; it never receives a pendingChoice." },
+          "zones": { "type": "array", "items": { "type": "string" }, "description": "Zone ids scoped to this adversary" },
+          "anchors": {
+            "type": "array",
+            "description": "Named persistent instances addressable as $adversary.<id> from any ability.",
+            "items": {
+              "type": "object",
+              "required": ["id", "type"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$" },
+                "type": { "type": "string" },
+                "required": { "type": "boolean", "default": true },
+                "zone": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "activation": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/effect" }
+        },
+        "additionalProperties": false
+      }
     },
 
     "vocabularies": {
@@ -101,7 +133,8 @@
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
           "name": { "type": "string" },
-          "scope": { "enum": ["player", "shared"] },
+          "scope": { "enum": ["player", "shared", "adversary"] },
+          "side": { "type": "string", "description": "For scope=adversary: which adversary owns this zone" },
           "visibility": { "enum": ["none", "owner", "controller", "public"] },
           "ordered": { "type": "boolean", "default": false },
           "faceDown": { "type": "boolean", "default": false },
@@ -137,6 +170,7 @@
                 "max": { "type": "number" },
                 "options": { "type": "array", "items": { "type": "string" } },
                 "vocabulary": { "type": "string" },
+                "perPlayer": { "type": "boolean", "default": false, "description": "The printed value is per player; the effective value is multiplied by the player count at setup." },
                 "showOnCard": { "type": ["string", "boolean"] },
                 "help": { "type": "string" }
               },
@@ -150,7 +184,9 @@
             "additionalProperties": false
           },
           "unique": { "type": "boolean", "default": false },
-          "isIdentity": { "type": "boolean", "default": false }
+          "isIdentity": { "type": "boolean", "default": false },
+          "doubleSided": { "type": "boolean", "default": false },
+          "controlledBy": { "enum": ["player", "adversary"], "default": "player" }
         },
         "additionalProperties": false
       }
@@ -219,7 +255,7 @@
         "firstPlayer": {
           "type": "object",
           "properties": {
-            "rule": { "enum": ["alternate", "fixed", "random", "winner_chooses"] }
+            "rule": { "enum": ["alternate", "rotate", "fixed", "random", "winner_chooses"] }
           },
           "additionalProperties": false
         },
@@ -341,7 +377,10 @@
             "properties": {
               "winner": { "type": "string" },
               "loser": { "type": "string" },
-              "draw": { "type": "boolean" }
+              "draw": { "type": "boolean" },
+              "allWin": { "type": "boolean", "description": "Every player wins together (cooperative victory)" },
+              "allLose": { "type": "boolean", "description": "Every player loses together (cooperative defeat)" },
+              "eliminate": { "type": "string", "description": "Selector for a player who is out while the game continues for the others" }
             },
             "additionalProperties": false
           },
@@ -392,6 +431,67 @@
               "rule": { "$ref": "https://game-maker-designer.dev/schemas/ability.schema.json#/$defs/expression" },
               "message": { "type": "string" },
               "severity": { "enum": ["error", "warning"], "default": "error" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "scenarioBuilding": {
+      "type": "object",
+      "description": "How an adversary's side is assembled. The cooperative counterpart of deckbuilding.",
+      "properties": {
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["anchor"],
+            "properties": {
+              "anchor": { "type": "string" },
+              "from": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "encounterSets": {
+          "type": "object",
+          "properties": {
+            "required": { "type": "array", "items": { "type": "string" } },
+            "modular": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "integer", "minimum": 0 },
+                "max": { "type": "integer", "minimum": 0 }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "perHeroAdditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "into"],
+            "properties": {
+              "from": { "type": "string" },
+              "matching": { "type": "string" },
+              "into": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "difficulties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "encounterSets": { "type": "array", "items": { "type": "string" } }
             },
             "additionalProperties": false
           }

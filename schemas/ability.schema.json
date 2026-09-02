@@ -35,6 +35,7 @@
           "enum": [
             "attr", "baseAttr", "counter", "resource", "count", "zone_size",
             "round", "phase", "step", "var", "param", "random_int", "constant",
+            "player_count", "side_of", "face",
             "add", "sub", "mul", "div", "mod", "min", "max", "abs", "clamp",
             "if",
             "eq", "ne", "lt", "lte", "gt", "gte",
@@ -76,8 +77,10 @@
       "description": "Declarative selection of card instances or players.",
       "properties": {
         "zone": { "type": ["string", "array"], "items": { "type": "string" } },
+        "zonePlayer": { "type": "string", "description": "Whose copy of a player-scoped zone to look in. Distinct from controller (who commands the card) and owner (whose deck it came from)." },
         "controller": { "type": "string" },
         "owner": { "type": "string" },
+        "face": { "enum": ["front", "back"] },
         "types": { "type": "array", "items": { "type": "string" } },
         "traits": { "$ref": "#/$defs/tagFilter" },
         "keywords": { "$ref": "#/$defs/tagFilter" },
@@ -128,6 +131,7 @@
             "draw", "move_card", "move_cards", "discard", "choose_and_discard",
             "destroy", "put_into_play", "create_token", "shuffle", "search",
             "reveal", "look_at", "attach", "detach",
+            "reveal_encounter", "flip_card", "replace_card", "engage", "run_activation",
             "exhaust", "ready", "ready_all", "exhaust_all",
             "add_counter", "remove_counter", "deal_damage", "heal",
             "gain_resource", "pay_resource", "gain_control",

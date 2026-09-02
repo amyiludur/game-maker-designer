@@ -178,6 +178,15 @@ do, and what just happened.
   reveal-all in sandbox.
 * Needs to work at 1280px wide and stay usable on a tablet in landscape.
 
+**Cooperative layout is a second, harder case.** The same screen must also render 1–4
+players against an adversary area (villain, main scheme with a threat track, engaged enemies
+per player). At four players there is far more board than fits, so this needs a focus /
+overview mode rather than a bigger grid; the threat track is the game's clock and must be
+readable at a glance, including how much lands next villain phase; and the villain phase
+executes a script against several players in sequence, which needs pacing and narration so
+players can follow what just happened to them. See
+[doc 16](16-cooperative-and-adversary-games.md#what-changes-in-the-ui).
+
 ### 9 · Replay viewer
 
 The play table in read-only mode plus a **scrubber**: timeline of actions with round/phase
@@ -237,8 +246,9 @@ a note into a card edit or a regression test in one action.
 1. Token set (colour, type, spacing, elevation, motion) in both themes.
 2. Core component sheet: buttons, inputs, selects, tags, tables, tabs, panels, dialogs,
    toasts, empty states.
-3. High-fidelity screens: **card editor**, **play table**, **simulation report**, **system
-   editor (phases tab)**, **deck builder**, **card browser**.
+3. High-fidelity screens: **card editor**, **play table (duel)**, **play table (4-player
+   co-op)**, **simulation report**, **system editor (phases tab)**, **deck builder**,
+   **card browser**.
 4. The card face component with a worked Emberfall example.
 5. The ability builder at three nesting depths (this is where a naive design falls apart).
 6. Responsive behaviour: 1280 / 1600 / 1920, plus tablet landscape for the play table.
