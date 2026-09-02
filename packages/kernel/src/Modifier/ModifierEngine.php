@@ -57,6 +57,9 @@ final class ModifierEngine
      */
     private ?array $computing = null;
 
+    /** Whether the last computation involved a modifier value that reads the board. */
+    private bool $volatile = false;
+
     /**
      * Printed characteristics per (card, face, player count).
      *
@@ -67,6 +70,18 @@ final class ModifierEngine
      * @var array<string, array{0: array<string, mixed>, 1: list<string>, 2: list<string>, 3: string}>
      */
     private array $printedCache = [];
+
+    /**
+     * Base characteristics per instance, reused while the card is still the same card.
+     *
+     * A card's printed characteristics depend on its code, its face, who controls it and the
+     * player count — never on its damage or its zone. Those change rarely, and the board is
+     * rebuilt constantly, so keeping the objects and checking a short signature is most of
+     * the cost of a rebuild.
+     *
+     * @var array<string, array{0: string, 1: CharacteristicSet}>
+     */
+    private array $baseSets = [];
 
     public function __construct()
     {
@@ -110,17 +125,28 @@ final class ModifierEngine
     public function board(EvalContext $context): array
     {
         $state = $context->state;
-        $stamp = $state instanceof Draft ? $state->mutationCounter : $state->version();
+        $boardStamp = $state instanceof Draft ? $state->boardVersion : $state->version();
+        $mutationStamp = $state instanceof Draft ? $state->mutationCounter : $state->version();
 
         $cached = $this->cache[$state] ?? null;
-        if ($cached !== null && $cached['stamp'] === $stamp) {
-            return $cached['board'];
+        if ($cached !== null
+            && $cached['board'] === $boardStamp
+            // A modifier whose value is an expression could read a counter or an exhausted
+            // state, so when one is in play the cache has to notice every change, not just
+            // the ones that alter what a card is.
+            && (! $cached['volatile'] || $cached['mutation'] === $mutationStamp)) {
+            return $cached['sets'];
         }
 
-        $board = $this->compute($context);
-        $this->cache[$state] = ['stamp' => $stamp, 'board' => $board];
+        $sets = $this->compute($context);
+        $this->cache[$state] = [
+            'board' => $boardStamp,
+            'mutation' => $mutationStamp,
+            'volatile' => $this->volatile,
+            'sets' => $sets,
+        ];
 
-        return $board;
+        return $sets;
     }
 
     public function breakdown(EvalContext $context, string $instanceId, string $attribute): ModifierBreakdown
@@ -170,7 +196,8 @@ final class ModifierEngine
             // If nothing a modifier computes can depend on the board, one pass is provably
             // enough and the fixed-point loop is pure overhead. Both example games take
             // this path; the loop exists for the games that will not.
-            $passes = $this->anyValueDependsOnState($modifiers) ? Budgets::MODIFIER_PASSES : 1;
+            $this->volatile = $this->anyValueDependsOnState($modifiers);
+            $passes = $this->volatile ? Budgets::MODIFIER_PASSES : 1;
 
             $board = $base;
             $fingerprint = null;
@@ -213,6 +240,16 @@ final class ModifierEngine
         foreach ($context->state->instances() as $id => $instance) {
             // The digest is in the key because one engine may outlive one game: two systems
             // can have a card with the same code and different printed values.
+            $signature = $instance->code . '@' . $instance->face . '@' . $instance->controller . '@' . $players;
+
+            if (($this->baseSets[$id][0] ?? null) === $signature) {
+                $board[$id] = $this->baseSets[$id][1];
+
+                continue;
+            }
+
+            // The digest is in the key because one engine may outlive one game: two systems
+            // can have a card with the same code and different printed values.
             $key = $context->system->digest . '|' . $instance->code . '@' . $instance->face . '@' . $players;
             $face = $context->system->cards->get($instance->code)->face($instance->face);
 
@@ -238,6 +275,7 @@ final class ModifierEngine
                 abilities: $face->abilities,
                 controller: $instance->controller,
             );
+            $this->baseSets[$id] = [$signature, $board[$id]];
         }
 
         return $board;

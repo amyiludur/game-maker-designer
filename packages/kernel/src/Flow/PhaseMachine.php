@@ -31,6 +31,9 @@ final class PhaseMachine
 
     public const OPEN = 'open';
 
+    /** How many actions — passes included — have been taken in the open window. */
+    public const WINDOW_ACTIONS = '__windowActions';
+
     public function currentStep(Draft $draft, SystemDocument $system): StepDefinition
     {
         return $system->step($draft->phase() . '.' . $draft->step())
@@ -62,8 +65,27 @@ final class PhaseMachine
     public function openWindow(Draft $draft, StepDefinition $step): void
     {
         $draft->setVar(self::STATE, self::OPEN);
+        $draft->setVar(self::WINDOW_ACTIONS, 0);
         $draft->setConsecutivePasses(0);
         $draft->setPriority($this->firstToAct($draft, $step));
+    }
+
+    /**
+     * Record that someone acted, and hand priority on.
+     *
+     * Both halves matter. Counting actions is how a single-action window knows it is done —
+     * "declare an attacker" is one beat, not an open-ended conversation. Passing priority is
+     * how an alternating window alternates; without it a player would keep the floor until
+     * they chose to pass, which is not what "priority passes back and forth" means.
+     */
+    public function recordAction(Draft $draft, StepDefinition $step, bool $wasPass): void
+    {
+        $draft->setVar(self::WINDOW_ACTIONS, (int) $draft->var(self::WINDOW_ACTIONS, 0) + 1);
+        $draft->setConsecutivePasses($wasPass ? $draft->consecutivePasses() + 1 : 0);
+
+        if (($step->window?->type ?? null) === \Gmd\Kernel\System\WindowDefinition::ALTERNATING) {
+            $this->passPriority($draft);
+        }
     }
 
     /**
@@ -133,11 +155,12 @@ final class PhaseMachine
         }
 
         $active = count(array_filter($draft->players(), static fn ($p): bool => $p->isPlaying()));
+        $taken = (int) $draft->var(self::WINDOW_ACTIONS, 0);
 
         return match ($window->endOn ?? \Gmd\Kernel\System\WindowDefinition::defaultEndOn($window->type)) {
             'consecutive_passes' => $draft->consecutivePasses() >= max(2, $active),
-            'all_submitted' => $draft->consecutivePasses() >= $active,
-            default => $draft->consecutivePasses() >= 1,
+            'all_submitted' => $taken >= $active,
+            default => $taken >= 1,
         };
     }
 

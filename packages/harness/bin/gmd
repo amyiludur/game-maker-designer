@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/*
+ | gmd — drive the rules kernel from a terminal.
+ |
+ | This exists so the kernel is provable before there is an application around it: a match
+ | can be played, a replay verified and a fuzz run started with nothing but PHP. The Laravel
+ | commands that arrive later are thin wrappers over the same runners.
+ */
+
+foreach ([__DIR__ . '/../../../vendor/autoload.php', __DIR__ . '/../vendor/autoload.php'] as $autoload) {
+    if (file_exists($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+exit((new Gmd\Harness\Cli\Application)->run($argv));

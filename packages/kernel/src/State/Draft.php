@@ -25,8 +25,18 @@ use Gmd\Kernel\Rng\Rng;
  */
 final class Draft implements StateView
 {
-    /** Bumped by every write; characteristic caches key on it. */
+    /** Bumped by every write. Legality caches key on this. */
     public int $mutationCounter = 0;
+
+    /**
+     * Bumped only by writes that can change what a card *is*.
+     *
+     * Counters and exhausted state are not characteristics — a card with three damage on it
+     * is the same 2/3 it was — so damage, which is dealt constantly, need not invalidate the
+     * layer walk. Zones, controllers, faces and modifiers can all change characteristics
+     * (an aura's query reads zones), and those do bump it.
+     */
+    public int $boardVersion = 0;
 
     /**
      * Instances whose characteristics may have changed since the last recompute.
@@ -171,6 +181,7 @@ final class Draft implements StateView
             $this->players,
         );
         $fork->mutationCounter = $this->mutationCounter;
+        $fork->boardVersion = $this->boardVersion;
 
         return $fork;
     }
@@ -342,6 +353,7 @@ final class Draft implements StateView
     public function markDirty(?string $instanceId): void
     {
         $this->mutationCounter++;
+        $this->boardVersion++;
         if ($instanceId === null) {
             $this->dirty = null;
 
@@ -352,10 +364,26 @@ final class Draft implements StateView
         }
     }
 
+    /**
+     * A change that cannot alter any card's characteristics.
+     *
+     * Only safe for counters and ready state, and only while nothing computes a
+     * characteristic *from* them — which the modifier engine checks for itself before
+     * trusting this.
+     */
+    private function markCosmetic(): void
+    {
+        $this->mutationCounter++;
+    }
+
     public function putInstance(Instance $instance, bool $widensBoard = true): void
     {
         $this->instances[$instance->id] = $instance;
-        $this->markDirty($widensBoard ? null : $instance->id);
+        if ($widensBoard) {
+            $this->markDirty(null);
+        } else {
+            $this->markCosmetic();
+        }
     }
 
     public function forgetInstance(string $id): void

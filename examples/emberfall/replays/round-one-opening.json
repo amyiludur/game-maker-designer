@@ -1,143 +1,204 @@
 {
-  "$schema": "../../../schemas/replay.schema.json",
-  "schemaVersion": "1.0.0",
-  "gameId": "emberfall",
-  "gameVersion": "0.4.0",
-  "matchId": null,
-  "mode": "simulation",
-  "seed": 8412773901,
-  "config": {
-    "mulligan": false,
-    "roundCap": 25
-  },
-  "seats": [
-    {
-      "seat": 0,
-      "deck": "examples/emberfall/decks/ember-aggro.json",
-      "agent": "emberfall-heuristic-aggro",
-      "label": "Ember"
+    "$schema": "../../../schemas/replay.schema.json",
+    "schemaVersion": "1.0.0",
+    "gameId": "emberfall",
+    "gameVersion": "0.4.0",
+    "matchId": null,
+    "mode": "simulation",
+    "seed": 48,
+    "config": {
+        "mulligan": false,
+        "roundCap": 25
     },
-    {
-      "seat": 1,
-      "deck": "examples/emberfall/decks/ash-control.json",
-      "agent": "emberfall-heuristic-aggro",
-      "label": "Ash"
+    "seats": [
+        {
+            "seat": 0,
+            "deck": "examples/emberfall/decks/ember-aggro.json",
+            "agent": "emberfall-heuristic-aggro",
+            "label": "Ember"
+        },
+        {
+            "seat": 1,
+            "deck": "examples/emberfall/decks/ash-control.json",
+            "agent": "emberfall-heuristic-aggro",
+            "label": "Ash"
+        }
+    ],
+    "actions": [
+        {
+            "seq": 1,
+            "seat": 0,
+            "actionId": "play_character",
+            "params": {
+                "card": "i-p0-2"
+            },
+            "note": "Round 1 income is min(round+1,6)=2. Cinder Scout for 1."
+        },
+        {
+            "seq": 2,
+            "seat": 1,
+            "actionId": "play_character",
+            "params": {
+                "card": "i-p1-11"
+            },
+            "note": "Dust Weaver for 2. Its Bolster trigger finds no other friendly character; the target is optional, so it resolves silently with no choice raised."
+        },
+        {
+            "seq": 3,
+            "seat": 0,
+            "actionId": "play_attachment",
+            "params": {
+                "card": "i-p0-20",
+                "host": "i-p0-2"
+            },
+            "note": "Ember Brand on the Scout. Attack becomes 4 (2 base at layer 0, +2 at layer 6)."
+        },
+        {
+            "seq": 4,
+            "seat": 1,
+            "actionId": "pass"
+        },
+        {
+            "seq": 5,
+            "seat": 0,
+            "actionId": "pass",
+            "note": "Two consecutive passes end action.main."
+        },
+        {
+            "seq": 6,
+            "seat": 0,
+            "actionId": "declare_attack",
+            "params": {
+                "attacker": "i-p0-2"
+            },
+            "note": "Legal on the round it entered play only because Swift grants attack_while_summoning_sick."
+        },
+        {
+            "seq": 7,
+            "seat": 1,
+            "actionId": "pass",
+            "note": "Declining to block: trading a 1/2 into a 4-attack body is worse than taking 4. Enemy hero damage 4."
+        },
+        {
+            "seq": 8,
+            "seat": 1,
+            "actionId": "pass",
+            "note": "Round 2. First player alternates, so Ash acts first. It holds Smother and passes on 3 Ember."
+        },
+        {
+            "seq": 9,
+            "seat": 0,
+            "actionId": "play_character",
+            "params": {
+                "card": "i-p0-23"
+            },
+            "note": "Wandering Emberkin, 2/2, for 2."
+        },
+        {
+            "seq": 10,
+            "seat": 1,
+            "actionId": "play_event",
+            "params": {
+                "card": "i-p1-14"
+            },
+            "choice": {
+                "victim": "i-p0-23"
+            },
+            "note": "Smother destroys the Emberkin. The branded Cinder Scout is NOT a legal target: Smother's query reads current attack (4), not printed attack (2). Pinning this is the point of the fixture."
+        },
+        {
+            "seq": 11,
+            "seat": 0,
+            "actionId": "pass"
+        },
+        {
+            "seq": 12,
+            "seat": 1,
+            "actionId": "pass"
+        },
+        {
+            "seq": 13,
+            "seat": 1,
+            "actionId": "declare_attack",
+            "params": {
+                "attacker": "i-p1-11"
+            },
+            "note": "Dust Weaver attacks; it entered play last round, so no permission is needed."
+        },
+        {
+            "seq": 14,
+            "seat": 0,
+            "actionId": "declare_block",
+            "params": {
+                "blocker": "i-p0-2",
+                "attacker": "i-p1-11"
+            },
+            "note": "Scout blocks. Simultaneous strike: the 4-attack Scout kills the 1/2 Weaver, and the Weaver's 1 damage kills the 1-health Scout, so both go to the discard. Every amount is read before any is applied, which is why the Weaver's death does not spare the Scout."
+        }
+    ],
+    "provenance": {
+        "recordedBy": "gmd replay --bless",
+        "reason": "Pins several engine behaviours worth holding still: Swift bypassing summoning sickness, an optional target with no legal choices resolving silently, and a modifier-vs-constraint interaction. Re-derived from the hand-authored original, which could not be run: it named instance ids (i-0-27, i-0-29, i-1-44) outside the 25 a seat has, and its note at seq 9 called i-0-15 a Wandering Emberkin when index 15 of ember-aggro is Second Wind. The line and the behaviours it pins are the original's; the seed was searched for so that the same line is playable, and the ids are the ones the kernel actually allocates. Keeping the state reconstructible from (version, decks, seed) was worth more than keeping the original seed."
+    },
+    "expected": {
+        "finalStateHash": "sha256:9aa2e39ac62d7e0883a16a2fce7802ddd75befdc393f6c1d995ea8bdca757368",
+        "checkpoints": [
+            {
+                "seq": 1,
+                "stateHash": "sha256:0859ea160c1584acd11cc0d4de4dff136979daf64170a045675a323c6a7e07de"
+            },
+            {
+                "seq": 2,
+                "stateHash": "sha256:d995d768e3ee1a7a6942bef094054ec1b1b3458ee3d82e8743c717fe84cfef1f"
+            },
+            {
+                "seq": 3,
+                "stateHash": "sha256:534be1035db707c76d7116015aa18419a4e2fed8a5317a21398c7fd5f0a33280"
+            },
+            {
+                "seq": 4,
+                "stateHash": "sha256:30358f08a0d415de723f9588d9b39a579ceefecb6a6502c0a5e1bc83f5442bab"
+            },
+            {
+                "seq": 5,
+                "stateHash": "sha256:9e0e8cb16daa44168d3162c846442c7b9f13f1215212c6aee4c275c2ff4798d4"
+            },
+            {
+                "seq": 6,
+                "stateHash": "sha256:973f639747a8af7858ff64610107ad50d1dd8f0ad509f3bc5a6fcb617036770c"
+            },
+            {
+                "seq": 7,
+                "stateHash": "sha256:8e8e35bb6af41099b8619cf983b5de24272b24e032ae601ba24e3403dee44438"
+            },
+            {
+                "seq": 8,
+                "stateHash": "sha256:acb52023737241c8a2381dd6051c29d92d170d81bf380fd019b4de4045b75247"
+            },
+            {
+                "seq": 9,
+                "stateHash": "sha256:0cb95956dbf30f114e1516e3603e38cd5e7687ac50f9cbc83945f634b58f79fb"
+            },
+            {
+                "seq": 10,
+                "stateHash": "sha256:85bfc7bc93ab6035f3be4bd9e30f7b7abbc9be0c7c25b2ab0acd80f3945a1651"
+            },
+            {
+                "seq": 11,
+                "stateHash": "sha256:2e91ac72585eb69f8011b5b5e587d44f01a127c72c139e025f4eabcf40abe35c"
+            },
+            {
+                "seq": 12,
+                "stateHash": "sha256:0d3f52c9cebea7edce0520a98f53f3e0fdb7c202b96d4581f9bc237ce7bfb71b"
+            },
+            {
+                "seq": 13,
+                "stateHash": "sha256:9d707d462db5febbec6192b19156392ccec6c15f82b58a1d1a21865bd4a3e616"
+            },
+            {
+                "seq": 14,
+                "stateHash": "sha256:9aa2e39ac62d7e0883a16a2fce7802ddd75befdc393f6c1d995ea8bdca757368"
+            }
+        ]
     }
-  ],
-  "actions": [
-    {
-      "seq": 1,
-      "seat": 0,
-      "actionId": "play_character",
-      "params": {
-        "card": "i-0-27"
-      },
-      "note": "Round 1 income is min(round+1,6)=2. Cinder Scout for 1."
-    },
-    {
-      "seq": 2,
-      "seat": 1,
-      "actionId": "play_character",
-      "params": {
-        "card": "i-1-31"
-      },
-      "note": "Dust Weaver for 2. Its Bolster trigger finds no other friendly character; the target is optional, so it resolves silently with no choice raised."
-    },
-    {
-      "seq": 3,
-      "seat": 0,
-      "actionId": "play_attachment",
-      "params": {
-        "card": "i-0-29",
-        "host": "i-0-27"
-      },
-      "note": "Ember Brand on the Scout. Attack becomes 4 (2 base at layer 0, +2 at layer 6)."
-    },
-    {
-      "seq": 4,
-      "seat": 1,
-      "actionId": "pass"
-    },
-    {
-      "seq": 5,
-      "seat": 0,
-      "actionId": "pass",
-      "note": "Two consecutive passes end action.main."
-    },
-    {
-      "seq": 6,
-      "seat": 0,
-      "actionId": "declare_attack",
-      "params": {
-        "attacker": "i-0-27"
-      },
-      "note": "Legal on the round it entered play only because Swift grants attack_while_summoning_sick."
-    },
-    {
-      "seq": 7,
-      "seat": 1,
-      "actionId": "pass",
-      "note": "Declining to block: trading a 1/2 into a 4-attack body is worse than taking 4. Enemy hero damage 4."
-    },
-    {
-      "seq": 8,
-      "seat": 1,
-      "actionId": "pass",
-      "note": "Round 2. First player alternates, so Ash acts first. It holds Smother and passes on 3 Ember."
-    },
-    {
-      "seq": 9,
-      "seat": 0,
-      "actionId": "play_character",
-      "params": {
-        "card": "i-0-15"
-      },
-      "note": "Wandering Emberkin, 2/2, for 2."
-    },
-    {
-      "seq": 10,
-      "seat": 1,
-      "actionId": "play_event",
-      "params": {
-        "card": "i-1-44"
-      },
-      "choice": {
-        "victim": "i-0-15"
-      },
-      "note": "Smother destroys the Emberkin. The branded Cinder Scout is NOT a legal target: Smother's query reads current attack (4), not printed attack (2). Pinning this is the point of the fixture."
-    },
-    {
-      "seq": 11,
-      "seat": 0,
-      "actionId": "pass"
-    },
-    {
-      "seq": 12,
-      "seat": 1,
-      "actionId": "pass"
-    },
-    {
-      "seq": 13,
-      "seat": 1,
-      "actionId": "declare_attack",
-      "params": {
-        "attacker": "i-1-31"
-      },
-      "note": "Dust Weaver attacks; it entered play last round, so no permission is needed."
-    },
-    {
-      "seq": 14,
-      "seat": 0,
-      "actionId": "declare_block",
-      "params": {
-        "blocker": "i-0-27",
-        "attacker": "i-1-31"
-      },
-      "note": "Scout blocks: 4 attack kills the 1/2 outright, and the Scout survives on 1 health with 1 damage. Simultaneous strike, so the lethal_damage state check fires once for the Weaver."
-    }
-  ],
-  "provenance": {
-    "recordedBy": "spec-example",
-    "reason": "Illustrates the replay format and several engine behaviours worth pinning as a conformance fixture: Swift bypassing summoning sickness, an optional target with no legal choices resolving silently, and a modifier-vs-constraint interaction."
-  }
 }

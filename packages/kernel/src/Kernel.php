@@ -128,11 +128,11 @@ final class Kernel
         }
 
         $draft = $this->draft($state);
+        $phases = new PhaseMachine;
+        $step = $phases->currentStep($draft, $this->system);
+        $phases->recordAction($draft, $step, $action->isPass());
 
         if ($action->isPass()) {
-            $draft->setConsecutivePasses($draft->consecutivePasses() + 1);
-            (new PhaseMachine)->passPriority($draft);
-
             return new StepResult($draft->commit(), $draft->emitted());
         }
 
@@ -142,7 +142,6 @@ final class Kernel
             $bindings['target.' . $id] = $value;
         }
 
-        $draft->setConsecutivePasses(0);
         $draft->pushStack(new StackItem(
             id: $draft->nextId('stack', 's'),
             kind: StackItem::KIND_ACTION,

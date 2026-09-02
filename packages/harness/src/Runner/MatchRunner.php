@@ -21,11 +21,17 @@ use Gmd\Kernel\State\GameState;
  */
 final class MatchRunner
 {
-    /** @param array<int, Agent> $agents keyed by seat */
+    /**
+     * @param  array<int, Agent>  $agents  keyed by seat
+     * @param  (callable(GameState): void)|null  $observe  called after every settled action,
+     *                                                     which is where the fuzz harness
+     *                                                     asserts the state's invariants
+     */
     public function __construct(
         private readonly Kernel $kernel,
         private readonly array $agents,
         private readonly int $actionCap = 2000,
+        private readonly mixed $observe = null,
     ) {}
 
     public function run(MatchSetup $setup): MatchOutcome
@@ -53,6 +59,7 @@ final class MatchRunner
                 $result = $this->kernel->answer($state, $response);
                 $state = $this->kernel->settle($result->state)->state;
                 $events = [...$events, ...$result->events];
+                $this->observe($state);
 
                 continue;
             }
@@ -73,9 +80,17 @@ final class MatchRunner
             $log[] = $action;
             $events = [...$events, ...$applied->events, ...$settled->events];
             $state = $settled->state;
+            $this->observe($state);
         }
 
         return new MatchOutcome($state, $log, $events);
+    }
+
+    private function observe(GameState $state): void
+    {
+        if ($this->observe !== null) {
+            ($this->observe)($state);
+        }
     }
 
     private function sideToAct(GameState $state): ?string
