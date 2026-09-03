@@ -189,10 +189,11 @@ originally written, both deliberate:
   releases which this project's build environment cannot reach, and depending on something
   that cannot be installed would make the whole pipeline unrunnable to gain a check that
   would not run. `vue-tsc --noEmit`, ESLint and the architecture tests cover part of it.
-* **Fuzz runs Emberfall only**, not "per example game". Warden's Hollow declares two ops the
-  kernel does not implement yet (`reveal_encounter`, `run_activation` — the co-op ops
-  deferred from this pass), so it cannot be played headlessly, and a permanently red job
-  teaches people to ignore the pipeline.
+* **Fuzz runs both example games**, as originally written. It ran Emberfall alone while
+  Warden's Hollow still declared two ops the kernel had not grown — a permanently red job
+  teaches people to ignore the pipeline — and covers both now that it can. A game seating a
+  range is fuzzed across the whole range rather than at its minimum: half of what breaks in
+  a cooperative game only exists at four players.
 
 The `perf` gate is asserted in the kernel's own suite rather than as a CI stage, measured in
 CPU time via `getrusage()` — wall-clock made it flake whenever anything else was running on

@@ -14,11 +14,12 @@ because every change is a diffable, versioned JSON document.
 
 ## What this repository is (right now)
 
-This repository currently contains the **design and specification set** — no application
-code yet. It is the blueprint that the implementation and the UI work will be built from.
+A working platform and the specification set it was built from. The rules engine plays both
+example games headlessly and in the browser; the authoring and play screens are real; the
+schemas are real and validate every example on every push.
 
-Everything here is intended to be executable-in-spirit: the JSON Schemas are real and
-validate the worked example, and the example game is complete enough to build a UI against.
+The specifications are not a plan for the code — they are the contract it is held to, and
+[what is built](#what-is-built) says how far along each milestone is.
 
 ---
 
@@ -58,6 +59,7 @@ docs/                     Specifications and plans
 schemas/                  JSON Schema (draft 2020-12) — the machine-readable contracts
 examples/emberfall/       Worked example 1 — a competitive two-player duel
 examples/wardens-hollow/  Worked example 2 — 1-4 player co-op vs. an automated adversary
+templates/                Starter systems a new game can be created from
 scripts/                  validate-examples.mjs — schema + cross-document integrity checks
 design/                   High-fidelity screen designs + handoff (six screens, dark theme)
 ```
@@ -100,7 +102,10 @@ validating, either the schemas or the example is wrong.
 [`design/`](design/) holds six high-fidelity screens — card editor, play table, system
 editor, card browser, deck builder, simulation report — drawn against the Emberfall data,
 with a full token set and per-screen specs in [`design/HANDOFF.md`](design/HANDOFF.md).
-They cover the competitive duel shape; the cooperative play table is not yet designed.
+They cover the competitive duel shape. The cooperative play table is built — an adversary
+strip with a clock per anchor, and one engagement row per seat — but it was laid out from
+[doc 16](docs/16-cooperative-and-adversary-games.md) rather than drawn, and has no mockup
+here to be held to.
 
 ## Running it
 
@@ -119,9 +124,17 @@ npm run web                                       # http://127.0.0.1:5273
 Play a match headlessly, with no database and no browser:
 
 ```bash
-php packages/harness/bin/gmd play emberfall --seed 1 --log
+php packages/harness/bin/gmd play emberfall --seed=1 --log
 php packages/harness/bin/gmd fuzz emberfall --matches=200
 php packages/harness/bin/gmd replay examples/emberfall/replays/round-one-opening.json
+```
+
+A cooperative game is played against a scenario, at any seated size:
+
+```bash
+php packages/harness/bin/gmd play wardens-hollow --seed=7 --players=4
+php packages/harness/bin/gmd fuzz wardens-hollow --matches=200     # cycles 1-4 players
+php packages/harness/bin/gmd record wardens-hollow --seed=7 --out=/tmp/match.json
 ```
 
 ## What is built
@@ -130,13 +143,17 @@ php packages/harness/bin/gmd replay examples/emberfall/replays/round-one-opening
 |---|---|
 | M2 · The kernel | **Done.** 10,000 random-bot matches with zero invariant violations; the golden replay reproduces bit-identically |
 | M0 · Foundations | **Done**, except auth and a Docker Compose environment |
-| M1 · Authoring | Card browser and card editor; the system editor is not built |
+| M1 · Authoring | **Done.** Card browser, card editor, and a system editor that reports what a rules change would break |
 | M3 · Play in the browser | A solo match against the random bot plays end to end; no animation layer, no replay scrubber |
-| M3.5 · Co-op | The kernel is co-op-shaped (side ids, not seat integers), but `reveal_encounter` and `run_activation` are not implemented — Warden's Hollow lints two errors and cannot be played yet |
+| M3.5 · Co-op | **Playable.** Warden's Hollow lints clean and plays at one to four seats, in the harness and in the browser, against a scenario. `replace_card` and `engage` are still unbuilt; nothing has needed them |
 | M4–M6 | Not started |
+
+Both example games are fuzzed in CI and both have a blessed conformance replay — the
+competitive duel and the cooperative scenario exercise different halves of the kernel, and a
+suite covering only one lets the other regress in silence.
 
 ## Next steps
 
-1. The remaining co-op ops, so Warden's Hollow plays (M3.5).
-2. The system editor, so a game can be defined without touching a file (M1).
-3. Authentication and workspace scoping, which every route currently goes without (M5).
+1. Authentication and workspace scoping, which every route currently goes without (M5).
+2. The animation layer and replay scrubber the play table is missing (M3).
+3. The heuristic bot and batch simulation, so a card change can be answered with data (M4).

@@ -97,18 +97,36 @@ are on decides what the Warden does to you in its phase — that trade-off is th
 
 ## Notes and known rough edges
 
-* **Defence is stubbed.** `deal_damage` carries `defendable: true` and the `guard_post`
-  keyword grants `may_defend`, but the defence window itself (a reaction step where a player
-  may exhaust an ally to absorb an attack) is not yet in the round structure. It needs a
-  `reaction` window type in the phase model — the closest thing to a real format gap this
-  example surfaced.
+* **Defence is built, but not as a phase step.** The gap this example was written to
+  surface was a `reaction` window type in the round structure. It did not need one: a
+  defendable attack raises an ordinary choice against the threatened player, mid-effect, the
+  same way paying a cost does. A window would have had to be declared in the phase model,
+  entered, and skipped on every attack nobody could defend — machinery for something that is
+  already a question the engine knows how to ask. Which cards may answer it is read from the
+  granted `may_defend` permission, so the keyword decides and the kernel learns no card type.
 * **Minion attacks are not modelled.** In the reference games, engaged minions attack during
   the villain phase. Adding it is two lines in the activation script; it is left out to keep
   the example legible.
 * **`stage` as an enum attribute** works, but a villain with three stages across two physical
-  cards would need `replace_card` rather than `flip_card`. Both ops exist; only `flip_card`
-  is exercised here.
-* **Balance is unexamined.** `scenarios/the-warden.json` states *target* win rates per player
-  count. Whether the scenario hits them is a simulation question and cannot be answered until
-  the kernel runs. The most likely finding is that flat acceleration against a per-player
-  threshold makes the 1-player game harder than intended.
+  cards would need `replace_card` rather than `flip_card`. Only `flip_card` exists — nothing
+  has needed the other yet, and this example advances its villain by turning one card over.
+* **Balance: the predicted inversion is real.** `scenarios/the-warden.json` states target win
+  rates falling from 0.60 at one player to 0.45 at four. Random bots produce the opposite
+  slope at the bottom end:
+
+  | Players | Target | Random bots |
+  |---|---|---|
+  | 1 | 0.60 | 0.38 |
+  | 2 | 0.55 | 0.46 |
+  | 3 | 0.50 | 0.42 |
+  | 4 | 0.45 | 0.40 |
+
+  Solo is the *hardest* table, which is exactly what this file predicted: flat acceleration
+  against a per-player threshold means one Watcher faces the same clock as four while
+  removing threat a quarter as fast. The failure mode the scenario's own design note worried
+  about — four players coming out *easier* than two — did not appear.
+
+  Random play is not competent play, so the absolute numbers say little; the ordering is the
+  finding, and it is the ordering the design notes asked about. A real answer waits on the
+  heuristic bot (M4). Reproduce with
+  `php packages/harness/bin/gmd fuzz wardens-hollow --matches=400 --players=1`.

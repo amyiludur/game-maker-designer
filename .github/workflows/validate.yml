@@ -76,11 +76,16 @@ jobs:
           extensions: json, random
           coverage: none
       - run: composer install --no-interaction --no-progress
-      # Emberfall only. Warden's Hollow lints two errors by design — `reveal_encounter` and
-      # `run_activation` are the co-op ops deliberately deferred — so it cannot be played
-      # headlessly yet, and pretending otherwise would make this job a permanent red.
-      - name: 200 random-bot matches, asserting invariants after every action
-        run: php packages/harness/bin/gmd fuzz emberfall --matches=200
+      # Both example games, because they exercise different halves of the kernel:
+      # interleaved priority against per-player turns, a second seat against a scripted
+      # adversary. Warden's Hollow is fuzzed across its whole seated range rather than at
+      # its minimum — half of what breaks in a cooperative game only exists at four players.
+      - name: 200 random-bot matches per game, asserting invariants after every action
+        run: |
+          for game in emberfall wardens-hollow; do
+            echo "── $game"
+            php packages/harness/bin/gmd fuzz "$game" --matches=200
+          done
 
   api:
     name: API

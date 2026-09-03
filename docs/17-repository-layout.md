@@ -15,6 +15,8 @@ apps/api/                          — Laravel 12. Persistence, HTTP, compilatio
 apps/web/             @gmd/web     — Vue 3 + Vite SPA.
 schemas/                           — JSON Schema 2020-12. The contract all four share.
 examples/                          — two complete worked games (emberfall, wardens-hollow).
+                                     each: game-system.json, sets/, decks/, replays/, and —
+                                     for a cooperative game — scenarios/ and encounter-sets/.
 docs/  design/  scripts/           — specification, screen designs, the schema validator.
 ```
 
@@ -76,7 +78,9 @@ Every one of these is what CI runs, so a green local run means a green pipeline.
 | PHP style | root | `composer cs` (`composer cs:fix` to apply) |
 | Verify a golden replay | root | `php packages/harness/bin/gmd replay <file>` |
 | Bless a replay's hashes | root | `php packages/harness/bin/gmd replay <file> --bless` |
-| Play a headless match | root | `php packages/harness/bin/gmd play emberfall --seed 1` |
+| Play a headless match | root | `php packages/harness/bin/gmd play emberfall --seed=1` |
+| Play a scenario | root | `php packages/harness/bin/gmd play wardens-hollow --players=4` |
+| Record a match as a replay | root | `php packages/harness/bin/gmd record wardens-hollow --seed=7 --out=<file>` |
 | Fuzz | root | `php packages/harness/bin/gmd fuzz emberfall --matches=200` |
 | Compile / lint a game | root | `php packages/harness/bin/gmd compile emberfall`, `… lint emberfall` |
 | API tests | `apps/api` | `php artisan test` |
@@ -87,6 +91,10 @@ Every one of these is what CI runs, so a green local run means a green pipeline.
 | Web lint | root | `npm run lint` |
 | Regenerate types from schemas | root | `npm run types` (`types:check` asserts they are current) |
 | End-to-end | root | `npm run e2e` (needs both servers running) |
+
+Options take an `=`: `--seed=1`, not `--seed 1`. Written with a space the value is parsed as
+a positional argument and the option silently keeps its default, which for `play` means
+every seed produces the same match.
 
 Services run natively; there is no Docker Compose file yet:
 

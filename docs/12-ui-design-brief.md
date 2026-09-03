@@ -2,8 +2,11 @@
 
 > **Six screens from this brief have been designed** — see [`design/`](../design/) and
 > [`design/HANDOFF.md`](../design/HANDOFF.md) for tokens, per-screen specs and known gaps.
-> They cover the competitive duel shape; the cooperative play table (§8, and
-> [doc 16](16-cooperative-and-adversary-games.md)) is still open.
+> They cover the competitive duel shape. The cooperative play table (§8, and
+> [doc 16](16-cooperative-and-adversary-games.md)) is built but undesigned: it lays out an
+> adversary strip with a clock per anchor over one engagement row per seat, and it has none
+> of what §8 asks for beyond that — no focus/overview mode at four players, no pacing or
+> narration of the villain's script, no forecast of what lands next villain phase.
 >
 > **This document is the brief for the UI design pass.** It describes what each screen must
 > do, what data it has, and the constraints that matter. It does not prescribe visual style
@@ -191,6 +194,11 @@ readable at a glance, including how much lands next villain phase; and the villa
 executes a script against several players in sequence, which needs pacing and narration so
 players can follow what just happened to them. See
 [doc 16](16-cooperative-and-adversary-games.md#what-changes-in-the-ui).
+
+What exists today is the skeleton of that: rows generated from `ui.board`, where `$each`
+draws one per seat, and an anchor strip whose clocks are read from the scenario's anchor map
+rather than named in the client. The three hard parts above — focus mode, a readable
+forecast, and narration of the script — are untouched.
 
 ### 9 · Replay viewer
 

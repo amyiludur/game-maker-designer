@@ -118,7 +118,12 @@ belongs in the system document, in the same effect DSL as everything else:
         ] }
   ]},
   { "op": "for_each_player", "order": "turn", "do": [
-      { "op": "reveal_encounter", "player": "$player", "count": 1 }
+      { "op": "reveal_encounter",
+        "from": "villain.encounter_deck",
+        "discard": "villain.encounter_discard",
+        "to": "engaged",
+        "zonePlayer": "$player",
+        "count": 1 }
   ]}
 ]
 ```
@@ -154,13 +159,24 @@ out" recurs in every game of this shape and is fiddly to get right:
 { "op": "reveal_encounter",
   "from": "villain.encounter_deck",
   "discard": "villain.encounter_discard",
-  "to": "$player.engaged",
+  "to": "engaged",
+  "zonePlayer": "$player",
   "count": 1,
   "shuffleOnEmpty": true }
 ```
 
-It emits `card.revealed` before the card lands, so "when revealed" abilities — the
-signature encounter-card mechanic — are ordinary triggered abilities:
+`to` names a zone and `zonePlayer` says whose copy of it, rather than the two being fused
+into one `$player.engaged` selector, because that is how every other op that crosses a side
+boundary is already written — and because the card that stays on the table sits in the
+*player's* zone while remaining the *adversary's* to control, which one field cannot say.
+
+Where the card goes is read from its card type's `playableTo`, so the kernel never learns
+the words "minion" or "treachery": a type that can be played to the engagement zone engages,
+and anything else goes to the discard, which is where a treachery belongs once it has done
+its work.
+
+It emits `card.revealed` after the card lands, so "when revealed" abilities — the signature
+encounter-card mechanic — are ordinary triggered abilities:
 
 ```json
 { "id": "a1", "kind": "triggered", "speed": "forced",
@@ -172,6 +188,14 @@ signature encounter-card mechanic — are ordinary triggered abilities:
 ```
 
 Nothing new in the trigger model. `card.revealed` already existed.
+
+The ordering was specified the other way round here — revealed *before* the card lands — and
+implementation argued it out of that. A trigger's filter is evaluated where the event is
+announced, against the position as it stands, so emitting first would make "when revealed"
+abilities read a card still sitting in the encounter deck: a minion could not ask who it had
+engaged, and no filter could mention the zone it was revealed into. The card turns face up
+and arrives in one beat either way — nothing observes the gap — so the beat is placed where
+an ability can see the board it is about to act on.
 
 ---
 
@@ -196,10 +220,10 @@ Hero ↔ alter-ego, villain stage I ↔ II, main scheme 1A ↔ 1B. A card docume
 
 Instance state gains `"face": "front" | "back"`. Two new ops:
 
-| Op | Meaning |
-|---|---|
-| `flip_card` | Turn a card to its other side. Counters, attachments and damage persist by default; `carry` lists exceptions. |
-| `replace_card` | Swap in a *different* card (villain stage III is usually a separate card), transferring what `carry` names. |
+| Op | Meaning | State |
+|---|---|---|
+| `flip_card` | Turn a card to its other side. Counters, attachments and damage persist by default; `carry` lists exceptions. | Built |
+| `replace_card` | Swap in a *different* card (villain stage III is usually a separate card), transferring what `carry` names. | Not built — Warden's Hollow advances its villain by flipping one card, so nothing has needed it |
 
 Modifier layers already handle the rest: flipping changes base characteristics at layer 0,
 and everything above it recomputes. Damage stays marked, so a hero who flips to alter-ego
@@ -336,7 +360,7 @@ Very little, which is the point:
 | State | `owner`/`controller` become side ids; `players[]` gains `eliminated`; instances gain `face` |
 | Sides | Adversary sides registered at setup with their zones and anchors |
 | Settle | An adversary step runs its activation script; it never raises a `pendingChoice` for the adversary itself |
-| Ops | `reveal_encounter`, `flip_card`, `replace_card`, `engage`, `run_activation` |
+| Ops | `reveal_encounter`, `flip_card`, `run_activation` — built. `replace_card` and `engage` are not: revealing already places a card by its type, so nothing has needed them yet |
 | Expressions | `player_count`; queries gain `zonePlayer` |
 | Win conditions | `allWin`, `allLose`, `eliminate`; check after every state-check pass as before |
 | Redaction | Adversary hidden zones (encounter deck) are hidden from *everyone*, including the engine's own log until revealed |
