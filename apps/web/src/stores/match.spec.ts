@@ -15,6 +15,7 @@ const { api } = await import('@/api/client')
 function envelope(overrides: Partial<MatchEnvelope> = {}): MatchEnvelope {
   return {
     match: { id: 'm1', status: 'active', actionCount: 3, mode: 'solo', seed: 48 },
+    waitingOn: 'p0',
     version: 7,
     stateHash: 'abc',
     view: {
@@ -70,15 +71,43 @@ describe('match store', () => {
     const base = envelope()
     base.view.pendingChoice = {
       id: 'c1',
-      key: 'c1',
       kind: 'select_target',
-      seat: 0,
+      side: 'p0',
       prompt: 'Choose',
       options: { cards: ['i-p1-9'] },
     }
     store.absorb(base)
 
     expect([...store.targetable]).toEqual(['i-p1-9'])
+  })
+
+  it('moves to the seat the server is waiting on at a hotseat table', async () => {
+    // A cooperative table is all-human — the adversary is a script, so there is no other
+    // agent to hand the turn to. Without this the board sits on p0 showing an empty action
+    // bar for three players out of four, which looks exactly like a game that has hung.
+    const store = useMatchStore()
+    vi.mocked(api.match).mockResolvedValue(
+      envelope({ match: { ...envelope().match, mode: 'hotseat' }, waitingOn: 'p2' }),
+    )
+
+    await store.open('m1', 'p0')
+
+    // Fetched again as p2: the first response said the game was waiting on that seat, and a
+    // p0 view cannot show p2's hand.
+    expect(api.match).toHaveBeenLastCalledWith('m1', 'p2')
+    expect(store.side).toBe('p2')
+  })
+
+  it('stays put when another agent holds the turn', async () => {
+    // A solo match has a bot in the other seat, and the server drives it. Following it would
+    // show the human the bot's hand.
+    const store = useMatchStore()
+    vi.mocked(api.match).mockResolvedValue(envelope({ waitingOn: 'p1' }))
+
+    await store.open('m1', 'p0')
+
+    expect(api.match).toHaveBeenCalledTimes(1)
+    expect(store.side).toBe('p0')
   })
 
   it('sends the version it is showing so a stale action is refused', async () => {

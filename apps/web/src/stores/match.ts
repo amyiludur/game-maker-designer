@@ -20,6 +20,7 @@ export const useMatchStore = defineStore('match', () => {
   const version = ref(0)
   const stateHash = ref('')
   const status = ref('lobby')
+  const mode = ref('solo')
   const actionCount = ref(0)
   const pending = ref(false)
   const problem = ref<string | null>(null)
@@ -49,6 +50,8 @@ export const useMatchStore = defineStore('match', () => {
     version.value = envelope.version
     stateHash.value = envelope.stateHash
     status.value = envelope.match.status
+    mode.value = envelope.match.mode
+    toAct.value = envelope.waitingOn
     actionCount.value = envelope.match.actionCount
     view.value = envelope.view
     legalActions.value = envelope.legalActions
@@ -56,9 +59,36 @@ export const useMatchStore = defineStore('match', () => {
     problem.value = null
   }
 
+  /**
+   * Whose turn it is, when anybody's — told by the server, not worked out here.
+   *
+   * A view cannot answer this: the projector strips a choice addressed to another seat out
+   * of it, so a client asking its own view would see "nobody is being asked" and sit still.
+   */
+  const toAct = ref<string | null>(null)
+
+  /**
+   * At a hotseat table, follow the seat that has to act.
+   *
+   * "Hotseat" means one person plays every seat, and a cooperative table is always that —
+   * the adversary is a script, so there is no other agent to hand the turn to. Without this
+   * the board sits on p0 showing an empty action bar for three players out of four, which
+   * looks exactly like a game that has hung.
+   */
+  async function follow(): Promise<void> {
+    if (mode.value !== 'hotseat' || matchId.value === null || isOver.value) return
+
+    const next = toAct.value
+    if (next === null || next === side.value || !/^p\d+$/.test(next)) return
+
+    side.value = next
+    absorb(await api.match(matchId.value, next))
+  }
+
   async function open(id: string, asSide = 'p0'): Promise<void> {
     side.value = asSide
     absorb(await api.match(id, asSide))
+    await follow()
   }
 
   async function act(action: LegalAction): Promise<void> {
@@ -73,6 +103,7 @@ export const useMatchStore = defineStore('match', () => {
           expectedVersion: version.value,
         }),
       )
+      await follow()
     } catch (error) {
       handle(error)
     } finally {
@@ -93,6 +124,7 @@ export const useMatchStore = defineStore('match', () => {
           expectedVersion: version.value,
         }),
       )
+      await follow()
     } catch (error) {
       handle(error)
     } finally {
@@ -103,6 +135,7 @@ export const useMatchStore = defineStore('match', () => {
   async function undo(): Promise<void> {
     if (matchId.value === null || actionCount.value === 0) return
     absorb(await api.undo(matchId.value, Math.max(0, actionCount.value - 1)))
+    await follow()
   }
 
   function handle(error: unknown): void {
@@ -133,6 +166,7 @@ export const useMatchStore = defineStore('match', () => {
     version,
     stateHash,
     status,
+    mode,
     actionCount,
     pending,
     problem,
@@ -141,6 +175,7 @@ export const useMatchStore = defineStore('match', () => {
     isOver,
     round,
     step,
+    toAct,
     targetable,
     absorb,
     open,

@@ -9,6 +9,7 @@ use App\Models\BotProfile;
 use App\Models\Game;
 use App\Models\GameMatch;
 use App\Models\GameVersion;
+use App\Models\Scenario;
 use App\Services\MatchService;
 use App\Services\StaleMatchVersion;
 use Gmd\Kernel\Contract\Action;
@@ -62,15 +63,32 @@ final class MatchController extends Controller
     {
         $version = GameVersion::query()->findOrFail($request->input('gameVersionId'));
 
-        $match = $this->matches->create(
-            $version,
-            $request->input('seats', []),
-            $request->input('seed') === null ? null : (int) $request->input('seed'),
-            $request->input('config', []),
-            (string) $request->input('mode', 'solo'),
-        );
+        $scenarioId = $request->input('scenarioId');
+        $scenario = $scenarioId === null ? null : Scenario::query()->findOrFail($scenarioId);
 
-        $this->matches->start($match);
+        try {
+            $match = $this->matches->create(
+                $version,
+                $request->input('seats', []),
+                $request->input('seed') === null ? null : (int) $request->input('seed'),
+                $request->input('config', []),
+                (string) $request->input('mode', 'solo'),
+                $scenario,
+            );
+
+            $this->matches->start($match);
+        } catch (KernelException $e) {
+            // A match that cannot be dealt is a bad request, not a server fault: too many
+            // seats, a deck naming a card the game does not have, or — the co-op one — a
+            // game played against an adversary with no scenario saying which.
+            return response()->json([
+                'error' => [
+                    'code' => $e->diagnostic()->code->value,
+                    'message' => $e->diagnostic()->message,
+                    'details' => $e->diagnostic()->jsonSerialize(),
+                ],
+            ], 422);
+        }
 
         return response()->json(['data' => $this->envelope($match, $this->side($request, $match))], 201);
     }
@@ -207,6 +225,10 @@ final class MatchController extends Controller
                 'actionCount' => $match->action_count,
                 'result' => $match->result,
             ],
+            // Whose turn it is has never been a secret, and a view cannot answer it: a
+            // choice addressed to another seat is stripped out of it by the projector. A
+            // hotseat table needs this to know which chair to move to.
+            'waitingOn' => $state->pendingChoice()?->side ?? ($state->isOver() ? null : $state->activeSide()),
             'version' => $state->version,
             'stateHash' => StateHasher::hash($state),
             'view' => $kernel->view($state, $side)->toArray(),

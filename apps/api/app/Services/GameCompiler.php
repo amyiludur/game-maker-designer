@@ -113,6 +113,19 @@ final class GameCompiler
 
         return [
             'digest' => $system->digest,
+            // How many seats a table may have, and whether any of them is a script. The
+            // setup screen reads the shape of a game from these rather than being told: a
+            // game that declares an adversary is played against a scenario, and one that
+            // does not is played against another chair.
+            'players' => [
+                'min' => $system->minPlayers(),
+                'max' => $system->maxPlayers(),
+                'mode' => $system->players['mode'] ?? 'competitive',
+            ],
+            'adversaries' => array_map(
+                static fn ($a): array => ['id' => $a->id, 'name' => $a->name, 'zones' => $a->zones],
+                $system->adversaries,
+            ),
             'cardTypes' => $cardTypes,
             'vocabularies' => $system->vocabularies,
             'keywords' => array_map(

@@ -198,3 +198,65 @@ test('a new card opens its own game’s card, not another game’s', async ({ pa
   await expect(page).toHaveURL(new RegExp(`/g/${slug}/cards/`))
   await expect(page.locator('input.title')).toHaveValue('Untitled')
 })
+
+test('a cooperative match is set up against a scenario and shows the adversary', async ({ page }) => {
+  // The other shape a game in this format takes. Nothing here is Warden's Hollow-specific
+  // in the client: the scenario picker appears because the game has scenarios, the seat
+  // count appears because it seats a range, and the anchors are drawn from the anchor map
+  // the scenario filled in.
+  await page.goto('/g/wardens-hollow/play')
+
+  const scenario = page.locator('[data-scenario]')
+  await expect(scenario).toBeVisible()
+  await expect(scenario).toHaveValue(/.+/)
+
+  // A cooperative table has no opposing seat to fill.
+  await expect(page.locator('[data-opponent]')).toHaveCount(0)
+
+  await page.locator('[data-players]').selectOption('3')
+  await expect(page.locator('select[data-seat="2"]')).toBeVisible()
+
+  await page.locator('input[type="number"]').fill('7')
+  await page.getByRole('button', { name: /Start match/ }).click()
+  await expect(page).toHaveURL(/\/m\/[0-9a-f-]{36}/)
+
+  // The villain and its scheme, each with the clock that ends the game.
+  const anchors = page.locator('[data-anchor]')
+  await expect(anchors).toHaveCount(2)
+  await expect(page.locator('[data-anchor="boss"]')).toContainText('Warden')
+  await expect(page.locator('[data-anchor="mainScheme"] .meter-text')).toContainText('threat')
+
+  // Health is printed per player, so three Watchers face a bigger villain than one would.
+  await expect(page.locator('[data-anchor="boss"] .meter-text')).toContainText('/27')
+
+  // `$each` draws one engagement row per seat, so the board grows with the table without
+  // the layout knowing how many there will be.
+  await expect(page.locator('[data-zone="p0.engaged"]')).toBeVisible()
+  await expect(page.locator('[data-zone="p2.engaged"]')).toBeVisible()
+  await expect(page.locator('[data-zone="warden.warden_area"]')).toBeVisible()
+
+  // A cooperative table is all-human, so the board follows the seat that has to act rather
+  // than sitting on p0 with an empty action bar for three players out of four.
+  await expect(page.locator('[data-seat-note]')).toBeVisible()
+
+  const actions = page.locator('[data-action]')
+  await expect(actions.first()).toBeVisible()
+
+  const before = await page.locator('[data-state-hash]').getAttribute('data-state-hash')
+  await actions.first().click()
+
+  await expect
+    .poll(async () => page.locator('[data-state-hash]').getAttribute('data-state-hash'))
+    .not.toBe(before)
+
+  // There is no resource pool in this game: a card costs cards, so playing one asks which
+  // to discard. Answering it is part of taking the action, not a separate feature.
+  const prompt = page.locator('.prompt')
+  for (let guard = 0; guard < 8 && (await prompt.count()) > 0; guard++) {
+    await prompt.locator('.choice').first().click()
+    await page.waitForTimeout(50)
+  }
+
+  // And it comes back playable — for whichever Watcher is up now.
+  await expect(actions.first()).toBeVisible()
+})

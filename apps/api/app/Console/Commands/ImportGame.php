@@ -10,8 +10,10 @@ use App\Models\CardRevision;
 use App\Models\CardSet;
 use App\Models\Deck;
 use App\Models\DeckVersion;
+use App\Models\EncounterSet;
 use App\Models\Game;
 use App\Models\GameVersion;
+use App\Models\Scenario;
 use App\Models\Workspace;
 use App\Services\CardValidator;
 use App\Services\GameCompiler;
@@ -96,6 +98,7 @@ final class ImportGame extends Command
             $this->importSets($path, $game, $projector);
             $this->importDecks($path, $game, $version);
             $this->importBots($path, $game);
+            $this->importScenarios($path, $game);
 
             return $game;
         });
@@ -124,13 +127,20 @@ final class ImportGame extends Command
             }
         }
 
+        $scenarios = Scenario::query()->where('game_id', $game->id)->count();
+
         $this->info(sprintf(
-            'imported %s — %d card(s) in %d set(s), %d deck(s), %d bot(s)',
+            'imported %s — %d card(s) in %d set(s), %d deck(s), %d bot(s)%s',
             $game->name,
             $game->cards()->count(),
             $game->sets()->count(),
             $game->decks()->count(),
             BotProfile::query()->where('game_id', $game->id)->count(),
+            $scenarios === 0 ? '' : sprintf(
+                ', %d scenario(s) over %d encounter set(s)',
+                $scenarios,
+                EncounterSet::query()->where('game_id', $game->id)->count(),
+            ),
         ));
 
         return self::SUCCESS;
@@ -170,6 +180,32 @@ final class ImportGame extends Command
                 ]);
                 $card->forceFill(['head_revision_id' => $revision->id])->saveQuietly();
             }
+        }
+    }
+
+    /**
+     * Encounter sets before scenarios, because a scenario names sets by code.
+     *
+     * A game with no adversary has neither directory and this does nothing, which is how a
+     * competitive duel stays unaffected by the co-op half of the format.
+     */
+    private function importScenarios(string $path, Game $game): void
+    {
+        foreach ($this->jsonIn($path . '/encounter-sets') as $name => $document) {
+            EncounterSet::create([
+                'game_id' => $game->id,
+                'code' => (string) ($document['code'] ?? $name),
+                'name' => (string) ($document['name'] ?? $name),
+                'kind' => (string) ($document['kind'] ?? 'scenario'),
+                'document' => $document,
+            ]);
+        }
+
+        foreach ($this->jsonIn($path . '/scenarios') as $document) {
+            Scenario::create([
+                'game_id' => $game->id,
+                ...Scenario::projected($document),
+            ]);
         }
     }
 

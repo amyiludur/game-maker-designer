@@ -2,7 +2,7 @@
 import { computed, onMounted } from 'vue'
 
 import CardInPlay from '@/components/table/CardInPlay.vue'
-import type { LegalAction } from '@/api/types'
+import type { LegalAction, ViewCard } from '@/api/types'
 import { useGameStore } from '@/stores/game'
 import { useMatchStore } from '@/stores/match'
 
@@ -15,22 +15,95 @@ onMounted(() => void match.open(props.matchId, 'p0'))
 
 const zones = computed(() => match.view?.zones ?? {})
 
+const opponent = computed(() => (match.side === 'p0' ? 'p1' : 'p0'))
+
+/** Every seat at the table, in seat order — one row each where the layout says `$each`. */
+const seats = computed(() => (match.view?.players ?? []).map((player) => player.side))
+
+/** The engine-controlled side, if this game has one. A duel has none and asks for none. */
+const adversary = computed(() => Object.keys(match.view?.adversaries ?? {})[0] ?? null)
+
+/**
+ * Which sides a declared row is drawn for.
+ *
+ * `$each` is what makes a cooperative board grow with the table: one engagement row per
+ * Watcher, four at four players, without the layout knowing how many there will be. The
+ * duel selectors are unchanged, so Emberfall draws exactly what it drew before.
+ */
+function sidesFor(player: string): string[] {
+  if (player === '$each') return seats.value
+  if (player === '$you') return [match.side]
+  if (player === '$shared') return ['shared']
+  if (player === '$adversary') return adversary.value === null ? [] : [adversary.value]
+  if (player === '$opponent') return [opponent.value]
+  return [player]
+}
+
 /** Board rows come from the game's own ui.board, not from a fixed picture of a duel. */
 const rows = computed(() => {
   const declared = games.compiled?.ui?.board?.rows
-  if (declared !== undefined && declared.length > 0) {
-    return declared.map((row) => ({
-      id: row.id,
-      label: row.id.replace(/-/g, ' '),
-      key: `${row.player === '$you' ? match.side : row.player === '$shared' ? 'shared' : opponent.value}.${row.zone}`,
-    }))
+  if (declared === undefined || declared.length === 0) {
+    return Object.keys(zones.value)
+      .filter((key) => key.endsWith('.play'))
+      .map((key) => ({ id: key, label: key, key, seat: null as string | null }))
   }
-  return Object.keys(zones.value)
-    .filter((key) => key.endsWith('.play'))
-    .map((key) => ({ id: key, label: key, key }))
+
+  return declared.flatMap((row) => {
+    const sides = sidesFor(row.player)
+    const base = row.label ?? row.id.replace(/-/g, ' ')
+
+    return sides.map((side) => ({
+      id: `${row.id}:${side}`,
+      // The seat is only named where a row repeats; labelling "Engaged p0" at a solo table
+      // says nothing the player did not already know.
+      label: sides.length > 1 ? `${base} · ${side}` : base,
+      key: `${side}.${row.zone}`,
+      seat: sides.length > 1 ? side : null,
+    }))
+  })
 })
 
-const opponent = computed(() => (match.side === 'p0' ? 'p1' : 'p0'))
+/**
+ * The villain and its scheme, read off the anchors.
+ *
+ * The board finds them the same way a card that says "damage the villain" does — through
+ * the anchor map the scenario filled in — so nothing here knows the word "Warden".
+ */
+const anchored = computed(() => {
+  const anchors = adversary.value === null ? {} : (match.view?.adversaries?.[adversary.value]?.anchors ?? {})
+
+  return Object.entries(anchors)
+    .map(([anchor, id]) => {
+      for (const cards of Object.values(zones.value)) {
+        const card = cards.find((candidate) => candidate.id === id)
+        if (card !== undefined) return { anchor, card }
+      }
+      return null
+    })
+    .filter((entry): entry is { anchor: string; card: ViewCard } => entry !== null)
+})
+
+/**
+ * A counter shown against the attribute that ends the game when it reaches it.
+ *
+ * Damage against health, threat against threshold: both are "this many out of that many,
+ * and when it fills, something happens". Which pairs with which is read from the card, so
+ * a game with a third such track gets it drawn without the client being told.
+ */
+function track(card: ViewCard): { counter: string; value: number; limit: number } | null {
+  const pairs: [string, string][] = [
+    ['damage', 'health'],
+    ['threat', 'threshold'],
+  ]
+
+  for (const [counter, attribute] of pairs) {
+    const limit = Number(card.attributes?.[attribute] ?? NaN)
+    if (!Number.isNaN(limit)) {
+      return { counter, value: card.counters?.[counter] ?? 0, limit }
+    }
+  }
+  return null
+}
 const hand = computed(() => zones.value[`${match.side}.hand`] ?? [])
 
 const phases = computed(() => games.compiled?.phases ?? [])
@@ -102,9 +175,13 @@ function name(value: string): string {
       </div>
       <div class="whose">
         <span class="label">Waiting on</span>
-        <span class="mono">{{
-          match.pendingChoice ? `p${match.pendingChoice.seat}` : match.view.activeSide
-        }}</span>
+        <span class="mono">{{ match.toAct ?? match.view.activeSide }}</span>
+        <!-- At a hotseat table the board follows the seat that has to act, so it has to say
+             whose cards are on screen — otherwise a player is looking at someone else's
+             hand without being told the chair moved. -->
+        <span v-if="match.mode === 'hotseat'" class="mono seat-note" data-seat-note>
+          showing {{ match.side }}
+        </span>
       </div>
 
       <!-- The state hash is on screen because a playtest note that carries one can be
@@ -121,6 +198,29 @@ function name(value: string): string {
 
     <div class="middle">
       <main class="board">
+        <!-- The adversary's anchors, above the board they are pressing on. A duel has no
+             anchors and gets no strip. -->
+        <section v-if="anchored.length > 0" class="anchors" data-anchors>
+          <article v-for="entry in anchored" :key="entry.anchor" class="anchor" :data-anchor="entry.anchor">
+            <span class="label">{{ entry.anchor }}</span>
+            <span class="anchor-name">{{ entry.card.name }}</span>
+            <template v-if="track(entry.card)">
+              <div class="meter" :data-counter="track(entry.card)!.counter">
+                <div
+                  class="fill"
+                  :class="track(entry.card)!.counter"
+                  :style="{
+                    width: `${Math.min(100, (track(entry.card)!.value / Math.max(1, track(entry.card)!.limit)) * 100)}%`,
+                  }"
+                />
+              </div>
+              <span class="mono meter-text">
+                {{ track(entry.card)!.counter }} {{ track(entry.card)!.value }}/{{ track(entry.card)!.limit }}
+              </span>
+            </template>
+          </article>
+        </section>
+
         <section v-for="row in rows" :key="row.id" class="row" :data-zone="row.key">
           <header class="row-head">
             <span class="label">{{ row.label }}</span>
@@ -143,7 +243,7 @@ function name(value: string): string {
       <!-- The choice prompt is docked, not modal: the board it is asking about has to stay
          visible, which is the whole reason the design refuses a dialog here. -->
       <div v-if="match.pendingChoice" class="prompt">
-        <span class="mono id">{{ match.pendingChoice.key }}</span>
+        <span class="mono id">{{ match.pendingChoice.id }}</span>
         <span class="text">{{ match.pendingChoice.prompt }}</span>
         <span class="spacer" />
         <button
@@ -220,6 +320,67 @@ function name(value: string): string {
 </template>
 
 <style scoped>
+.seat-note {
+  display: block;
+  font-size: 9px;
+  color: var(--text-4);
+}
+
+.anchors {
+  display: flex;
+  gap: var(--gap-4);
+  padding: var(--gap-4) 0 var(--gap-5);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--gap-4);
+}
+
+.anchor {
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-panel, 6px);
+  padding: var(--gap-3) var(--gap-4);
+}
+
+.anchor-name {
+  display: block;
+  font-weight: 600;
+  margin: 2px 0 var(--gap-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meter {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-0);
+  overflow: hidden;
+}
+
+.meter .fill {
+  height: 100%;
+  background: var(--text-4);
+}
+
+/* Damage and threat are the two clocks in this format and read as different dangers: one
+   is the villain dying, the other is the table losing. */
+.meter .fill.damage {
+  background: var(--danger, #b4453c);
+}
+
+.meter .fill.threat {
+  background: var(--accent);
+}
+
+.meter-text {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  color: var(--text-4);
+}
+
 .table {
   display: flex;
   flex-direction: column;

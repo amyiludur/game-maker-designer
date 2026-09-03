@@ -9,6 +9,7 @@ import type {
   ImpactReport,
   LintFinding,
   MatchEnvelope,
+  ScenarioSummary,
   SetSummary,
   VersionDetail,
 } from './types'
@@ -197,11 +198,15 @@ export const api = {
       `/games/${game}/bot-profiles`,
     ),
 
+  /** Empty for a competitive game, so the setup screen can ask without knowing the shape. */
+  scenarios: (game: string) => request<ScenarioSummary[]>(`/games/${game}/scenarios`),
+
   createMatch: (payload: {
     gameVersionId: string
     seats: { seat: number; deckVersionId?: string; botProfileId?: string }[]
     seed?: number
     mode?: string
+    scenarioId?: string
   }) => request<MatchEnvelope>('/matches', { method: 'POST', body: JSON.stringify(payload) }),
 
   match: (id: string, side: string) => request<MatchEnvelope>(`/matches/${id}${query({ side })}`),

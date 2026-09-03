@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\DeckController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\MatchController;
+use App\Http\Controllers\Api\ScenarioController;
 use App\Http\Controllers\Api\SetController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,11 @@ Route::prefix('v1')->group(function (): void {
     Route::get('games/{game}/decks', [DeckController::class, 'index']);
     Route::post('games/{game}/decks/validate', [DeckController::class, 'validateDeck']);
     Route::get('decks/{deck}', [DeckController::class, 'show']);
+
+    // Empty for a competitive game, which is what lets a client ask unconditionally and
+    // learn from the answer whether it is setting up a duel or a scenario.
+    Route::get('games/{game}/scenarios', [ScenarioController::class, 'index']);
+    Route::get('games/{game}/scenarios/{scenario}', [ScenarioController::class, 'show']);
 
     Route::get('games/{game}/bot-profiles', [MatchController::class, 'botProfiles']);
 

@@ -142,6 +142,9 @@ export interface CompiledCardType {
 
 export interface CompiledBundle {
   digest: string
+  players: { min: number; max: number; mode: string }
+  /** Engine-controlled sides. Empty for a competitive game. */
+  adversaries: Record<string, { id: string; name: string; zones: string[] }>
   cardTypes: Record<string, CompiledCardType>
   vocabularies: {
     traits?: string[]
@@ -156,7 +159,7 @@ export interface CompiledBundle {
 
 export interface BoardLayout {
   layout?: string
-  rows?: { id: string; zone: string; player: string; collapsed?: boolean }[]
+  rows?: { id: string; zone: string; player: string; label?: string; collapsed?: boolean }[]
   docks?: Record<string, string>
 }
 
@@ -195,16 +198,18 @@ export interface ModifiedAttribute {
   from: { source: string; mode: string; amount: unknown; layer: number }[]
 }
 
+/** Exactly what the kernel serialises — see Gmd\Kernel\Contract\PendingChoice. */
 export interface PendingChoice {
   id: string
-  key: string
   kind: string
-  seat: number
+  /** The side being asked. A view only ever carries a choice addressed to its own side. */
+  side: string
   prompt?: string
   options?: { cards?: string[]; players?: string[]; items?: string[]; min?: number; max?: number }
   count?: number | { min: number; max: number }
   optional?: boolean
-  source?: { instance?: string; ability?: string }
+  sourceInstance?: string | null
+  abilityId?: string | null
 }
 
 export interface PlayerView {
@@ -222,9 +227,28 @@ export interface PlayerView {
     identityInstance: string | null
     status: string
   }[]
+  /**
+   * Engine-controlled sides, keyed by side id, with their anchors resolved to instances.
+   *
+   * `anchors.boss` is how the board finds the villain without knowing which villain: the
+   * scenario decided that, and a card that says "damage the villain" reads the same map.
+   */
+  adversaries?: Record<string, { anchors: Record<string, string>; flags?: Record<string, unknown> }>
   pendingChoice?: PendingChoice | null
   result?: { winners: string[]; losers: string[]; reason: string; rounds: number; draw?: boolean } | null
   log?: { seq: number; type: string; payload: Record<string, unknown> }[]
+}
+
+/** A cooperative match's other half. Empty for a competitive game. */
+export interface ScenarioSummary {
+  id: string
+  code: string
+  name: string
+  adversary: string | null
+  difficulty: string | null
+  players: { min: number | null; max: number | null }
+  anchors: Record<string, string>
+  encounterSets: string[]
 }
 
 export interface LegalAction {
@@ -249,6 +273,14 @@ export interface MatchEnvelope {
     actionCount: number
     result: Record<string, unknown> | null
   }
+  /**
+   * The side the game is waiting on: whoever was asked a choice, else whoever has the turn.
+   *
+   * Not redacted, because whose turn it is has never been a secret — and a view cannot
+   * answer it, since a choice addressed to another seat is stripped out of it. A hotseat
+   * table needs it to know which chair to move to.
+   */
+  waitingOn: string | null
   version: number
   stateHash: string
   view: PlayerView

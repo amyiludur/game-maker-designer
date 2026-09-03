@@ -6,16 +6,19 @@ namespace App\Services;
 
 use App\Models\BotProfile;
 use App\Models\DeckVersion;
+use App\Models\EncounterSet;
 use App\Models\GameMatch;
 use App\Models\GameVersion;
 use App\Models\MatchAction;
 use App\Models\MatchPlayer;
 use App\Models\MatchSnapshot;
+use App\Models\Scenario;
 use Gmd\Harness\Agent\RandomAgent;
 use Gmd\Kernel\Contract\Action;
 use Gmd\Kernel\Contract\Agent;
 use Gmd\Kernel\Contract\ChoiceResponse;
 use Gmd\Kernel\Contract\MatchSetup;
+use Gmd\Kernel\Contract\ScenarioSetup;
 use Gmd\Kernel\Contract\SeatSetup;
 use Gmd\Kernel\Contract\Side;
 use Gmd\Kernel\Contract\StepResult;
@@ -63,8 +66,14 @@ final class MatchService
      * @param  list<array{seat: int, deckVersionId?: string, botProfileId?: string, userId?: int, label?: string}>  $seats
      * @param  array<string, mixed>  $config
      */
-    public function create(GameVersion $version, array $seats, ?int $seed = null, array $config = [], string $mode = 'solo'): GameMatch
-    {
+    public function create(
+        GameVersion $version,
+        array $seats,
+        ?int $seed = null,
+        array $config = [],
+        string $mode = 'solo',
+        ?Scenario $scenario = null,
+    ): GameMatch {
         $kernel = $this->kernel($version);
 
         $seatSetups = [];
@@ -84,12 +93,18 @@ final class MatchService
         // match" has to be answerable afterwards and nobody thinks to ask for a seed first.
         $seed ??= random_int(1, PHP_INT_MAX);
 
-        $initial = $kernel->begin(new MatchSetup($seatSetups, $seed, $config));
+        $initial = $kernel->begin(new MatchSetup(
+            $seatSetups,
+            $seed,
+            $config,
+            $scenario === null ? null : $this->scenarioSetup($version, $scenario),
+        ));
 
-        return DB::transaction(function () use ($version, $seats, $seed, $config, $mode, $initial): GameMatch {
+        return DB::transaction(function () use ($version, $seats, $seed, $config, $mode, $initial, $scenario): GameMatch {
             $match = GameMatch::create([
                 'game_id' => $version->game_id,
                 'game_version_id' => $version->id,
+                'scenario_id' => $scenario?->id,
                 'mode' => $mode,
                 'status' => GameMatch::ACTIVE,
                 'seed' => $seed,
@@ -461,6 +476,53 @@ final class MatchService
                 "bot strategy \"{$strategy}\" is not implemented yet; only \"random\" is",
             ),
         };
+    }
+
+    /**
+     * Turn a stored scenario into the kernel's setup input.
+     *
+     * The encounter sets are resolved here rather than in the kernel because they are rows:
+     * the kernel is handed a flat list of card codes in document order, for the same reason
+     * a deck is — instance ids are allocated from that order before anything is shuffled.
+     */
+    private function scenarioSetup(GameVersion $version, Scenario $scenario): ScenarioSetup
+    {
+        $codes = [...$scenario->encounterSetCodes(), ...$this->difficultySets($version, $scenario)];
+
+        $sets = EncounterSet::query()
+            ->where('game_id', $scenario->game_id)
+            ->whereIn('code', $codes)
+            ->get()
+            ->keyBy('code');
+
+        $documents = [];
+        foreach ($codes as $code) {
+            $set = $sets->get($code) ?? throw new \RuntimeException(
+                "scenario \"{$scenario->code}\" names encounter set \"{$code}\", which this game does not have",
+            );
+            $documents[$code] = $set->document;
+        }
+
+        return ScenarioSetup::fromDocument($scenario->document, $documents);
+    }
+
+    /**
+     * The extra encounter sets the chosen difficulty adds, which is the whole of what a
+     * difficulty is in this format.
+     *
+     * @return list<string>
+     */
+    private function difficultySets(GameVersion $version, Scenario $scenario): array
+    {
+        $system = $this->compiler->compile($version);
+
+        foreach ($system->scenarioBuilding['difficulties'] ?? [] as $candidate) {
+            if (($candidate['id'] ?? null) === $scenario->difficulty) {
+                return array_values($candidate['encounterSets'] ?? []);
+            }
+        }
+
+        return [];
     }
 
     public function kernel(GameVersion $version): Kernel
