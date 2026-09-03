@@ -113,6 +113,9 @@ final class OpRegistry
             new Ops\DeclareBlockOp,
             new Ops\EnforceHandSizeOp,
             new Ops\SetFirstPlayerOp,
+            // cooperative games and their adversaries
+            new Ops\RevealEncounterOp,
+            new Ops\RunActivationOp,
             // outcomes
             new Ops\WinGameOp,
             new Ops\LoseGameOp,

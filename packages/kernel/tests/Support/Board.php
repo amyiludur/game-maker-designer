@@ -9,6 +9,7 @@ use Gmd\Kernel\Expr\Bindings;
 use Gmd\Kernel\Expr\EvalContext;
 use Gmd\Kernel\Expr\Runtime;
 use Gmd\Kernel\Rng\Pcg64Rng;
+use Gmd\Kernel\State\AdversaryState;
 use Gmd\Kernel\State\Draft;
 use Gmd\Kernel\State\GameState;
 use Gmd\Kernel\State\Instance;
@@ -42,6 +43,9 @@ final class Board
     /** @var array<string, mixed> */
     private array $vars = [];
 
+    /** @var array<string, AdversaryState> */
+    private array $adversaries = [];
+
     private int $round = 1;
 
     private string $phase = 'action';
@@ -60,6 +64,37 @@ final class Board
     public static function emberfall(): self
     {
         return new self(Fixtures::emberfall());
+    }
+
+    public static function wardensHollow(): self
+    {
+        return new self(Fixtures::wardensHollow());
+    }
+
+    /**
+     * Seat an engine-controlled side, filling its anchors.
+     *
+     * @param  array<string, array{0: string, 1: string}>  $anchors  anchor id => [card code, zone id]
+     */
+    public function adversary(string $id, array $anchors = []): self
+    {
+        $filled = [];
+        foreach ($anchors as $anchor => [$code, $zoneId]) {
+            $filled[$anchor] = $this->placeFor($id, $code, $zoneId);
+        }
+        $this->adversaries[$id] = new AdversaryState($id, $filled);
+
+        return $this;
+    }
+
+    /** Put a card in an adversary's zone — an encounter deck, or a minion already engaged. */
+    public function adversaryCard(string $adversary, string $code, string $zoneId, ?int $engagedWith = null): self
+    {
+        $side = $engagedWith === null ? $adversary : Side::player($engagedWith);
+        $id = $this->placeFor($side, $code, $zoneId);
+        $this->instances[$id] = $this->instances[$id]->with(['controller' => $adversary, 'owner' => $adversary]);
+
+        return $this;
     }
 
     /** @param array<string, int> $resources */
@@ -95,6 +130,14 @@ final class Board
     public function inZone(int $seat, string $code, string $zone): self
     {
         $this->place($seat, $code, $zone);
+
+        return $this;
+    }
+
+    /** Turn a double-sided card over — a guardian form, a villain's final stage. */
+    public function face(string $instanceId, string $face): self
+    {
+        $this->instances[$instanceId] = $this->instances[$instanceId]->with(['face' => $face]);
 
         return $this;
     }
@@ -173,6 +216,7 @@ final class Board
             players: array_values($this->players),
             zones: $this->zones,
             instances: $this->instances,
+            adversaries: $this->adversaries,
             vars: $this->vars,
         );
     }
@@ -200,7 +244,11 @@ final class Board
 
     private function place(int $seat, string $code, string $zoneId): string
     {
-        $side = Side::player($seat);
+        return $this->placeFor(Side::player($seat), $code, $zoneId);
+    }
+
+    private function placeFor(string $side, string $code, string $zoneId): string
+    {
         $ordinal = ($this->ordinals[$side] ?? 0) + 1;
         $this->ordinals[$side] = $ordinal;
         $id = 'i-' . $side . '-' . $ordinal;

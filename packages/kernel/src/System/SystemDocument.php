@@ -32,6 +32,7 @@ final readonly class SystemDocument
      * @param  array<string, mixed>  $vocabularies
      * @param  array<string, mixed>  $players
      * @param  array<string, mixed>  $deckbuilding
+     * @param  array<string, mixed>  $scenarioBuilding
      * @param  array<string, mixed>  $mulligan
      * @param  array<string, mixed>  $ui
      * @param  list<string>  $declaredEvents  events this game emits beyond the core catalogue
@@ -55,6 +56,7 @@ final readonly class SystemDocument
         public array $adversaries,
         public array $vocabularies,
         public array $deckbuilding,
+        public array $scenarioBuilding,
         public array $mulligan,
         public array $ui,
         public CardDatabase $cards,

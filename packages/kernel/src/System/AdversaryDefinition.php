@@ -19,6 +19,7 @@ final readonly class AdversaryDefinition
     /**
      * @param  list<string>  $zones  zone ids scoped to this adversary
      * @param  list<array{id: string, type: string, zone?: string, required?: bool}>  $anchors
+     * @param  ?string  $encounterDeck  the zone a scenario's encounter sets are shuffled into
      */
     public function __construct(
         public string $id,
@@ -27,6 +28,7 @@ final readonly class AdversaryDefinition
         public array $anchors = [],
         public string $controlledBy = 'engine',
         public bool $hasActivation = false,
+        public ?string $encounterDeck = null,
     ) {}
 
     /** @param array<string, mixed> $raw */
@@ -39,7 +41,20 @@ final readonly class AdversaryDefinition
             $raw['anchors'] ?? [],
             (string) ($raw['controlledBy'] ?? 'engine'),
             isset($raw['activation']) && $raw['activation'] !== [],
+            isset($raw['encounterDeck']) ? (string) $raw['encounterDeck'] : null,
         );
+    }
+
+    /** The anchor definition with this id, or null when the adversary declares no such anchor. */
+    public function anchor(string $id): ?array
+    {
+        foreach ($this->anchors as $anchor) {
+            if ($anchor['id'] === $id) {
+                return $anchor;
+            }
+        }
+
+        return null;
     }
 
     public function activationProgram(): ProgramRef

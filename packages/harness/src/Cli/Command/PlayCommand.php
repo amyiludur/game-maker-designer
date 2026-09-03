@@ -28,23 +28,27 @@ final class PlayCommand extends Command
             throw new \RuntimeException("{$game->path} has no decks to play with");
         }
 
+        $players = $arguments->integer('players', $game->system->minPlayers());
+        $scenario = $game->scenarioSetup($arguments->option('scenario'));
+
         $seats = [];
         $agents = [];
-        for ($seat = 0; $seat < $game->system->minPlayers(); $seat++) {
+        for ($seat = 0; $seat < $players; $seat++) {
             $seats[] = new SeatSetup($seat, $game->deck($deckNames[$seat % count($deckNames)]));
             $agents[$seat] = new RandomAgent(Pcg64Rng::at($seed * 1000 + $seat));
         }
 
         $started = hrtime(true);
-        $outcome = new MatchRunner($kernel, $agents)->run(new MatchSetup($seats, seed: $seed));
+        $outcome = new MatchRunner($kernel, $agents)
+            ->run(new MatchSetup($seats, seed: $seed, scenario: $scenario));
         $elapsed = (hrtime(true) - $started) / 1e6;
 
         $this->line();
         $this->line("  {$game->system->name} v{$game->system->version}  ·  seed {$seed}");
-        $this->line('  ' . implode('  vs  ', array_map(
-            fn (SeatSetup $s): string => (string) ($s->deck['name'] ?? 'deck'),
-            $seats,
-        )));
+        $decks = array_map(fn (SeatSetup $s): string => (string) ($s->deck['name'] ?? 'deck'), $seats);
+        $this->line($scenario === null
+            ? '  ' . implode('  vs  ', $decks)
+            : '  ' . implode(', ', $decks) . '  vs  ' . ($scenario->id ?? $scenario->adversary));
         $this->line();
         $this->line('  ' . $outcome->describe());
         $this->line(sprintf('  %d events in %.0fms', count($outcome->events), $elapsed));

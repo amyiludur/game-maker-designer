@@ -52,14 +52,26 @@ it('does not flag a grant that an action requirement reads', function (): void {
 });
 
 it('reports ops the kernel has not grown yet', function (): void {
-    // Warden's Hollow needs the cooperative ops, which are not implemented. The linter
-    // saying so at load is the whole point: the alternative is UnknownOp at round 12 of
-    // match 7,431.
-    $findings = Lint::standard()->check(Fixtures::wardensHollow());
+    // The linter saying so at load is the whole point: the alternative is UnknownOp at
+    // round 12 of match 7,431.
+    $document = Fixtures::json(Fixtures::path('emberfall') . '/game-system.json');
+    $document['round']['phases'][0]['steps'][0]['auto'] = [['op' => 'summon_kraken']];
+
+    $findings = Lint::standard()->check((new SystemCompiler)->compile($document, []));
     $unknown = array_filter($findings, static fn (LintFinding $f): bool => $f->rule === 'unknown-op');
 
     expect(array_map(static fn (LintFinding $f): string => $f->message, $unknown))
-        ->toContain('the kernel does not implement the op "reveal_encounter"');
+        ->toContain('the kernel does not implement the op "summon_kraken"');
+});
+
+it('finds no unimplemented op in the cooperative example', function (): void {
+    // Warden's Hollow is the conformance target for the co-op shape, and every op it reaches
+    // for — reveal_encounter, run_activation — is one the kernel had to grow to play it. If
+    // this fails, the example is asking for a primitive that does not exist.
+    $findings = Lint::standard()->check(Fixtures::wardensHollow());
+    $unknown = array_filter($findings, static fn (LintFinding $f): bool => $f->rule === 'unknown-op');
+
+    expect(array_map(static fn (LintFinding $f): string => $f->message, $unknown))->toBe([]);
 });
 
 it('insists the game can end', function (): void {

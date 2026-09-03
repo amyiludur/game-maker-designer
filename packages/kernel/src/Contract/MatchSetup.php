@@ -7,9 +7,10 @@ namespace Gmd\Kernel\Contract;
 /**
  * The inputs a match is built from.
  *
- * A match is pinned to exactly this: a system version, a deck per seat, and a seed. That
- * triple is what makes a replay from three months ago still reproduce — the kernel is
- * rebuilt from the same inputs rather than from whatever the cards say today.
+ * A match is pinned to exactly this: a system version, a deck per seat, a seed, and — for
+ * a cooperative table — the scenario being played. That is what makes a replay from three
+ * months ago still reproduce: the kernel is rebuilt from the same inputs rather than from
+ * whatever the cards say today.
  */
 final readonly class MatchSetup
 {
@@ -21,6 +22,7 @@ final readonly class MatchSetup
         public array $seats,
         public int $seed,
         public array $config = [],
+        public ?ScenarioSetup $scenario = null,
     ) {}
 
     public function seatCount(): int

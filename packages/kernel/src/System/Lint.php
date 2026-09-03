@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gmd\Kernel\System;
 
 use Gmd\Kernel\Effect\OpRegistry;
+use Gmd\Kernel\Effect\ReadsGrants;
 use Gmd\Kernel\Event\EventCatalogue;
 
 /**
@@ -272,6 +273,16 @@ final class Lint
         foreach ($system->winConditions as $condition) {
             foreach ($this->strings($condition->check) as $value) {
                 $mentioned[$value] = true;
+            }
+        }
+
+        // The last place a grant can be read is the kernel: `may_defend` is consulted by
+        // `deal_damage` and appears in no document at all. An op that reads one says so.
+        foreach ($this->ops->all() as $op) {
+            if ($op instanceof ReadsGrants) {
+                foreach ($op->grantsRead() as $grant) {
+                    $mentioned[$grant] = true;
+                }
             }
         }
 

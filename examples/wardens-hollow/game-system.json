@@ -14,6 +14,7 @@
       "name": "The Warden",
       "controlledBy": "engine",
       "zones": ["encounter_deck", "encounter_discard", "warden_area"],
+      "encounterDeck": "encounter_deck",
       "anchors": [
         { "id": "boss", "type": "warden", "required": true, "zone": "warden_area" },
         { "id": "mainScheme", "type": "scheme", "required": true, "zone": "warden_area" }

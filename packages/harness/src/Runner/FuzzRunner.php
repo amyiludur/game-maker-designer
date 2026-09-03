@@ -21,6 +21,11 @@ use Gmd\Kernel\State\GameState;
  * Random play is the point: it reaches board positions no heuristic ever would, and it does
  * not need to be good at the game to prove the engine never breaks. A failing seed is worth
  * more than a passing thousand, so it is recorded in full rather than counted.
+ *
+ * A game that seats a range of players is fuzzed across the whole range rather than at its
+ * minimum. Half the things that break in a cooperative game only exist at four seats — turn
+ * order wrapping, per-player scaling, an activation that reveals once per player — and a run
+ * that only ever plays solo would report them all clean.
  */
 final class FuzzRunner
 {
@@ -31,6 +36,8 @@ final class FuzzRunner
         private readonly GameFixture $game,
         private readonly Kernel $kernel,
         private readonly InvariantChecker $invariants = new InvariantChecker,
+        /** Seats per match, or null to sweep the range the game allows. */
+        private readonly ?int $players = null,
     ) {
         $this->deckNames = $this->game->deckNames();
     }
@@ -50,7 +57,7 @@ final class FuzzRunner
             $failure = null;
 
             try {
-                $outcome = $this->play($seed);
+                $outcome = $this->play($seed, $this->seats($i));
                 $rounds[] = $outcome->rounds();
                 $reasons[$outcome->reason()] = ($reasons[$outcome->reason()] ?? 0) + 1;
                 if ($outcome->stalled) {
@@ -74,14 +81,34 @@ final class FuzzRunner
         return new FuzzReport($matches, $rounds, $reasons, $failures, $stalls);
     }
 
-    private function play(int $seed): MatchOutcome
+    /**
+     * How many seats match number $index plays at.
+     *
+     * Cycling rather than randomising keeps a run reproducible and its coverage even: 200
+     * matches of a 1-4 player game are 50 at each size, whatever the seed.
+     */
+    private function seats(int $index): int
+    {
+        if ($this->players !== null) {
+            return $this->players;
+        }
+
+        $min = $this->game->system->minPlayers();
+        $max = $this->game->system->maxPlayers();
+
+        return $min + $index % max(1, $max - $min + 1);
+    }
+
+    private function play(int $seed, int $players): MatchOutcome
     {
         $agents = [];
         $seats = [];
-        foreach (range(0, $this->game->system->minPlayers() - 1) as $seat) {
+        foreach (range(0, $players - 1) as $seat) {
             $agents[$seat] = new RandomAgent(Pcg64Rng::at($seed * 1000 + $seat));
             $seats[] = new SeatSetup($seat, $this->game->deck($this->deckNames[$seat % count($this->deckNames)]));
         }
+
+        $setup = new MatchSetup($seats, seed: $seed, scenario: $this->game->scenarioSetup());
 
         $runner = new MatchRunner(
             $this->kernel,
@@ -89,7 +116,7 @@ final class FuzzRunner
             observe: fn (GameState $state) => $this->assertInvariants($state, $seed),
         );
 
-        $state = $this->kernel->settle($this->kernel->begin(new MatchSetup($seats, seed: $seed)))->state;
+        $state = $this->kernel->settle($this->kernel->begin($setup))->state;
         $this->assertInvariants($state, $seed);
 
         return $runner->continueFrom($state);

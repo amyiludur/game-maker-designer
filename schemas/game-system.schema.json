@@ -36,6 +36,7 @@
           "name": { "type": "string" },
           "controlledBy": { "enum": ["engine"], "description": "An adversary executes a script; it never receives a pendingChoice." },
           "zones": { "type": "array", "items": { "type": "string" }, "description": "Zone ids scoped to this adversary" },
+          "encounterDeck": { "type": "string", "description": "Which of this adversary's zones a scenario's encounter sets are shuffled into at setup. Required once any scenario supplies encounter sets." },
           "anchors": {
             "type": "array",
             "description": "Named persistent instances addressable as $adversary.<id> from any ability.",

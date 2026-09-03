@@ -169,6 +169,10 @@ final class OpContext
     /**
      * Run a nested op list — a loop body, an if branch — and come back here afterwards.
      *
+     * The child inherits what the parent had bound, so a loop variable survives being read
+     * one level further in: `for_each_player` with an `if` inside it is a branch on that
+     * player, and without inheritance `$player` would simply vanish at the brace.
+     *
      * @param  list<string>  $path
      * @param  array<string, mixed>  $vars
      * @param  list<mixed>|null  $items  when set, the frame repeats once per item
@@ -181,7 +185,7 @@ final class OpContext
             0,
             $items,
             0,
-            $vars,
+            [...$this->frame->vars, ...$vars],
         ));
     }
 

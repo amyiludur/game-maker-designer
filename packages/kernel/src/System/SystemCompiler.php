@@ -152,6 +152,7 @@ final class SystemCompiler
             adversaries: $adversaries,
             vocabularies: $system['vocabularies'] ?? [],
             deckbuilding: $system['deckbuilding'] ?? [],
+            scenarioBuilding: $system['scenarioBuilding'] ?? [],
             mulligan: $system['mulligan'] ?? [],
             ui: $system['ui'] ?? [],
             cards: $cards,

@@ -19,6 +19,12 @@ use Gmd\Kernel\System\SystemDocument;
  * the whole state machine: automatic steps run and move on, windows stop and wait for a
  * player, and everything the phase rail on the play table shows is generated from this
  * structure rather than drawn per game.
+ *
+ * A `repeatPerPlayer` step is the third shape a round takes. A duel interleaves priority, so
+ * one window serves the whole table; a cooperative game gives each player a turn in
+ * sequence, and the step runs once per player with `$player` bound and the active seat
+ * moved to them (doc 16 §8). It is the same step either way — the flag decides how many
+ * times it happens, not what it does.
  */
 final class PhaseMachine
 {
@@ -34,6 +40,9 @@ final class PhaseMachine
     /** How many actions — passes included — have been taken in the open window. */
     public const WINDOW_ACTIONS = '__windowActions';
 
+    /** How far a `repeatPerPlayer` step has got round the table. */
+    public const STEP_TURN = '__stepTurn';
+
     public function currentStep(Draft $draft, SystemDocument $system): StepDefinition
     {
         return $system->step($draft->phase() . '.' . $draft->step())
@@ -43,9 +52,58 @@ final class PhaseMachine
     /** Begin the step the state currently names. */
     public function enter(Draft $draft, SystemDocument $system, OpContext $context): void
     {
-        $step = $this->currentStep($draft, $system);
+        $this->beginStep($draft, $this->currentStep($draft, $system), $context);
+    }
+
+    /**
+     * Enter a step: reset its state, seat whoever takes it first, and announce it.
+     *
+     * Every path into a step goes through here — the next step, the next round, the next
+     * player of a repeating step — so a step cannot be entered without its per-player
+     * counter being right.
+     */
+    private function beginStep(Draft $draft, StepDefinition $step, OpContext $context): void
+    {
         $draft->setVar(self::STATE, self::ENTERED);
-        $context->emit('step.began', ['phase' => $step->phaseId, 'step' => $step->id]);
+
+        if ($step->repeatPerPlayer) {
+            $draft->setVar(self::STEP_TURN, 0);
+            $order = $this->turnOrder($draft);
+            if ($order !== []) {
+                $draft->setActiveSeat($order[0]);
+            }
+        } else {
+            $draft->setVar(self::STEP_TURN, null);
+        }
+
+        $context->emit('step.began', array_filter([
+            'phase' => $step->phaseId,
+            'step' => $step->id,
+            'player' => $step->repeatPerPlayer ? $draft->activeSide() : null,
+        ], static fn (mixed $v): bool => $v !== null));
+    }
+
+    /**
+     * The seats in turn order, from the first player round the table.
+     *
+     * The same order `for_each_player` uses, and for the same reason: a script written for
+     * two players has to behave at four without being rewritten.
+     *
+     * @return list<int>
+     */
+    private function turnOrder(Draft $draft): array
+    {
+        $seats = array_values(array_map(
+            static fn ($player): int => $player->seat,
+            array_filter($draft->players(), static fn ($p): bool => $p->isPlaying()),
+        ));
+
+        $at = array_search(Side::seatOf($draft->firstSide()), $seats, true);
+        if ($at === false) {
+            return $seats;
+        }
+
+        return [...array_slice($seats, (int) $at), ...array_slice($seats, 0, (int) $at)];
     }
 
     /** Start an automatic step's script as its own stack item. */
@@ -57,7 +115,9 @@ final class PhaseMachine
             kind: StackItem::KIND_STEP,
             controller: $draft->activeSide(),
             frames: [new StackFrame($step->autoProgram())],
-            bindings: ['you' => $draft->activeSide()],
+            bindings: $step->repeatPerPlayer
+                ? ['you' => $draft->activeSide(), 'player' => $draft->activeSide()]
+                : ['you' => $draft->activeSide()],
         ));
     }
 
@@ -89,7 +149,7 @@ final class PhaseMachine
     }
 
     /**
-     * Move to the next step, or the next phase, or the next round.
+     * Move to the next player of this step, the next step, the next phase, or the next round.
      *
      * Rotating the first player at the round boundary is what `alternate` and `rotate` mean;
      * doing it here rather than in a script keeps a game from having to remember.
@@ -97,7 +157,15 @@ final class PhaseMachine
     public function advance(Draft $draft, SystemDocument $system, OpContext $context): void
     {
         $step = $this->currentStep($draft, $system);
-        $context->emit('step.ended', ['phase' => $step->phaseId, 'step' => $step->id]);
+        $context->emit('step.ended', array_filter([
+            'phase' => $step->phaseId,
+            'step' => $step->id,
+            'player' => $step->repeatPerPlayer ? $draft->activeSide() : null,
+        ], static fn (mixed $v): bool => $v !== null));
+
+        if ($this->handOnToNextPlayer($draft, $step, $context)) {
+            return;
+        }
 
         $next = $system->stepAfter($step->qualifiedId());
 
@@ -113,8 +181,44 @@ final class PhaseMachine
         }
 
         $draft->setPhaseStep($next->phaseId, $next->id);
+        $this->beginStep($draft, $next, $context);
+    }
+
+    /**
+     * Give a repeating step to the next player, or hand the table back when it has been round.
+     *
+     * The active seat is restored to the first player on the way out, so the steps that
+     * follow — the villain's activation, cleanup — do not silently inherit whoever happened
+     * to take the last turn.
+     *
+     * @return bool whether the step is repeating rather than ending
+     */
+    private function handOnToNextPlayer(Draft $draft, StepDefinition $step, OpContext $context): bool
+    {
+        if (! $step->repeatPerPlayer) {
+            return false;
+        }
+
+        $order = $this->turnOrder($draft);
+        $taken = (int) $draft->var(self::STEP_TURN, 0) + 1;
+
+        if ($taken >= count($order)) {
+            $draft->setVar(self::STEP_TURN, null);
+            $draft->setActiveSeat(Side::seatOrFail($draft->firstSide()));
+
+            return false;
+        }
+
+        $draft->setVar(self::STEP_TURN, $taken);
         $draft->setVar(self::STATE, self::ENTERED);
-        $context->emit('step.began', ['phase' => $next->phaseId, 'step' => $next->id]);
+        $draft->setActiveSeat($order[$taken]);
+        $context->emit('step.began', [
+            'phase' => $step->phaseId,
+            'step' => $step->id,
+            'player' => $draft->activeSide(),
+        ]);
+
+        return true;
     }
 
     private function endRound(Draft $draft, SystemDocument $system, OpContext $context): void
@@ -133,11 +237,10 @@ final class PhaseMachine
 
         $first = $system->firstStep();
         $draft->setPhaseStep($first->phaseId, $first->id);
-        $draft->setVar(self::STATE, self::ENTERED);
 
         $context->emit('round.began', ['round' => $draft->round()]);
         $context->emit('phase.began', ['phase' => $first->phaseId]);
-        $context->emit('step.began', ['phase' => $first->phaseId, 'step' => $first->id]);
+        $this->beginStep($draft, $first, $context);
     }
 
     /**
@@ -154,11 +257,15 @@ final class PhaseMachine
             return true;
         }
 
-        $active = count(array_filter($draft->players(), static fn ($p): bool => $p->isPlaying()));
+        // A repeating step is one player's turn, so only that player is in the window: it
+        // ends when they pass once, not when the whole table has declined in succession.
+        $active = $step->repeatPerPlayer
+            ? 1
+            : count(array_filter($draft->players(), static fn ($p): bool => $p->isPlaying()));
         $taken = (int) $draft->var(self::WINDOW_ACTIONS, 0);
 
         return match ($window->endOn ?? \Gmd\Kernel\System\WindowDefinition::defaultEndOn($window->type)) {
-            'consecutive_passes' => $draft->consecutivePasses() >= max(2, $active),
+            'consecutive_passes' => $draft->consecutivePasses() >= max($step->repeatPerPlayer ? 1 : 2, $active),
             'all_submitted' => $taken >= $active,
             default => $taken >= 1,
         };

@@ -24,15 +24,19 @@ final class FuzzCommand extends Command
         $game = $this->game($arguments);
         $matches = $arguments->integer('matches', 200);
         $firstSeed = $arguments->integer('seed', 1);
+        $players = $arguments->option('players') === null ? null : $arguments->integer('players', 0);
 
         $this->line();
         $this->line("  fuzzing {$game->system->name} — {$matches} matches from seed {$firstSeed}");
+        $this->line($players === null
+            ? sprintf('  %d-%d players, cycled', $game->system->minPlayers(), $game->system->maxPlayers())
+            : "  {$players} players");
         $this->line();
 
         $started = hrtime(true);
         $done = 0;
 
-        $report = new FuzzRunner($game, new Kernel($game->system))->run(
+        $report = new FuzzRunner($game, new Kernel($game->system), players: $players)->run(
             $matches,
             $firstSeed,
             function (int $seed, ?FuzzFailure $failure) use (&$done, $matches, $started): void {

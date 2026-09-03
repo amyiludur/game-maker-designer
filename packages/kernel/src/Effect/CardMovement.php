@@ -19,6 +19,8 @@ use Gmd\Kernel\State\ModifierRecord;
 final class CardMovement
 {
     /**
+     * @param  ?string  $side  whose copy of the zone; defaults to the card's own controller
+     * @param  ?string  $controller  who controls the card afterwards; defaults to $side
      * @param  'top'|'bottom'|int  $position
      */
     public static function move(
@@ -29,6 +31,7 @@ final class CardMovement
         string|int $position = 'bottom',
         ?bool $faceDown = null,
         ?string $face = null,
+        ?string $controller = null,
     ): void {
         $draft = $context->draft;
         $instance = $draft->instance($instanceId);
@@ -36,7 +39,10 @@ final class CardMovement
         $fromKey = $instance->zone;
         [, $fromZoneId] = Side::splitZoneKey($fromKey);
 
-        $toSide = $side ?? $instance->controller;
+        [$qualified, $toZoneId] = self::splitDestination($context, $toZoneId);
+
+        $toSide = $qualified ?? $side ?? $instance->controller;
+        $toController = $controller ?? $toSide;
         $toKey = $context->zoneKey($toSide, $toZoneId);
         $toZone = $context->system->zone($toZoneId);
 
@@ -53,7 +59,7 @@ final class CardMovement
 
         $changes = [
             'zone' => $toKey,
-            'controller' => $toSide,
+            'controller' => $toController,
             'faceDown' => $faceDown ?? $toZone->faceDown,
             'enteredOnRound' => $draft->round(),
         ];
@@ -84,9 +90,32 @@ final class CardMovement
             'card' => $instanceId,
             'from' => $fromZoneId,
             'to' => $toZoneId,
-            'controller' => $toSide,
+            'controller' => $toController,
             'position' => is_int($position) ? $position : $position,
         ], $instanceId);
+    }
+
+    /**
+     * Split a destination into the side holding the zone and the zone id itself.
+     *
+     * A destination may name the zone alone — `discard`, meaning the moving card's own — or
+     * qualify it with the side that holds it, as `warden.encounter_discard` does. The
+     * qualified form is what lets a player's card send a defeated minion back to the
+     * villain's pile without knowing anything about the villain.
+     *
+     * @return array{0: ?string, 1: string} the side, or null for "the card's own", and the zone id
+     */
+    public static function splitDestination(OpContext $context, string $destination): array
+    {
+        if (! str_contains($destination, '.')) {
+            return [null, $destination];
+        }
+
+        [$side, $zoneId] = Side::splitZoneKey($destination);
+
+        // An unqualified zone whose id happens to contain a dot is not a thing this format
+        // allows, but failing here would name the wrong culprit; let zone() say so instead.
+        return $context->system->hasZone($zoneId) ? [$side, $zoneId] : [null, $destination];
     }
 
     /** Detach this card from whatever it was attached to. */
