@@ -22,6 +22,7 @@ final readonly class ReplayFile
      * @param  array<string, mixed>  $config
      * @param  array<string, mixed>|null  $expected
      * @param  array<string, mixed>  $provenance
+     * @param  ?string  $scenario  for a cooperative match, the scenario it was played against
      */
     public function __construct(
         public string $path,
@@ -35,6 +36,7 @@ final readonly class ReplayFile
         public array $provenance = [],
         public string $mode = 'simulation',
         public ?string $matchId = null,
+        public ?string $scenario = null,
     ) {}
 
     /** @param array<string, mixed> $document */
@@ -52,6 +54,7 @@ final readonly class ReplayFile
             $document['provenance'] ?? [],
             (string) ($document['mode'] ?? 'simulation'),
             $document['matchId'] ?? null,
+            isset($document['scenario']) ? (string) $document['scenario'] : null,
         );
     }
 

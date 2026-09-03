@@ -13,6 +13,7 @@
     "matchId": { "type": ["string", "null"] },
     "mode": { "enum": ["solo", "hotseat", "online", "sandbox", "simulation"] },
     "seed": { "type": "integer" },
+    "scenario": { "type": ["string", "null"], "description": "For a cooperative match, the scenario document it was played against. Pinned like the decks are, since the same seats face a different game against a different villain." },
     "config": { "type": "object" },
 
     "seats": {

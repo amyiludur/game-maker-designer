@@ -34,6 +34,14 @@ final class MoveCardOp implements Op
             return;
         }
 
+        // Moving a card to the zone it is already in is how a revealed treachery says "and
+        // then discard me" — it has already been put there. Without this it leaves and
+        // re-enters, which the play table animates and which resets when it arrived, for a
+        // move that did not happen. An explicit position means a genuine reposition.
+        if (! isset($node['position']) && $this->alreadyThere($context, $card, (string) $node['to'])) {
+            return;
+        }
+
         CardMovement::move(
             $context,
             $card,
@@ -42,5 +50,13 @@ final class MoveCardOp implements Op
             $node['position'] ?? 'bottom',
             isset($node['facing']) ? $node['facing'] === 'down' : null,
         );
+    }
+
+    private function alreadyThere(OpContext $context, string $card, string $destination): bool
+    {
+        [$side, $zoneId] = CardMovement::splitDestination($context, $destination);
+        $instance = $context->draft->instance($card);
+
+        return $instance->zone === $context->zoneKey($side ?? $instance->controller, $zoneId);
     }
 }

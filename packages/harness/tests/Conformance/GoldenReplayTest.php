@@ -52,6 +52,22 @@ it('has at least one conformance fixture to check', function (): void {
     expect(goldenReplays())->not->toBeEmpty();
 });
 
+it('covers both shapes a game in this format can take', function (): void {
+    // The competitive duel and the cooperative scenario exercise different halves of the
+    // kernel — interleaved priority against per-player turns, a second seat against a
+    // scripted adversary. A conformance suite covering only one of them would let the other
+    // regress in silence, which is exactly what happened to Warden's Hollow for months.
+    $games = [];
+    foreach (goldenReplays() as [$file]) {
+        $document = (new FixtureLoader)->readJson($file);
+        if (isset($document['expected']['finalStateHash'])) {
+            $games[(string) $document['gameId']] = true;
+        }
+    }
+
+    expect(array_keys($games))->toContain('emberfall')->toContain('wardens-hollow');
+});
+
 it('rebuilds the opening position rather than restoring one', function (): void {
     // A replay that carried its initial state would prove the actions still work and say
     // nothing about whether setup still deals the same cards.

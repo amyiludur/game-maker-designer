@@ -129,6 +129,12 @@ final class Settler
         }
 
         if ($state === PhaseMachine::ENTERED) {
+            if ($this->phases->needsBeginning($draft)) {
+                $this->phases->enter($draft, $system, $context);
+
+                return true;
+            }
+
             if ($step->hasAuto) {
                 $this->phases->runAuto($draft, $step);
 

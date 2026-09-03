@@ -169,7 +169,12 @@ final class ReplayRunner
             );
         }
 
-        return new MatchSetup($seats, $replay->seed, $replay->config);
+        return new MatchSetup(
+            $seats,
+            $replay->seed,
+            $replay->config,
+            $this->gameFor($replay)->scenarioSetup($replay->scenario),
+        );
     }
 
     private function gameFor(ReplayFile $replay): GameFixture

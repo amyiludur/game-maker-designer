@@ -95,12 +95,34 @@ final class ReplayCommand extends Command
             $document['provenance'] = [...($document['provenance'] ?? []), 'reason' => $reason];
         }
 
-        file_put_contents($path, json_encode($document, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+        file_put_contents($path, json_encode($this->writable($document), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 
         $this->line();
         $this->line('  ✓ recorded ' . count($result->checkpoints) . ' checkpoints');
         $this->line();
 
         return 0;
+    }
+
+    /**
+     * Drop the empty object-typed fields before writing.
+     *
+     * Blessing rewrites the whole document, and PHP cannot tell `{}` from `[]` across a
+     * decode — so an empty `config` written by a recorder came back as an array and stopped
+     * validating against a schema that says object. Omitting it says the same thing and
+     * cannot be ambiguous.
+     *
+     * @param  array<string, mixed>  $document
+     * @return array<string, mixed>
+     */
+    private function writable(array $document): array
+    {
+        foreach (['config', 'provenance'] as $key) {
+            if (($document[$key] ?? null) === []) {
+                unset($document[$key]);
+            }
+        }
+
+        return $document;
     }
 }

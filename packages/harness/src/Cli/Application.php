@@ -8,6 +8,7 @@ use Gmd\Harness\Cli\Command\CompileCommand;
 use Gmd\Harness\Cli\Command\FuzzCommand;
 use Gmd\Harness\Cli\Command\LintCommand;
 use Gmd\Harness\Cli\Command\PlayCommand;
+use Gmd\Harness\Cli\Command\RecordCommand;
 use Gmd\Harness\Cli\Command\ReplayCommand;
 use Gmd\Kernel\Diagnostics\KernelException;
 
@@ -18,6 +19,7 @@ final class Application
     private const COMMANDS = [
         'play' => PlayCommand::class,
         'replay' => ReplayCommand::class,
+        'record' => RecordCommand::class,
         'fuzz' => FuzzCommand::class,
         'compile' => CompileCommand::class,
         'lint' => LintCommand::class,
@@ -66,13 +68,15 @@ final class Application
         gmd — the Game Maker Designer rules kernel
 
         Usage:
-          gmd play <game> [--seed=N] [--log] [--view=p0]   Play a headless match
+          gmd play <game> [--seed=N] [--players=N] [--scenario=NAME] [--log] [--view=p0]
+          gmd record <game> [--seed=N] [--players=N] [--scenario=NAME] [--out=FILE]
           gmd replay <file> [--bless] [--reason="..."]      Verify or record a golden replay
-          gmd fuzz <game> [--matches=N] [--seed=N]          Random bots, invariants checked
+          gmd fuzz <game> [--matches=N] [--seed=N] [--players=N]
           gmd compile <game>                                Compile a game and report on it
           gmd lint <game>                                   Report authoring mistakes
 
-        <game> is a directory under examples/, or a path to one.
+        <game> is a directory under examples/, or a path to one. A cooperative game is
+        played against a scenario; without --scenario the first one in the game is used.
 
         TEXT;
     }

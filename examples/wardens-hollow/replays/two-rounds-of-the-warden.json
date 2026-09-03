@@ -1,0 +1,167 @@
+{
+  "$schema": "../../../schemas/replay.schema.json",
+  "schemaVersion": "1.0.0",
+  "gameId": "wardens-hollow",
+  "gameVersion": "0.2.0",
+  "matchId": null,
+  "mode": "simulation",
+  "seed": 7,
+  "scenario": "the-warden",
+  "seats": [
+    {
+      "seat": 0,
+      "deck": "examples/wardens-hollow/decks/nightjar-starter.json",
+      "agent": "random",
+      "label": "Nightjar Starter"
+    },
+    {
+      "seat": 1,
+      "deck": "examples/wardens-hollow/decks/nightjar-starter.json",
+      "agent": "random",
+      "label": "Nightjar Starter"
+    }
+  ],
+  "actions": [
+    {
+      "seq": 1,
+      "seat": 0,
+      "actionId": "play_event",
+      "params": {
+        "card": "i-p0-13"
+      },
+      "note": "There is no resource pool: an event costs cards. play_event discards from hand equal to the printed cost, which is why a two-player opening burns through a 21-card deck quickly."
+    },
+    {
+      "seq": 2,
+      "seat": 0,
+      "actionId": "play_ally",
+      "params": {
+        "card": "i-p0-4"
+      },
+      "choice": {
+        "i-p0-4.discard": [
+          "i-p0-17"
+        ]
+      },
+      "note": "Old Hollis, cost 3. The choice is the cost — three cards discarded from hand — not a target. He carries Guard Post, so from here the Warden's attacks on p0 can be defended."
+    },
+    {
+      "seq": 3,
+      "seat": 0,
+      "actionId": "pass",
+      "note": "One pass ends a player's turn. `watch.turn` is repeatPerPlayer, so the window holds one player rather than the table, and does not wait for a second consecutive pass the way a duel's alternating window does."
+    },
+    {
+      "seq": 4,
+      "seat": 1,
+      "actionId": "play_event",
+      "params": {
+        "card": "i-p1-13"
+      },
+      "note": "p1's turn of round 1. The first player token rotates, so p1 leads round 2."
+    },
+    {
+      "seq": 5,
+      "seat": 1,
+      "actionId": "pass",
+      "note": "Round 1's Warden phase runs on this settle: both Watchers are Citizens, so the Warden schemes rather than attacks — 1 threat per player from its thwart, plus 1 from the scheme's acceleration. Then one encounter card is revealed per player."
+    },
+    {
+      "seq": 6,
+      "seat": 1,
+      "actionId": "pass",
+      "note": "p1 leads round 2 and has nothing worth doing."
+    },
+    {
+      "seq": 7,
+      "seat": 0,
+      "actionId": "play_upgrade",
+      "params": {
+        "card": "i-p0-21"
+      },
+      "choice": {
+        "i-p0-21.discard": [
+          "i-p0-20",
+          "i-p0-18"
+        ]
+      }
+    },
+    {
+      "seq": 8,
+      "seat": 0,
+      "actionId": "play_event",
+      "params": {
+        "card": "i-p0-16"
+      },
+      "choice": {
+        "i-p0-16.discard": [
+          "i-p0-7"
+        ]
+      }
+    },
+    {
+      "seq": 9,
+      "seat": 0,
+      "actionId": "ally_attack",
+      "params": {
+        "ally": "i-p0-4",
+        "enemy": "i-warden-1"
+      },
+      "note": "Ally attack on the boss. The Warden's health is printed 9 and per-player, so it is 18 at this table — the asymmetry the scenario's design notes call the main difficulty dial."
+    },
+    {
+      "seq": 10,
+      "seat": 0,
+      "actionId": "pass",
+      "note": "Round 2's activation. This is the reveal that reshuffles nothing yet: the encounter deck is 10 cards and a two-player table draws 2 a round, so the discard does not come back until round 6."
+    }
+  ],
+  "expected": {
+    "finalStateHash": "sha256:18c592adc740ac09c5af91d8fa2fbd65c084c22b1c2222275e57bd73d49abb4a",
+    "checkpoints": [
+      {
+        "seq": 1,
+        "stateHash": "sha256:c5556f834c7604e292864e15368e82251613d8da6a48012135a33cbd890427d4"
+      },
+      {
+        "seq": 2,
+        "stateHash": "sha256:f1acb1df0e35e54552dc868f72c5eb44529ea8a443f2198f6dcb70adb01b5d43"
+      },
+      {
+        "seq": 3,
+        "stateHash": "sha256:0f9dfdbc13fe5f74b20da67633b06a73814f988b8111d129b5e1303534fb61a2"
+      },
+      {
+        "seq": 4,
+        "stateHash": "sha256:3ab3284d289e30ebd86128b04d7704ef10fc5a2dfc13068539a1d85128342583"
+      },
+      {
+        "seq": 5,
+        "stateHash": "sha256:e5093addd47adf400513b71ea1b579334c86c58792b3b486414af422eb116c73"
+      },
+      {
+        "seq": 6,
+        "stateHash": "sha256:6e7aa46b8d23994c3e991eca96639be89c3d3f41cc39bb7edcfb2682480e93a8"
+      },
+      {
+        "seq": 7,
+        "stateHash": "sha256:0212f29e8b704f4d530caad95f12299916837d0e9f3d998d2e3ebd464eb558eb"
+      },
+      {
+        "seq": 8,
+        "stateHash": "sha256:451fc8ee237d28230d57b8643e51fcfd5605b896816e7f0a676829bd1596156b"
+      },
+      {
+        "seq": 9,
+        "stateHash": "sha256:066f83196548c1065ffcbc179525a5f3a786cbf4e463c097c6f25c6100b396e3"
+      },
+      {
+        "seq": 10,
+        "stateHash": "sha256:18c592adc740ac09c5af91d8fa2fbd65c084c22b1c2222275e57bd73d49abb4a"
+      }
+    ]
+  },
+  "provenance": {
+    "reason": "First conformance fixture for the cooperative shape: scenario setup, per-player turns, the Warden's scripted activation, and encounter reveals."
+  }
+}

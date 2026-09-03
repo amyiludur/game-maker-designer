@@ -49,6 +49,21 @@ final class PhaseMachine
             ?? $system->firstStep();
     }
 
+    /**
+     * Whether the step the state names has yet been begun.
+     *
+     * The opening step of a match is the one nothing advances into: the builder writes it
+     * straight into the state, so without this it would run having never been entered — no
+     * `step.began` for the phase rail to draw, and, if it repeats per player, nobody seated
+     * in it. An absent step state is exactly that moment and no other, because every path
+     * that begins, runs or opens a step writes one; carrying a flag of its own would put a
+     * var in every state hash to record something the state already says.
+     */
+    public function needsBeginning(Draft $draft): bool
+    {
+        return $draft->var(self::STATE) === null;
+    }
+
     /** Begin the step the state currently names. */
     public function enter(Draft $draft, SystemDocument $system, OpContext $context): void
     {
